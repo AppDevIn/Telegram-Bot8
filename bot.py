@@ -2,7 +2,8 @@ from typing import List
 import requests
 import json
 import configparser as cfg
-from Models.update import Update, UpdateType
+
+from TelegramBot.model.update import UpdateType, Update
 
 
 class TeleBot:
