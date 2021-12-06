@@ -1,10 +1,10 @@
-from Models.user import User
-from Models.chat import Chat
-from Models.entities import Entities
-from Models.inlineKeyboard import InlineKeyboard
+from user import User
+from chat import Chat
+from entities import Entities
+from inlineKeyboard import InlineKeyboard
+
 
 class Message(object):
-
     _message_id = int()
     date = int()
     text = str()
@@ -23,8 +23,8 @@ class Message(object):
         except:
             self.text = ""
 
-        try: 
-           self.replyMarkup = InlineKeyboard(response=response["reply_markup"]["inline_keyboard"])
+        try:
+            self.replyMarkup = InlineKeyboard(response=response["reply_markup"]["inline_keyboard"])
         except KeyError:
             self.replyMarkup = None
 
@@ -33,11 +33,6 @@ class Message(object):
                 self.entities.append(Entities(item))
         except:
             self._entities = False
-        
+
     def entityType(self) -> bool:
         return self._entities
-
-
-    
-
-
