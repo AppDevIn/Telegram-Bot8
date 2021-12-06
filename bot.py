@@ -35,8 +35,11 @@ class TeleBot:
                         callback = item.callback.message.replyMarkup.keyboards[0].callbackData.split("@")[1]
                         self._callback.get(callback)(item)
 
-    def add_command(self, commnad, func):
-        self._commands[commnad] = func
+    def add_command(self, command):
+        def decorator(func):
+            self._commands[command] = func
+
+        return decorator
 
     def add_callback(self, callbackData, func):
         self._callback[callbackData] = func

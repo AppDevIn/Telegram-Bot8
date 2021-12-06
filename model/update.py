@@ -8,6 +8,7 @@ class UpdateType(Enum):
     MESSAGE = 0
     CALLBACK = 1
 
+
 class Update(object):
     _update_id = int()
     _hasCallback = True
@@ -26,25 +27,25 @@ class Update(object):
             self.callback = CallbackMessage(response["callback_query"])
         except KeyError:
             self._hasCallback = False
-    
+
     def getUpdateType(self) -> UpdateType:
-        
-        if self._hasMessage: 
+
+        if self._hasMessage:
             return UpdateType.MESSAGE
-        elif self._hasCallback: 
+        elif self._hasCallback:
             return UpdateType.CALLBACK
 
-    
     def getNextUpdateID(self):
         return self._update_id + 1
 
     def getMessage(self) -> Message:
-        if self._hasMessage: return self.message
-        else: raise ValueError
+        if self._hasMessage:
+            return self.message
+        else:
+            raise ValueError
 
     def getCallback(self) -> Message:
-        if self._hasCallback: return self.callback
-        else: raise ValueError
-    
-
-
+        if self._hasCallback:
+            return self.callback
+        else:
+            raise ValueError
