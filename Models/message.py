@@ -1,7 +1,7 @@
-from telegrambot.Models.user import User
-from telegrambot.Models.chat import Chat
-from telegrambot.Models.entities import Entities
-from telegrambot.Models.inlineKeyboard import InlineKeyboard
+from Models.user import User
+from Models.chat import Chat
+from Models.entities import Entities
+from Models.inlineKeyboard import InlineKeyboard
 
 class Message(object):
 
