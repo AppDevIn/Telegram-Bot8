@@ -1,6 +1,6 @@
 from enum import Enum
 
-from model.callbackMessage import CallbackMessage
+from model.CallBackMessage import CallbackMessage
 from model.message import Message
 
 
@@ -20,7 +20,7 @@ class Update(object):
 
         try:
             self.message = Message(response["message"])
-        except:
+        except Exception as e:
             self._hasMessage = False
 
         try:
@@ -37,6 +37,12 @@ class Update(object):
 
     def getNextUpdateID(self):
         return self._update_id + 1
+
+    def hasMessage(self) -> bool:
+        return self._hasMessage
+
+    def hasCallback(self) -> bool:
+        return self._hasMessage
 
     def getMessage(self) -> Message:
         if self._hasMessage:

@@ -4,6 +4,7 @@ import json
 import configparser as cfg
 
 from model.update import UpdateType, Update
+from telebot import TeleBot
 
 
 class TeleBot:
