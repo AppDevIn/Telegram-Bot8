@@ -1,7 +1,7 @@
 from enum import Enum
 
-from TelegramBot.model.callbackMessage import CallbackMessage
-from TelegramBot.model.message import Message
+from model.callbackMessage import CallbackMessage
+from model.message import Message
 
 
 class UpdateType(Enum):

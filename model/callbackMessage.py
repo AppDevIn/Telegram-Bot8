@@ -1,5 +1,5 @@
-from TelegramBot.model.message import Message
-from TelegramBot.model.user import User
+from model.message import Message
+from model.user import User
 
 
 class CallbackMessage(object):

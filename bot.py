@@ -3,7 +3,7 @@ import requests
 import json
 import configparser as cfg
 
-from TelegramBot.model.update import UpdateType, Update
+from model.update import UpdateType, Update
 
 
 class TeleBot:
