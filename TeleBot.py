@@ -61,14 +61,14 @@ class TeleBot:
             .build()
 
         response = requests.request("GET", get_update_url, headers={}, data={})
-        response = json.loads(response.content)["result"]
+        response = json.loads(response.content)
 
         return response
 
     def generate_updates(self, response) -> List[Update]:
 
         if response.get('ok', False) is True:
-            return list(map(lambda update: Update(response=update), response))
+            return list(map(lambda update: Update(response=update), response["result"]))
         else:
             raise ValueError(response['error'])
 
