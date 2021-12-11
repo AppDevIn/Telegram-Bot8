@@ -2,5 +2,4 @@ certifi==2021.10.8
 charset-normalizer==2.0.9
 idna==3.3
 requests==2.26.0
--e git+https://github.com/AppDevIn/TelegramBot.git@5795952a50fa9f98ef45f6ff30a6d9a9eabcd022#egg=TelegramBot
 urllib3==1.26.7

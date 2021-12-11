@@ -1,4 +1,5 @@
 from typing import List
+import re
 import requests
 import json
 import model.Constants as const
@@ -10,6 +11,7 @@ from model.Update import UpdateType, Update
 class TeleBot:
     _commands = {}
     _callback = {}
+    _text = {}
 
     def __init__(self, token):
         self.base = f"{const.BASE_URL}{token}/"
@@ -29,9 +31,16 @@ class TeleBot:
                     lastUpdate = item
                     self.process_update(item)
 
-    def add_command(self, command):
+    def add_command(self, command=None, text=None):
         def decorator(func):
-            self._commands[command] = func
+            if command is not None:
+                self._commands[command] = func
+            else:
+                if isinstance(text, list):
+                    for t in text:
+                        self._text[text] = func
+                else:
+                    self._text[text] = func
 
         return decorator
 
@@ -64,8 +73,14 @@ class TeleBot:
             raise ValueError(response['error'])
 
     def process_update(self, item):
+        if item.message.text:
+            for p in self._text.keys():
+                r = re.compile(p)
+                if re.fullmatch(r, item.message.text.lower()):
+                    self._text.get(p)(item.message)
         if item.getUpdateType() == UpdateType.MESSAGE and item.message.entityType():
             command = item.message.text[item.message.entities[0].offset:item.message.entities[0].length]
+            print(command)
             if self._commands.get(command): self._commands.get(command)(item)
         elif item.getUpdateType() == UpdateType.CALLBACK:
             callback = item.callback.message.replyMarkup.keyboards[0].callbackData.split("@")[1]
