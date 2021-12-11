@@ -2,6 +2,7 @@ from typing import List
 import requests
 import json
 import model.Constants as const
+from Url.UrlBuilder import UpdateUrl
 
 from model.Update import UpdateType, Update
 
@@ -13,13 +14,13 @@ class TeleBot:
     def __init__(self, token):
         self.base = f"{const.BASE_URL}{token}/"
 
-    def poll(self):
+    def poll(self, timeout=1200, allowed_types=None):
         lastUpdate = None
         while True:
             if lastUpdate is None:
-                response = self.get_updates(offset=-1)
+                response = self.get_updates(offset=-1, timeout=timeout, allowed_types=allowed_types)
             else:
-                response = self.get_updates(offset=lastUpdate.getNextUpdateID())
+                response = self.get_updates(offset=lastUpdate.getNextUpdateID(), timeout=timeout, allowed_types=allowed_types)
 
             updates = self.generate_updates(response)
 
@@ -40,7 +41,7 @@ class TeleBot:
 
         return decorator
 
-    def get_updates(self, offset=None, timeout=1200, allowed_types=None) -> {}:
+    def get_updates(self, offset, timeout, allowed_types) -> {}:
         if allowed_types is None:
             allowed_types = [UpdateType.MESSAGE]
 
@@ -74,8 +75,8 @@ class TeleBot:
         url = self.base + f"sendMessage?chat_id={chat_id}&text={text}"
         requests.request("POST", url, headers={}, data={})
 
-    def send_callback(self, chat_id, text, replyMarkUp):
-        url = self.base + f"sendMessage?chat_id={chat_id}&text={text}&reply_markup={replyMarkUp}"
+    def send_callback(self, chat_id, text, reply_mark_up):
+        url = self.base + f"sendMessage?chat_id={chat_id}&text={text}&reply_markup={reply_mark_up}"
         requests.request("POST", url, headers={}, data={})
 
     def send_photo(self, chat_id, file):
@@ -86,42 +87,3 @@ class TeleBot:
         })
 
 
-class UrlBuilder:
-    def __init__(self, base):
-        self.base = base
-        self.firstParameter = True
-
-    def addParameter(self, value) -> str:
-        if self.firstParameter is True:
-            self.firstParameter = False
-            self.base += f"?{value}"
-        else:
-            self.base += f"&{value}"
-        return self.base
-
-    def build(self) -> str:
-        return self.base
-
-
-class UpdateUrl(UrlBuilder):
-
-    def __init__(self, url):
-        self.base = url + "getUpdates"
-        super(UpdateUrl, self).__init__(self.base)
-
-    def timeout(self, timeout):
-        self.addParameter(f"timeout={timeout}")
-        return self
-
-    def offset(self, offset, condition=True):
-        if condition:
-            self.addParameter(f"offset={offset}")
-        return self
-
-    def allowed_updates(self, allowed_updates: []):
-        self.addParameter(f"allowed_updates={allowed_updates}")
-        return self
-
-    def limit(self, limit: int):
-        self.addParameter(f"limit={limit}")
-        return self
