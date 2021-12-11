@@ -1,7 +1,7 @@
-from model.user import User
-from model.chat import Chat
-from model.entities import Entities
-from model.inlineKeyboard import InlineKeyboard
+from model.User import User
+from model.Chat import Chat
+from model.Entities import Entities
+from model.InlineKeyboard import InlineKeyboard
 
 
 class Message(object):

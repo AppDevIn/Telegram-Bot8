@@ -17,4 +17,3 @@ class Chat(object):
 
     def getID(self) -> int:
         return self._id
-    

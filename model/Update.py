@@ -1,12 +1,13 @@
 from enum import Enum
 
-from model.callbackMessage import CallbackMessage
-from model.message import Message
+from model.CallBackMessage import CallbackMessage
+from model.Message import Message
 
 
 class UpdateType(Enum):
-    MESSAGE = 0
-    CALLBACK = 1
+    MESSAGE = "message"
+    CALLBACK = "callback_query"
+    EDITED_CHANNEL_POST = "edited_channel_post"
 
 
 class Update(object):
@@ -20,7 +21,7 @@ class Update(object):
 
         try:
             self.message = Message(response["message"])
-        except:
+        except Exception as e:
             self._hasMessage = False
 
         try:
@@ -37,6 +38,12 @@ class Update(object):
 
     def getNextUpdateID(self):
         return self._update_id + 1
+
+    def hasMessage(self) -> bool:
+        return self._hasMessage
+
+    def hasCallback(self) -> bool:
+        return self._hasMessage
 
     def getMessage(self) -> Message:
         if self._hasMessage:
