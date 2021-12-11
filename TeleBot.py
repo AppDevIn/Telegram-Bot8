@@ -2,7 +2,7 @@ from typing import List
 import requests
 import json
 import model.Constants as const
-from Url.UrlBuilder import UpdateUrl
+from url.UrlBuilder import UpdateUrl
 
 from model.Update import UpdateType, Update
 
