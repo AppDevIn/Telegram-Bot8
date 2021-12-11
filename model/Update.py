@@ -5,8 +5,9 @@ from model.Message import Message
 
 
 class UpdateType(Enum):
-    MESSAGE = 0
-    CALLBACK = 1
+    MESSAGE = "message"
+    CALLBACK = "callback_query"
+    EDITED_CHANNEL_POST = "edited_channel_post"
 
 
 class Update(object):
