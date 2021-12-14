@@ -13,8 +13,9 @@ class TeleBot:
     _callback = {}
     _text = {}
 
-    def __init__(self, token):
+    def __init__(self, token, limited=None):
         self.base = f"{const.BASE_URL}{token}/"
+        self.limited = limited
 
     def poll(self, timeout=1200, allowed_types=None):
         lastUpdate = None
@@ -73,6 +74,8 @@ class TeleBot:
             raise ValueError(response['error'])
 
     def process_update(self, item):
+        if item.message.fromUser.getID() != int(self.limited):
+            return
         if item.message.text:
             for p in self._text.keys():
                 r = re.compile(p)
