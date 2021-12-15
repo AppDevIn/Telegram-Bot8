@@ -1,12 +1,12 @@
 import unittest
 
-from url.UrlBuilder import SendMessageUrl
+from url.UrlBuilder import UpdateUrl
 
 
 class UpdateUrlTest(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.updateUrl = SendMessageUrl("test.com/botnsdjnsj/")
+        self.updateUrl = UpdateUrl("test.com/botnsdjnsj/")
 
     def test_first_parameter_has_question_mark(self):
         url = self.updateUrl.offset("-1").build()
