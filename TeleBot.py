@@ -22,7 +22,7 @@ class TeleBot:
         lastUpdate = None
         while True:
             if lastUpdate is None:
-                response = self.get_updates(offset=None, timeout=timeout, allowed_types=allowed_types)
+                response = self.get_updates(offset=-1, timeout=timeout, allowed_types=allowed_types)
             else:
                 response = self.get_updates(offset=lastUpdate.getNextUpdateID(), timeout=timeout,
                                             allowed_types=allowed_types)
