@@ -100,9 +100,6 @@ class TeleBot:
             .reply_markup(reply_markup).build()
         requests.request("POST", sendMessageUrl, headers={}, data={})
 
-    def send_callback(self, chat_id, text, reply_mark_up):
-        url = self.base + f"sendMessage?chat_id={chat_id}&text={text}&reply_markup={reply_mark_up}"
-        requests.request("POST", url, headers={}, data={})
 
     def send_photo(self, chat_id, file):
         up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
