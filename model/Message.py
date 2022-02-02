@@ -2,6 +2,7 @@ from model.User import User
 from model.Chat import Chat
 from model.Entities import Entities
 from model.InlineKeyboard import InlineKeyboard
+from enum import Enum
 
 
 class Message(object):
@@ -36,3 +37,9 @@ class Message(object):
 
     def entityType(self) -> bool:
         return self._entities
+
+
+class ParseMode(Enum):
+    MarkdownV2 = "MarkdownV2"
+    Markdown = "MarkdownV2"
+    HTML = "html"

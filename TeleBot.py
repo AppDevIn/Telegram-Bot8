@@ -36,16 +36,16 @@ class TeleBot:
                     if update is not None:
                         update(item)
 
-    def add_command(self, command=None, text=None):
+    def add_command(self, command=None, regex=None):
         def decorator(func):
             if command is not None:
                 self._commands[command] = func
             else:
-                if isinstance(text, list):
-                    for t in text:
-                        self._text[text] = func
+                if isinstance(regex, list):
+                    for t in regex:
+                        self._text[regex] = func
                 else:
-                    self._text[text] = func
+                    self._text[regex] = func
 
         return decorator
 
@@ -80,7 +80,8 @@ class TeleBot:
     def process_update(self, item):
         if item.message.fromUser.getID() != int(self.limited):
             return
-        if len(item.message.entities) != 0 and item.message.entities[0].type == "bot_command" and item.getUpdateType() == UpdateType.MESSAGE and item.message.entityType():
+        if len(item.message.entities) != 0 and item.message.entities[0].type == "bot_command" and \
+                item.getUpdateType() == UpdateType.MESSAGE and item.message.entityType():
             command = item.message.text[item.message.entities[0].offset:item.message.entities[0].length]
             if self._commands.get(command): self._commands.get(command)(item.message)
         elif item.message.text:
@@ -91,10 +92,22 @@ class TeleBot:
         elif item.getUpdateType() == UpdateType.CALLBACK:
             callback = item.callback.message.replyMarkup.keyboards[0].callbackData.split("@")[1]
             self._callback.get(callback)(item.message)
+        else:
+            print("DEAD ☠️")
 
     def send_message(self, chat_id, text, parse_mode=None, disable_web_page_preview=None,
                      disable_notification=None, reply_to_message_id=None,
                      allow_sending_without_reply=None, reply_markup=None):
+        """
+        :param chat_id: Unique identifier for the target chat or username of the target channel
+        :param text: Text of the message to be sent, 1-4096 characters after entities parsing
+        :param parse_mode: Mode for parsing entities in the message text allowing for bold and italic formats
+        :param disable_web_page_preview: Disables link previews for links in this message
+        :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
+        :param reply_to_message_id: If the message is a reply, ID of the original message
+        :param allow_sending_without_reply: Pass True, if the message should be sent even if the specified replied-to message is not found
+        :param reply_markup: Pass True, if the message should be sent even if the specified replied-to message is not found
+        """
         sendMessageUrl = SendMessageUrl(self.base).text(text).chat_id(chat_id).parse_mode(parse_mode) \
             .disable_web_page_preview(disable_web_page_preview) \
             .disable_notification(disable_notification) \

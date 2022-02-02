@@ -29,7 +29,7 @@ class BotTest(unittest.TestCase):
                             "type": "private"
                         },
                         "date": 1639191220,
-                        "text": "Mm"
+                        "regex": "Mm"
                     }
                 }
             ]

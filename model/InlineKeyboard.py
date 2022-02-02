@@ -5,7 +5,7 @@ class InlineKeyboard(object):
         super().__init__()
 
         for item in response[0]:
-            self.keyboards.append(Keyboard(item["text"], item["callback_data"]))
+            self.keyboards.append(Keyboard(item["regex"], item["callback_data"]))
 
 
 class Keyboard(object):
