@@ -4,6 +4,8 @@ import re
 import requests
 import json
 import model.Constants as const
+from model.Reqest.ForwardReqest import ForwardRequest
+from model.Response.ForwardResponse import ForwardResponse, forward_from_dict
 from url.UrlBuilder import SendMessageUrl, UpdateUrl
 
 from model.Update import UpdateType, Update
@@ -115,6 +117,26 @@ class TeleBot:
             .allow_sending_without_reply(allow_sending_without_reply) \
             .reply_markup(reply_markup).build()
         requests.request("POST", sendMessageUrl, headers={}, data={})
+
+    def forward_messaged(self, chat_id, from_chat_id, message_id: int,
+                         disable_notification: bool = None, protect_content: bool = None) -> ForwardResponse:
+        """
+        Use this method to forward messages of any kind. Service messages can't be forwarded.
+        On success, the sent Message is returned.
+        :param chat_id: Unique identifier for the target chat or username of the target channel
+        :param from_chat_id: Unique identifier for the chat group where the original message was sent
+        :param message_id: Message id in the chat group specified in from_chat_id
+        :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
+        :param protect_content: Protects the contents of the forwarded message from forwarding and saving
+        :return: ForwardResponse containing the message
+        """
+        url = f'{self.base}forwardMessage'
+        request_body = ForwardRequest()
+        request_body = request_body.chat_id(chat_id).from_chat_id(from_chat_id).message_id(message_id). \
+            disable_notification(disable_notification).protect_content(protect_content).build()
+
+        response = requests.post(url, headers={}, data=request_body)
+        return forward_from_dict(response.text)
 
     def send_photo(self, chat_id, file):
         up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
