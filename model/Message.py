@@ -38,6 +38,9 @@ class Message(object):
     def entityType(self) -> bool:
         return self._entities
 
+    def get_id(self):
+        return self._message_id
+
 
 class ParseMode(Enum):
     MarkdownV2 = "MarkdownV2"

@@ -1,16 +1,12 @@
-import json
-
-
 class BaseSendRequest(object):
-
     body = {}
 
     def chat_id(self, chat_id):
         self.addParameter("chat_id", chat_id)
         return self
 
-    def disable_web_page_preview(self, disable_web_page_preview):
-        self.addParameter("disable_web_page_preview", disable_web_page_preview)
+    def disable_notification(self, disable_notification):
+        self.addParameter("disable_notification", disable_notification)
         return self
 
     def protect_content(self, protect_content):
@@ -18,7 +14,7 @@ class BaseSendRequest(object):
         return self
 
     def addParameter(self, key, value, not_required=False) -> {}:
-        if not_required or "None" in value:
+        if not_required or None == value:
             return self.body
         self.body[key] = value
         return self.body

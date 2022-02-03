@@ -4,6 +4,7 @@ import re
 import requests
 import json
 import model.Constants as const
+from model.Reqest.ForwardReqest import ForwardRequest
 from url.UrlBuilder import SendMessageUrl, UpdateUrl
 
 from model.Update import UpdateType, Update
@@ -118,7 +119,12 @@ class TeleBot:
 
     def forward_messaged(self, chat_id, from_chat_id, message_id: int,
                          disable_notification: bool = None, protect_content: bool = None):
-        pass
+        url = f'{self.base}forwardMessage'
+        request_body = ForwardRequest()
+        request_body = request_body.chat_id(chat_id).from_chat_id(from_chat_id).message_id(message_id).\
+            disable_notification(disable_notification).protect_content(protect_content).build()
+
+        requests.post(url, headers={}, data=request_body)
 
     def send_photo(self, chat_id, file):
         up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
