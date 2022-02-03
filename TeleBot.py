@@ -123,12 +123,12 @@ class TeleBot:
         """
         Use this method to forward messages of any kind. Service messages can't be forwarded.
         On success, the sent Message is returned.
-        :param chat_id:
-        :param from_chat_id:
-        :param message_id:
-        :param disable_notification:
-        :param protect_content:
-        :return:
+        :param chat_id: Unique identifier for the target chat or username of the target channel
+        :param from_chat_id: Unique identifier for the chat group where the original message was sent
+        :param message_id: Message id in the chat group specified in from_chat_id
+        :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
+        :param protect_content: Protects the contents of the forwarded message from forwarding and saving
+        :return: ForwardResponse containing the message
         """
         url = f'{self.base}forwardMessage'
         request_body = ForwardRequest()
