@@ -5,6 +5,7 @@ import requests
 import json
 import model.Constants as const
 from model.Reqest.ForwardReqest import ForwardRequest
+from model.Response.ForwardResponse import ForwardResponse, forward_from_dict
 from url.UrlBuilder import SendMessageUrl, UpdateUrl
 
 from model.Update import UpdateType, Update
@@ -118,13 +119,24 @@ class TeleBot:
         requests.request("POST", sendMessageUrl, headers={}, data={})
 
     def forward_messaged(self, chat_id, from_chat_id, message_id: int,
-                         disable_notification: bool = None, protect_content: bool = None):
+                         disable_notification: bool = None, protect_content: bool = None) -> ForwardResponse:
+        """
+        Use this method to forward messages of any kind. Service messages can't be forwarded.
+        On success, the sent Message is returned.
+        :param chat_id:
+        :param from_chat_id:
+        :param message_id:
+        :param disable_notification:
+        :param protect_content:
+        :return:
+        """
         url = f'{self.base}forwardMessage'
         request_body = ForwardRequest()
-        request_body = request_body.chat_id(chat_id).from_chat_id(from_chat_id).message_id(message_id).\
+        request_body = request_body.chat_id(chat_id).from_chat_id(from_chat_id).message_id(message_id). \
             disable_notification(disable_notification).protect_content(protect_content).build()
 
-        requests.post(url, headers={}, data=request_body)
+        response = requests.post(url, headers={}, data=request_body)
+        return forward_from_dict(response.text)
 
     def send_photo(self, chat_id, file):
         up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
