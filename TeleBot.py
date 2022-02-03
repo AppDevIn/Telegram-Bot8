@@ -116,6 +116,10 @@ class TeleBot:
             .reply_markup(reply_markup).build()
         requests.request("POST", sendMessageUrl, headers={}, data={})
 
+    def forward_messaged(self, chat_id, from_chat_id, message_id: int,
+                         disable_notification: bool = None, protect_content: bool = None):
+        pass
+
     def send_photo(self, chat_id, file):
         up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
         url = self.base + f"sendPhoto"
