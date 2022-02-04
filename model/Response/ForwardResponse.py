@@ -1,42 +1,7 @@
 import json
-from typing import Any, Optional, TypeVar, Type, cast
+from typing import Any, Optional
 
-
-T = TypeVar("T")
-
-
-def from_int(x: Any) -> int:
-    assert isinstance(x, int) and not isinstance(x, bool)
-    return x
-
-
-def from_str(x: Any) -> str:
-    assert isinstance(x, str)
-    return x
-
-
-def from_bool(x: Any) -> bool:
-    assert isinstance(x, bool)
-    return x
-
-
-def from_none(x: Any) -> Any:
-    assert x is None
-    return x
-
-
-def from_union(fs, x):
-    for f in fs:
-        try:
-            return f(x)
-        except:
-            pass
-    assert False
-
-
-def to_class(c: Type[T], x: Any) -> dict:
-    assert isinstance(x, c)
-    return cast(Any, x).to_dict()
+from model.Response.BaseConvertors import from_int, from_bool, from_str, to_class, from_union
 
 
 class Chat:
@@ -112,7 +77,8 @@ class Result:
     forward_date: int
     text: str
 
-    def __init__(self, message_id: int, result_from: From, chat: Chat, date: int, forward_from: From, forward_date: int, text: str) -> None:
+    def __init__(self, message_id: int, result_from: From, chat: Chat, date: int, forward_from: From, forward_date: int,
+                 text: str) -> None:
         self.message_id = message_id
         self.result_from = result_from
         self.chat = chat

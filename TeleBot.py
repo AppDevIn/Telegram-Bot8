@@ -6,6 +6,7 @@ import json
 import model.Constants as const
 from model.Reqest.ForwardReqest import ForwardRequest
 from model.Response.ForwardResponse import ForwardResponse, forward_from_dict
+from model.Response.GetMeResponse import GetMeResponse, get_me_response_from_dict
 from url.UrlBuilder import SendMessageUrl, UpdateUrl
 
 from model.Update import UpdateType, Update
@@ -96,6 +97,14 @@ class TeleBot:
             self._callback.get(callback)(item.message)
         else:
             print("DEAD ☠️")
+
+    def get_me(self) -> GetMeResponse:
+        """
+        :return: Returns information about the bot using the GetMeResponse class
+        """
+        url = f'{self.base}getMe'
+        response = requests.post(url, headers={}, data={})
+        return get_me_response_from_dict(response.text)
 
     def send_message(self, chat_id, text, parse_mode=None, disable_web_page_preview=None,
                      disable_notification=None, reply_to_message_id=None,
