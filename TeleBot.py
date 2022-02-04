@@ -99,6 +99,9 @@ class TeleBot:
             print("DEAD ☠️")
 
     def get_me(self) -> GetMeResponse:
+        """
+        :return: Returns information about the bot using the GetMeResponse class
+        """
         url = f'{self.base}getMe'
         response = requests.post(url, headers={}, data={})
         return get_me_response_from_dict(response.text)
