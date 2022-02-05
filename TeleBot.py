@@ -177,6 +177,13 @@ class TeleBot:
             return success_from_dict(response.text)
 
     def get_my_commands(self, scope: {} = None, language_code: str = None):
+        """
+        Use this method to get the current list of the bot's commands for the given scope and user language.
+        :param scope: A JSON-serialized object, describing scope of users.
+        Defaults to BotCommandScopeDefault.
+        :param language_code: A two-letter ISO 639-1 language code or an empty string
+        :return: Array of BotCommand on success. If commands aren't set, an empty list is returned.
+        """
 
         url = f'{self.base}getMyCommands'
         request_body = CommandRequestBase().scope(scope) \
