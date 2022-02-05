@@ -36,9 +36,9 @@ class TeleBot:
                                  .description(x["description"]).build(), command["commands"]))
 
             if "language_code" in command:
-                print(self.set_my_commands(commands, command["scope"], command["language_code"]))
+                self.set_my_commands(commands, command["scope"], command["language_code"])
             else:
-                print(self.set_my_commands(commands, command["scope"], None))
+                self.set_my_commands(commands, command["scope"], None)
 
     def poll(self, update=None, timeout=1200, allowed_types=None):
         self._set_commands()
@@ -114,7 +114,7 @@ class TeleBot:
         if len(item.message.entities) != 0 and item.message.entities[0].type == "bot_command" and \
                 item.getUpdateType() == UpdateType.MESSAGE and item.message.entityType():
             command = item.message.text[item.message.entities[0].offset:item.message.entities[0].length]
-            if self._command.get_command(command): self._command.get_command(command).get(command)(item.message)
+            if self._command.has_command(command): self._command.get_command(command)(item.message)
         elif item.message.text:
             for p in self._text.keys():
                 r = re.compile(p)
@@ -189,10 +189,7 @@ class TeleBot:
         request_body = SetMyCommandRequest().commands(commands).scope(scope) \
             .language_code(language_code).build()
 
-        print(request_body)
-
         payload = json.dumps(request_body)
-        print(payload)
         response = requests.post(url, headers=self.headers, data=payload)
 
         if response.status_code != 200:

@@ -17,6 +17,9 @@ class Commands:
     def get_command(self, name: str):
         return self._commands[name]
 
+    def has_command(self, name):
+        return name in self._commands.keys()
+
     def get_menu_command_list(self):
         return self._command_menu.values()
 
@@ -28,5 +31,5 @@ class Commands:
         command_list = data["commands"]
         command_list.append(BotCommand().command(name).description(description).build())
         data = SetMyCommandRequest().commands(command_list).scope(data["scope"]) \
-            .language_code(data["language_code"]).build()
+            .language_code(None if language is None else data["language_code"]).build()
         self._command_menu[key] = data
