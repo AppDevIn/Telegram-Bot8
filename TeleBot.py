@@ -197,6 +197,28 @@ class TeleBot:
         else:
             return bot_commands_from_dict(response.text)
 
+    def delete_my_commands(self, scope: {} = None, language_code: str = None):
+        """
+        Use this method to delete the list of the bot's commands for the given scope and user language.
+        After deletion, higher level commands will be shown to affected users.
+        :param scope: A JSON-serialized object, describing scope of users.
+        Defaults to BotCommandScopeDefault.
+        :param language_code: A two-letter ISO 639-1 language code or an empty string
+        :return: True on success
+        """
+        
+        url = f'{self.base}getMyCommands'
+        request_body = CommandRequestBase().scope(scope) \
+            .language_code(language_code).build()
+
+        payload = json.dumps(request_body)
+        response = requests.post(url, headers=self.headers, data=payload)
+
+        if response.status_code != 200:
+            return error_from_dict(response.text)
+        else:
+            return bot_commands_from_dict(response.text)
+
     def send_photo(self, chat_id, file):
         up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
         url = self.base + f"sendPhoto"
