@@ -63,7 +63,7 @@ class TeleBot:
         def decorator(func):
             if isinstance(regex, list):
                 for t in regex:
-                    self._text[regex] = func
+                    self._text[t] = func
             else:
                 self._text[regex] = func
 

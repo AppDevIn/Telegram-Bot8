@@ -35,3 +35,8 @@ def from_union(fs, x):
 def from_list(f: Callable[[Any], T], x: Any) -> List[T]:
     assert isinstance(x, list)
     return [f(y) for y in x]
+
+
+def from_none(x: Any) -> Any:
+    assert x is None
+    return x
