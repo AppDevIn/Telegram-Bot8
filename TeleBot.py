@@ -34,7 +34,7 @@ class TeleBot:
         for command in self._command.get_menu_command_list():
             commands = list(map(lambda x: BotCommand().command(x["command"])
                                 .description(x["description"]).build(), command["commands"]))
-            
+
             if "language_code" in command:
                 self.set_my_commands(commands, command["scope"], command["language_code"])
             else:
@@ -60,6 +60,10 @@ class TeleBot:
                         update(item)
 
     def add_regex_helper(self, regex):
+        """
+        Method to look at each chat and if the message matches it will triggers
+        :param regex: The regex pattern you want the text to match
+        """
         def decorator(func):
             if isinstance(regex, list):
                 for t in regex:
@@ -70,6 +74,10 @@ class TeleBot:
         return decorator
 
     def add_command_helper(self, command):
+        """
+        This method allows you handle commands send from telegram
+        :param command: Add the command you want to handle e.g. /hello_world
+        """
         def decorator(func):
             if command is None: return
 
@@ -83,6 +91,17 @@ class TeleBot:
 
     def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault()[0], description="",
                                 language=None):
+        """
+        This method allows you handle commands send from telegram and allows add the
+        command to telegram menu
+        :param command: Add the command you want to handle e.g. /hello_world
+        :param scope: Use BotCommandScope to view the different scopes. A JSON-serialized object,
+        describing scope of users for which the commands are relevant.
+        :param description: Description of the command
+        :param language: A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands
+        :return: Error or success messages
+        :return:
+        """
         def decorator(func):
             if command is None: return
 
