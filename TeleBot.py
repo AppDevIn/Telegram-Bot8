@@ -73,10 +73,16 @@ class TeleBot:
                            language=None, add_to_menu=False):
         def decorator(func):
             if command is None: return
-            self._command.add_command(command, func)
 
-            if add_to_menu:
+            if isinstance(command, list):
+                for c in command:
+                    self._command.add_command(c, func)
+                    if add_to_menu:
+                        self._command.add_command_menu(c, func, description, scope, language)
+            else:
+                self._command.add_command(command, func)
                 self._command.add_command_menu(command, func, description, scope, language)
+
 
         return decorator
 
