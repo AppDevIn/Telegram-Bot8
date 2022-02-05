@@ -23,7 +23,7 @@ class Result:
         self.supports_inline_queries = supports_inline_queries
 
     @staticmethod
-    def from_dict(obj: Any) -> 'Result':
+    def from_dict(obj: Any) -> 'SetMyCommandRequest':
         assert isinstance(obj, dict)
         id = from_int(obj.get("id"))
         is_bot = from_bool(obj.get("is_bot"))

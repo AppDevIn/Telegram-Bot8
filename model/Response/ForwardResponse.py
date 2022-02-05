@@ -88,7 +88,7 @@ class Result:
         self.text = text
 
     @staticmethod
-    def from_dict(obj: Any) -> 'Result':
+    def from_dict(obj: Any) -> 'SetMyCommandRequest':
         assert isinstance(obj, dict)
         message_id = from_int(obj.get("message_id"))
         result_from = From.from_dict(obj.get("from"))

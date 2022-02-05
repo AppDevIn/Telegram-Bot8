@@ -1,7 +1,8 @@
 import json
-from enum import Enum
+from typing import List, Any
 
 from model.Reqest.Base import BaseRequest
+from model.Response.BaseConvertors import from_bool, from_str, from_list, to_class
 
 
 class CommandRequestBase(BaseRequest):
@@ -25,7 +26,7 @@ class CommandDto(BaseRequest):
         return self
 
 
-class SetCommandRequest(CommandRequestBase):
+class SetMyCommandRequest(CommandRequestBase):
 
     def commands(self, command: [CommandDto]):
         self.addParameter("commands", command)
@@ -61,3 +62,63 @@ class BotCommandScope:
     @staticmethod
     def BotCommandScopeChatMember(chat_id, user_id):
         return {"type": "chat_member", "chat_id": chat_id, "user_id": user_id}
+
+
+class BotCommand(BaseRequest):
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'BotCommand':
+        assert isinstance(obj, dict)
+        command = from_str(obj.get("command"))
+        description = from_str(obj.get("description"))
+        return BotCommand().command(command).description(description)
+
+    def command(self, command):
+        self.addParameter("command", command)
+        return self
+
+    def description(self, description):
+        self.addParameter("description", description)
+        return self
+
+    def to_dict(self) -> dict:
+        return self.body
+
+
+class BotCommands:
+    ok: bool
+    result: List[BotCommand]
+
+    def __init__(self, ok: bool, result: List[BotCommand]) -> None:
+
+        self.ok = ok
+        self.result = result
+
+    def commands(self, command: [CommandDto]):
+        self.addParameter("commands", command)
+        return self
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'BotCommands':
+        assert isinstance(obj, dict)
+        ok = from_bool(obj.get("ok"))
+        result = from_list(BotCommand.from_dict, obj.get("result"))
+        return BotCommands(ok, result)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["ok"] = from_bool(self.ok)
+        result["result"] = from_list(lambda x: to_class(BotCommand, x), self.result)
+        return result
+
+
+def bot_commands_from_dict(s: Any) -> BotCommands:
+    data = json.loads(s)
+    return BotCommands.from_dict(data)
+
+
+def bot_commands_to_dict(x: BotCommands) -> Any:
+    return to_class(BotCommands, x)

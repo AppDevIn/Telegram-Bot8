@@ -4,7 +4,8 @@ import re
 import requests
 import json
 import model.Constants as const
-from model.Reqest.CommandRequest import SetCommandRequest, BotCommandScope, CommandDto
+from model.Reqest.CommandRequest import SetMyCommandRequest, BotCommandScope, CommandDto, CommandRequestBase, \
+    bot_commands_from_dict
 from model.Reqest.ForwardReqest import ForwardRequest
 from model.Response.ErrorResponse import error_from_dict
 from model.Response.ForwardResponse import ForwardResponse, forward_from_dict
@@ -164,7 +165,7 @@ class TeleBot:
         """
 
         url = f'{self.base}setMyCommands'
-        request_body = SetCommandRequest().commands(commands).scope(scope) \
+        request_body = SetMyCommandRequest().commands(commands).scope(scope) \
             .language_code(language_code).build()
 
         payload = json.dumps(request_body)
@@ -174,6 +175,20 @@ class TeleBot:
             return error_from_dict(response.text)
         else:
             return success_from_dict(response.text)
+
+    def get_my_commands(self, scope: {} = None, language_code: str = None):
+
+        url = f'{self.base}getMyCommands'
+        request_body = CommandRequestBase().scope(scope) \
+            .language_code(language_code).build()
+
+        payload = json.dumps(request_body)
+        response = requests.post(url, headers=self.headers, data=payload)
+
+        if response.status_code != 200:
+            return error_from_dict(response.text)
+        else:
+            return bot_commands_from_dict(response.text)
 
     def send_photo(self, chat_id, file):
         up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
