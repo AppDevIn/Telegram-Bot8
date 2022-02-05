@@ -32,9 +32,9 @@ class TeleBot:
     def _set_commands(self):
 
         for command in self._command.get_menu_command_list():
-            commands  = list(map(lambda x: BotCommand().command(x["command"])
-                                 .description(x["description"]).build(), command["commands"]))
-
+            commands = list(map(lambda x: BotCommand().command(x["command"])
+                                .description(x["description"]).build(), command["commands"]))
+            
             if "language_code" in command:
                 self.set_my_commands(commands, command["scope"], command["language_code"])
             else:
@@ -69,20 +69,30 @@ class TeleBot:
 
         return decorator
 
-    def add_command_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault()[0], description="",
-                           language=None, add_to_menu=False):
+    def add_command_helper(self, command):
         def decorator(func):
             if command is None: return
 
             if isinstance(command, list):
                 for c in command:
                     self._command.add_command(c, func)
-                    if add_to_menu:
-                        self._command.add_command_menu(c, func, description, scope, language)
+            else:
+                self._command.add_command(command, func)
+
+        return decorator
+
+    def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault()[0], description="",
+                                language=None):
+        def decorator(func):
+            if command is None: return
+
+            if isinstance(command, list):
+                for c in command:
+                    self._command.add_command(c, func)
+                self._command.add_command_menu(command[0], func, description, scope, language)
             else:
                 self._command.add_command(command, func)
                 self._command.add_command_menu(command, func, description, scope, language)
-
 
         return decorator
 
