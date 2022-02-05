@@ -14,4 +14,4 @@ class BaseRequest(object):
         return self.body
 
     def build(self) -> {}:
-        return json.dumps(self.body)
+        return self.body

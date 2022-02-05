@@ -6,8 +6,10 @@ import json
 import model.Constants as const
 from model.Reqest.CommandRequest import SetCommandRequest, BotCommandScope, CommandDto
 from model.Reqest.ForwardReqest import ForwardRequest
+from model.Response.ErrorResponse import error_from_dict
 from model.Response.ForwardResponse import ForwardResponse, forward_from_dict
 from model.Response.GetMeResponse import GetMeResponse, get_me_response_from_dict
+from model.Response.SuccessResponse import success_from_dict
 from url.UrlBuilder import SendMessageUrl, UpdateUrl
 
 from model.Update import UpdateType, Update
@@ -17,6 +19,9 @@ class TeleBot:
     _commands = {}
     _callback = {}
     _text = {}
+    headers = {
+        'Content-Type': 'application/json'
+    }
 
     def __init__(self, token, limited=None):
         self.base = f"{const.BASE_URL}{token}/"
@@ -148,12 +153,17 @@ class TeleBot:
         response = requests.post(url, headers={}, data=request_body)
         return forward_from_dict(response.text)
 
-    def set_my_commands(self, commands: [CommandDto], scope: BotCommandScope = None, language_code: str = None) -> bool:
+    def set_my_commands(self, commands: [CommandDto], scope: BotCommandScope = None, language_code: str = None):
         url = f'{self.base}setMyCommands'
         request_body = SetCommandRequest().commands(commands).scope(scope) \
             .language_code(language_code).build()
 
-        requests.post(url, headers={}, data=request_body).text
+        response = requests.post(url, headers=self.headers, data=json.dumps(request_body))
+
+        if response.status_code != 200:
+            return error_from_dict(response.text)
+        else:
+            return success_from_dict(response.text)
 
     def send_photo(self, chat_id, file):
         up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
