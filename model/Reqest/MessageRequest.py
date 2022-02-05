@@ -1,5 +1,7 @@
-class BaseSendRequest(object):
-    body = {}
+from model.Reqest.Base import BaseRequest
+
+
+class MessageRequest(BaseRequest):
 
     def chat_id(self, chat_id):
         self.addParameter("chat_id", chat_id)
@@ -12,12 +14,3 @@ class BaseSendRequest(object):
     def protect_content(self, protect_content):
         self.addParameter("protect_content", protect_content)
         return self
-
-    def addParameter(self, key, value, not_required=False) -> {}:
-        if not_required or None == value:
-            return self.body
-        self.body[key] = value
-        return self.body
-
-    def build(self) -> {}:
-        return self.body

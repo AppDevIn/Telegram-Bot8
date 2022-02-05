@@ -4,24 +4,44 @@ import re
 import requests
 import json
 import model.Constants as const
+from model.Reqest.CommandRequest import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
+    bot_commands_from_dict
 from model.Reqest.ForwardReqest import ForwardRequest
+from model.Response.ErrorResponse import error_from_dict
 from model.Response.ForwardResponse import ForwardResponse, forward_from_dict
 from model.Response.GetMeResponse import GetMeResponse, get_me_response_from_dict
+from model.Response.SuccessResponse import success_from_dict
+from src.CommandHandler import Commands
 from url.UrlBuilder import SendMessageUrl, UpdateUrl
 
 from model.Update import UpdateType, Update
 
 
 class TeleBot:
-    _commands = {}
     _callback = {}
     _text = {}
+    _command = Commands()
+    headers = {
+        'Content-Type': 'application/json'
+    }
 
     def __init__(self, token, limited=None):
         self.base = f"{const.BASE_URL}{token}/"
         self.limited = limited
 
+    def _set_commands(self):
+
+        for command in self._command.get_menu_command_list():
+            commands = list(map(lambda x: BotCommand().command(x["command"])
+                                .description(x["description"]).build(), command["commands"]))
+
+            if "language_code" in command:
+                self.set_my_commands(commands, command["scope"], command["language_code"])
+            else:
+                self.set_my_commands(commands, command["scope"], None)
+
     def poll(self, update=None, timeout=1200, allowed_types=None):
+        self._set_commands()
         lastUpdate = None
         while True:
             if lastUpdate is None:
@@ -39,16 +59,59 @@ class TeleBot:
                     if update is not None:
                         update(item)
 
-    def add_command(self, command=None, regex=None):
+    def add_regex_helper(self, regex):
+        """
+        Method to look at each chat and if the message matches it will triggers
+        :param regex: The regex pattern you want the text to match
+        """
         def decorator(func):
-            if command is not None:
-                self._commands[command] = func
+            if isinstance(regex, list):
+                for t in regex:
+                    self._text[t] = func
             else:
-                if isinstance(regex, list):
-                    for t in regex:
-                        self._text[regex] = func
-                else:
-                    self._text[regex] = func
+                self._text[regex] = func
+
+        return decorator
+
+    def add_command_helper(self, command):
+        """
+        This method allows you handle commands send from telegram
+        :param command: Add the command you want to handle e.g. /hello_world
+        """
+        def decorator(func):
+            if command is None: return
+
+            if isinstance(command, list):
+                for c in command:
+                    self._command.add_command(c, func)
+            else:
+                self._command.add_command(command, func)
+
+        return decorator
+
+    def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault()[0], description="",
+                                language=None):
+        """
+        This method allows you handle commands send from telegram and allows add the
+        command to telegram menu
+        :param command: Add the command you want to handle e.g. /hello_world
+        :param scope: Use BotCommandScope to view the different scopes. A JSON-serialized object,
+        describing scope of users for which the commands are relevant.
+        :param description: Description of the command
+        :param language: A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands
+        :return: Error or success messages
+        :return:
+        """
+        def decorator(func):
+            if command is None: return
+
+            if isinstance(command, list):
+                for c in command:
+                    self._command.add_command(c, func)
+                self._command.add_command_menu(command[0], func, description, scope, language)
+            else:
+                self._command.add_command(command, func)
+                self._command.add_command_menu(command, func, description, scope, language)
 
         return decorator
 
@@ -86,7 +149,7 @@ class TeleBot:
         if len(item.message.entities) != 0 and item.message.entities[0].type == "bot_command" and \
                 item.getUpdateType() == UpdateType.MESSAGE and item.message.entityType():
             command = item.message.text[item.message.entities[0].offset:item.message.entities[0].length]
-            if self._commands.get(command): self._commands.get(command)(item.message)
+            if self._command.has_command(command): self._command.get_command(command)(item.message)
         elif item.message.text:
             for p in self._text.keys():
                 r = re.compile(p)
@@ -146,6 +209,71 @@ class TeleBot:
 
         response = requests.post(url, headers={}, data=request_body)
         return forward_from_dict(response.text)
+
+    def set_my_commands(self, commands: [BotCommand], scope: {} = None, language_code: str = None):
+        """
+        This allows you to set a list of commands in the page where your bot will exist
+        :param commands: Is an array of CommandDto. At most 100 commands can be specified.
+        :param scope: A JSON-serialized object, describing scope of users for which the commands are relevant.
+        Defaults to BotCommandScopeDefault. You can use the BotCommandScope to get values in
+        :param language_code: A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands
+        :return: Error or success messages
+        """
+
+        url = f'{self.base}setMyCommands'
+        request_body = SetMyCommandRequest().commands(commands).scope(scope) \
+            .language_code(language_code).build()
+
+        payload = json.dumps(request_body)
+        response = requests.post(url, headers=self.headers, data=payload)
+
+        if response.status_code != 200:
+            return error_from_dict(response.text)
+        else:
+            return success_from_dict(response.text)
+
+    def get_my_commands(self, scope: {} = None, language_code: str = None):
+        """
+        Use this method to get the current list of the bot's commands for the given scope and user language.
+        :param scope: A JSON-serialized object, describing scope of users.
+        Defaults to BotCommandScopeDefault.
+        :param language_code: A two-letter ISO 639-1 language code or an empty string
+        :return: Array of BotCommand on success. If commands aren't set, an empty list is returned.
+        """
+
+        url = f'{self.base}getMyCommands'
+        request_body = CommandRequestBase().scope(scope) \
+            .language_code(language_code).build()
+
+        payload = json.dumps(request_body)
+        response = requests.post(url, headers=self.headers, data=payload)
+
+        if response.status_code != 200:
+            return error_from_dict(response.text)
+        else:
+            return bot_commands_from_dict(response.text)
+
+    def delete_my_commands(self, scope: {} = None, language_code: str = None):
+        """
+        Use this method to delete the list of the bot's commands for the given scope and user language.
+        After deletion, higher level commands will be shown to affected users.
+        :param scope: A JSON-serialized object, describing scope of users.
+        Defaults to BotCommandScopeDefault.
+        :param language_code: A two-letter ISO 639-1 language code or an empty string
+        :return: True on success
+        """
+
+        url = f'{self.base}deleteMyCommands'
+        request_body = CommandRequestBase().scope(scope) \
+            .language_code(language_code).build()
+
+        payload = json.dumps(request_body)
+        response = requests.post(url, headers=self.headers, data=payload)
+
+        if response.status_code != 200:
+            return error_from_dict(response.text)
+        else:
+            return success_from_dict(response.text)
 
     def send_photo(self, chat_id, file):
         up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}

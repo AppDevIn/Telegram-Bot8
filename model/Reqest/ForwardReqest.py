@@ -1,7 +1,7 @@
-from model.Reqest.BaseRequest import BaseSendRequest
+from model.Reqest.MessageRequest import MessageRequest
 
 
-class ForwardRequest(BaseSendRequest):
+class ForwardRequest(MessageRequest):
 
     def from_chat_id(self, from_chat_id):
         self.addParameter("from_chat_id", from_chat_id)
