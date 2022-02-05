@@ -1,3 +1,4 @@
+import json
 from enum import Enum
 
 from model.Reqest.Base import BaseRequest
@@ -31,11 +32,32 @@ class SetCommandRequest(CommandRequestBase):
         return self
 
 
-class BotCommandScope(Enum):
-    BotCommandScopeDefault = {"type": "default"},
-    BotCommandScopeAllPrivateChats = {"type": "all_private_chats"},
-    BotCommandScopeAllGroupChats = {"type": "all_group_chats"},
-    BotCommandScopeAllChatAdministrators = {"type": "all_chat_administrators"},
-    BotCommandScopeChat = lambda chat_id: {"type": "chat", "chat_id": chat_id},
-    BotCommandScopeChatAdministrators = lambda chat_id: {"type": "chat_administrators", "chat_id": chat_id},
-    BotCommandScopeChatMember = lambda chat_id: {"type": "chat_member", "chat_id": chat_id},
+class BotCommandScope:
+
+    @staticmethod
+    def BotCommandScopeDefault():
+        return {"type": "default"},
+
+    @staticmethod
+    def BotCommandScopeAllPrivateChats():
+        return {"type": "all_private_chats"},
+
+    @staticmethod
+    def BotCommandScopeAllGroupChats():
+        return {"type": "all_group_chats"},
+
+    @staticmethod
+    def BotCommandScopeAllChatAdministrators():
+        return {"type": "all_chat_administrators"},
+
+    @staticmethod
+    def BotCommandScopeChat(chat_id):
+        return {"type": "chat", "chat_id": chat_id}
+
+    @staticmethod
+    def BotCommandScopeChatAdministrators(chat_id):
+        return {"type": "chat_administrators", "chat_id": chat_id}
+
+    @staticmethod
+    def BotCommandScopeChatMember(chat_id, user_id):
+        return {"type": "chat_member", "chat_id": chat_id, "user_id": user_id}

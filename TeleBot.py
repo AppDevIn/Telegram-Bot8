@@ -153,12 +153,12 @@ class TeleBot:
         response = requests.post(url, headers={}, data=request_body)
         return forward_from_dict(response.text)
 
-    def set_my_commands(self, commands: [CommandDto], scope: BotCommandScope = None, language_code: str = None):
+    def set_my_commands(self, commands: [CommandDto], scope: {} = None, language_code: str = None):
         """
         This allows you to set a list of commands in the page where your bot will exist
         :param commands: Is an array of CommandDto. At most 100 commands can be specified.
         :param scope: A JSON-serialized object, describing scope of users for which the commands are relevant.
-        Defaults to BotCommandScopeDefault.
+        Defaults to BotCommandScopeDefault. You can use the BotCommandScope to get values in
         :param language_code: A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands
         :return: Error or success messages
         """
@@ -167,7 +167,8 @@ class TeleBot:
         request_body = SetCommandRequest().commands(commands).scope(scope) \
             .language_code(language_code).build()
 
-        response = requests.post(url, headers=self.headers, data=json.dumps(request_body))
+        payload = json.dumps(request_body)
+        response = requests.post(url, headers=self.headers, data=payload)
 
         if response.status_code != 200:
             return error_from_dict(response.text)
