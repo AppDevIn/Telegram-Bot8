@@ -4,6 +4,7 @@ import re
 import requests
 import json
 import model.Constants as const
+from model.Reqest.CommandRequest import SetCommandRequest, BotCommandScope, CommandDto
 from model.Reqest.ForwardReqest import ForwardRequest
 from model.Response.ForwardResponse import ForwardResponse, forward_from_dict
 from model.Response.GetMeResponse import GetMeResponse, get_me_response_from_dict
@@ -147,8 +148,12 @@ class TeleBot:
         response = requests.post(url, headers={}, data=request_body)
         return forward_from_dict(response.text)
 
-    def set_my_commands(self, commands: [], scope, language_code: str):
-        pass
+    def set_my_commands(self, commands: [CommandDto], scope: BotCommandScope = None, language_code: str = None) -> bool:
+        url = f'{self.base}setMyCommands'
+        request_body = SetCommandRequest().commands(commands).scope(scope) \
+            .language_code(language_code).build()
+
+        requests.post(url, headers={}, data=request_body).text
 
     def send_photo(self, chat_id, file):
         up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
