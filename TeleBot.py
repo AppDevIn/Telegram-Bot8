@@ -46,16 +46,21 @@ class TeleBot:
                     if update is not None:
                         update(item)
 
-    def add_command(self, command=None, regex=None):
+    def add_regex_helper(self, regex):
         def decorator(func):
-            if command is not None:
-                self._commands[command] = func
-            else:
-                if isinstance(regex, list):
-                    for t in regex:
-                        self._text[regex] = func
-                else:
+            if isinstance(regex, list):
+                for t in regex:
                     self._text[regex] = func
+            else:
+                self._text[regex] = func
+
+        return decorator
+
+    def add_command_helper(self, command):
+        def decorator(func):
+            if command is None: return
+
+            self._commands[command] = func
 
         return decorator
 
