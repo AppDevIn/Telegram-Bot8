@@ -206,8 +206,8 @@ class TeleBot:
         :param language_code: A two-letter ISO 639-1 language code or an empty string
         :return: True on success
         """
-        
-        url = f'{self.base}getMyCommands'
+
+        url = f'{self.base}deleteMyCommands'
         request_body = CommandRequestBase().scope(scope) \
             .language_code(language_code).build()
 
@@ -217,7 +217,7 @@ class TeleBot:
         if response.status_code != 200:
             return error_from_dict(response.text)
         else:
-            return bot_commands_from_dict(response.text)
+            return success_from_dict(response.text)
 
     def send_photo(self, chat_id, file):
         up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
