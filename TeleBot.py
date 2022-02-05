@@ -4,22 +4,23 @@ import re
 import requests
 import json
 import model.Constants as const
-from model.Reqest.CommandRequest import SetMyCommandRequest, BotCommandScope, CommandDto, CommandRequestBase, \
+from model.Reqest.CommandRequest import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
     bot_commands_from_dict
 from model.Reqest.ForwardReqest import ForwardRequest
 from model.Response.ErrorResponse import error_from_dict
 from model.Response.ForwardResponse import ForwardResponse, forward_from_dict
 from model.Response.GetMeResponse import GetMeResponse, get_me_response_from_dict
 from model.Response.SuccessResponse import success_from_dict
+from src.CommandHandler import Commands
 from url.UrlBuilder import SendMessageUrl, UpdateUrl
 
 from model.Update import UpdateType, Update
 
 
 class TeleBot:
-    _commands = {}
     _callback = {}
     _text = {}
+    _command = Commands()
     headers = {
         'Content-Type': 'application/json'
     }
@@ -28,7 +29,19 @@ class TeleBot:
         self.base = f"{const.BASE_URL}{token}/"
         self.limited = limited
 
+    def _set_commands(self):
+
+        for command in self._command.get_menu_command_list():
+            commands  = list(map(lambda x: BotCommand().command(x["command"])
+                                 .description(x["description"]).build(), command["commands"]))
+
+            if "language_code" in command:
+                print(self.set_my_commands(commands, command["scope"], command["language_code"]))
+            else:
+                print(self.set_my_commands(commands, command["scope"], None))
+
     def poll(self, update=None, timeout=1200, allowed_types=None):
+        self._set_commands()
         lastUpdate = None
         while True:
             if lastUpdate is None:
@@ -56,11 +69,14 @@ class TeleBot:
 
         return decorator
 
-    def add_command_helper(self, command):
+    def add_command_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault()[0], description="",
+                           language=None, add_to_menu=False):
         def decorator(func):
             if command is None: return
+            self._command.add_command(command, func)
 
-            self._commands[command] = func
+            if add_to_menu:
+                self._command.add_command_menu(command, func, description, scope, language)
 
         return decorator
 
@@ -98,7 +114,7 @@ class TeleBot:
         if len(item.message.entities) != 0 and item.message.entities[0].type == "bot_command" and \
                 item.getUpdateType() == UpdateType.MESSAGE and item.message.entityType():
             command = item.message.text[item.message.entities[0].offset:item.message.entities[0].length]
-            if self._commands.get(command): self._commands.get(command)(item.message)
+            if self._command.get_command(command): self._command.get_command(command).get(command)(item.message)
         elif item.message.text:
             for p in self._text.keys():
                 r = re.compile(p)
@@ -159,7 +175,7 @@ class TeleBot:
         response = requests.post(url, headers={}, data=request_body)
         return forward_from_dict(response.text)
 
-    def set_my_commands(self, commands: [CommandDto], scope: {} = None, language_code: str = None):
+    def set_my_commands(self, commands: [BotCommand], scope: {} = None, language_code: str = None):
         """
         This allows you to set a list of commands in the page where your bot will exist
         :param commands: Is an array of CommandDto. At most 100 commands can be specified.
@@ -173,7 +189,10 @@ class TeleBot:
         request_body = SetMyCommandRequest().commands(commands).scope(scope) \
             .language_code(language_code).build()
 
+        print(request_body)
+
         payload = json.dumps(request_body)
+        print(payload)
         response = requests.post(url, headers=self.headers, data=payload)
 
         if response.status_code != 200:
