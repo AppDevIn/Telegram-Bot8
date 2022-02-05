@@ -147,6 +147,9 @@ class TeleBot:
         response = requests.post(url, headers={}, data=request_body)
         return forward_from_dict(response.text)
 
+    def set_my_commands(self, commands: [], scope, language_code: str):
+        pass
+
     def send_photo(self, chat_id, file):
         up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
         url = self.base + f"sendPhoto"
