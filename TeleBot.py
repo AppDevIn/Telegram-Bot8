@@ -154,6 +154,15 @@ class TeleBot:
         return forward_from_dict(response.text)
 
     def set_my_commands(self, commands: [CommandDto], scope: BotCommandScope = None, language_code: str = None):
+        """
+        This allows you to set a list of commands in the page where your bot will exist
+        :param commands: Is an array of CommandDto. At most 100 commands can be specified.
+        :param scope: A JSON-serialized object, describing scope of users for which the commands are relevant.
+        Defaults to BotCommandScopeDefault.
+        :param language_code: A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands
+        :return: Error or success messages
+        """
+
         url = f'{self.base}setMyCommands'
         request_body = SetCommandRequest().commands(commands).scope(scope) \
             .language_code(language_code).build()
