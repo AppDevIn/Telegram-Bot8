@@ -1,28 +1,17 @@
-name: Release
+name: Release version
 
 on:
   pull_request:
-    types: [ labeled ]
+    branches:
+      - 'release/**'
 
 jobs:
   prepare-release:
     runs-on: ubuntu-latest
     steps:
-      - name: Set major release
-        if: ${{ github.event.label.name == 'release-major' }}
-        run: echo "RELEASE=major" >> $GITHUB_ENV
-      - name: Set minor release
-        if: ${{ github.event.label.name == 'release-minor' }}
-        run: echo "RELEASE=minor" >> $GITHUB_ENV
-      - name: Set patch release
-        if: ${{ github.event.label.name == 'release-patch' }}
-        run: echo "RELEASE=patch" >> $GITHUB_ENV
-      - name: Check release env
-        run: |
-          if [[ -z "${{ env.RELEASE }}" ]];
-          then
-            echo "You need to set a release label on PRs to the main branch"
-            exit 1
-          else
-            exit 0
-          fi
+    - name: Set env
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/release/}" >> $GITHUB_ENV
+    - name: Test
+      run: |
+        echo $RELEASE_VERSION
+        echo ${{ env.RELEASE_VERSION }}

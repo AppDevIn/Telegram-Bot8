@@ -21,16 +21,12 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - uses: actions/checkout@v2
-    - name: Check release env
+    - name: Set env
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/release/}" >> $GITHUB_ENV
+    - name: Test
       run: |
-        echo "${{ github.event.label.name }}"
-        if [[ -z "${{ env.RELEASE }}" ]];
-        then
-          echo "You need to set a release label on PRs to the main branch"
-          exit 1
-        else
-          exit 0
-        fi
+        echo $RELEASE_VERSION
+        echo ${{ env.RELEASE_VERSION }}
     - name: Tagging
       uses: rymndhng/release-on-push-action@master
       with:
