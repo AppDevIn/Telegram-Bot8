@@ -1,5 +1,7 @@
 [build-system]
 requires = [
+    "setuptools>=42",
+    "wheel",
     "certifi==2021.10.8",
     "charset-normalizer==2.0.9",
     "idna==3.3",
