@@ -1,6 +1,6 @@
 import unittest
 
-from src.Bot.TeleBot import TeleBot
+from Bot.TeleBot import TeleBot
 
 
 class BotTest(unittest.TestCase):

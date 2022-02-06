@@ -1,4 +1,4 @@
-from src.Model.Reqest.MessageRequest import MessageRequest
+from Bot.Model.Reqest.MessageRequest import MessageRequest
 
 
 class ForwardRequest(MessageRequest):

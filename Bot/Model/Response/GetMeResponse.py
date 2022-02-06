@@ -1,7 +1,7 @@
 import json
 from typing import Any
 
-from src.Model.Response.BaseConvertors import from_int, from_bool, from_str, to_class
+from Bot.Model.Response.BaseConvertors import from_int, from_bool, from_str, to_class
 
 
 class Result:
