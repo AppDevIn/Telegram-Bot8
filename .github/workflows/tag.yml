@@ -1,8 +1,10 @@
-on: 
+on:
   push:
-    branches: ['releases/**']
+    branches:
+      - 'releases/**'
   pull_request:
-    branches: ['releases/**']
+    branches:
+      - 'releases/**'
 
 jobs:
   release-on-push:
