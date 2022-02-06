@@ -2,9 +2,6 @@ on:
   push:
     branches:
       - 'release/**'
-  pull_request:
-    branches:
-      - 'release/**'
 jobs:
   release-on-push:
     runs-on: ubuntu-latest
