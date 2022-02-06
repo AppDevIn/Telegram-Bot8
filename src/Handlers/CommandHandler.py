@@ -1,4 +1,4 @@
-from model.Reqest.CommandRequest import SetMyCommandRequest, BotCommand, BotCommandScope
+from src.model.Reqest.CommandRequest import SetMyCommandRequest, BotCommand
 
 
 class Commands:

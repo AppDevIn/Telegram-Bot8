@@ -1,5 +1,5 @@
-from model.Message import Message
-from model.User import User
+from src.model.Message import Message
+from src.model.User import User
 
 
 class CallbackMessage(object):
