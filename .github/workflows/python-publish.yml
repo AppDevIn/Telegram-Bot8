@@ -21,17 +21,15 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - uses: actions/checkout@v2
-    - name: Set env
-      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/release/}" >> $GITHUB_ENV
-    - name: Test
-      run: |
-        echo $RELEASE_VERSION
-        echo ${{ env.RELEASE_VERSION }}
-    - name: Tagging
-      uses: rymndhng/release-on-push-action@master
+    - name: Check out code
+      uses: actions/checkout@master
       with:
-        bump_version_scheme: ${{ env.RELEASE }}
-        use_github_release_notes: true
+        fetch-depth: '0'
+    - name: Bump version and push tag
+      uses: ChloePlanet/github-tag-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
