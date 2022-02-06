@@ -14,7 +14,7 @@ $ python -m pip install repo_helper_github
 
 ## Usage
 
-```
+```python
 from TeleBot import TeleBot
 
 @bot.add_command_helper(command="/hi")
