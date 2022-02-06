@@ -32,6 +32,7 @@ jobs:
       run: echo "RELEASE=patch" >> $GITHUB_ENV
     - name: Check release env
       run: |
+        echo "${{ github.event.label.name }}"
         if [[ -z "${{ env.RELEASE }}" ]];
         then
           echo "You need to set a release label on PRs to the main branch"
