@@ -1,11 +1,10 @@
 on:
   push:
     branches:
-      - 'releases/**'
+      - 'release/**'
   pull_request:
     branches:
-      - 'releases/**'
-
+      - 'release/**'
 jobs:
   release-on-push:
     runs-on: ubuntu-latest
