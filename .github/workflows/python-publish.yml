@@ -38,15 +38,15 @@ jobs:
         password: ${{ secrets.PYPI_API_TOKEN }}
     - name: Set major release
       if: ${{ github.event.label.name == 'release-major' }}
-      run: echo "RELEASE=major" >> $GITHUB_ENV
+      run: echo "major" >> $GITHUB_ENV
     - name: Set minor release
       if: ${{ github.event.label.name == 'release-minor' }}
-      run: echo "RELEASE=minor" >> $GITHUB_ENV
+      run: echo "minor" >> $GITHUB_ENV
     - name: Set patch release
       if: ${{ github.event.label.name == 'release-patch' }}
-      run: echo "RELEASE=patch" >> $GITHUB_ENV
+      run: echo "patch" >> $GITHUB_ENV
     - name: Tagging
       uses: rymndhng/release-on-push-action@master
       with:
-        bump_version_scheme: minor
+        bump_version_scheme: $GITHUB_ENV
         use_github_release_notes: true
