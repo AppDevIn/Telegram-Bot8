@@ -1,7 +1,7 @@
-from model.User import User
-from model.Chat import Chat
-from model.Entities import Entities
-from model.InlineKeyboard import InlineKeyboard
+from src.model.User import User
+from src.model.Chat import Chat
+from src.model.Entities import Entities
+from src.model.InlineKeyboard import InlineKeyboard
 from enum import Enum
 
 

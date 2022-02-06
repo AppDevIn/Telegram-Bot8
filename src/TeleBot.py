@@ -1,4 +1,3 @@
-import pdb
 from typing import List
 import re
 import requests
@@ -11,10 +10,10 @@ from model.Response.ErrorResponse import error_from_dict
 from model.Response.ForwardResponse import ForwardResponse, forward_from_dict
 from model.Response.GetMeResponse import GetMeResponse, get_me_response_from_dict
 from model.Response.SuccessResponse import success_from_dict
-from src.CommandHandler import Commands
-from url.UrlBuilder import SendMessageUrl, UpdateUrl
+from src.Handlers.CommandHandler import Commands
 
 from model.Update import UpdateType, Update
+from src.url.UrlBuilder import UpdateUrl, SendMessageUrl
 
 
 class TeleBot:
