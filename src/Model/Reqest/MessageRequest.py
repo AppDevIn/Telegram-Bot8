@@ -1,4 +1,4 @@
-from src.model.Reqest.Base import BaseRequest
+from src.Model.Reqest.Base import BaseRequest
 
 
 class MessageRequest(BaseRequest):

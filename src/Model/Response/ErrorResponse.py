@@ -1,7 +1,7 @@
 import json
 from typing import Any, TypeVar
 
-from src.model.Response.BaseConvertors import from_bool, from_int, from_str, to_class
+from src.Model.Response.BaseConvertors import from_bool, from_int, from_str, to_class
 
 T = TypeVar("T")
 

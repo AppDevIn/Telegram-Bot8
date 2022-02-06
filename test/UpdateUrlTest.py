@@ -1,6 +1,6 @@
 import unittest
 
-from src.url.UrlBuilder import UpdateUrl
+from src.Url.UrlBuilder import UpdateUrl
 
 
 class UpdateUrlTest(unittest.TestCase):

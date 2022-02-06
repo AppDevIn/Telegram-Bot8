@@ -1,7 +1,7 @@
 from enum import Enum
 
-from src.model.CallBackMessage import CallbackMessage
-from src.model.Message import Message
+from src.Model.CallBackMessage import CallbackMessage
+from src.Model.Message import Message
 
 
 class UpdateType(Enum):
