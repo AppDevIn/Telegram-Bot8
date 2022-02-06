@@ -2,17 +2,17 @@ from typing import List
 import re
 import requests
 import json
-import model.Constants as const
-from model.Reqest.CommandRequest import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
+import src.model.Constants as const
+from src.model.Reqest.CommandRequest import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
     bot_commands_from_dict
-from model.Reqest.ForwardReqest import ForwardRequest
-from model.Response.ErrorResponse import error_from_dict
-from model.Response.ForwardResponse import ForwardResponse, forward_from_dict
-from model.Response.GetMeResponse import GetMeResponse, get_me_response_from_dict
-from model.Response.SuccessResponse import success_from_dict
+from src.model.Reqest.ForwardReqest import ForwardRequest
+from src.model.Response.ErrorResponse import error_from_dict
+from src.model.Response.ForwardResponse import ForwardResponse, forward_from_dict
+from src.model.Response.GetMeResponse import GetMeResponse, get_me_response_from_dict
+from src.model.Response.SuccessResponse import success_from_dict
 from src.Handlers.CommandHandler import Commands
 
-from model.Update import UpdateType, Update
+from src.model.Update import UpdateType, Update
 from src.url.UrlBuilder import UpdateUrl, SendMessageUrl
 
 
