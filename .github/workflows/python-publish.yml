@@ -12,12 +12,13 @@ on:
   push:
     branches:
       - 'release/**'
-
 jobs:
   deploy:
 
     runs-on: ubuntu-latest
 
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
@@ -35,3 +36,8 @@ jobs:
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
+    - name: Tagging
+      uses: rymndhng/release-on-push-action@master
+      with:
+        bump_version_scheme: minor
+        use_github_release_notes: true
