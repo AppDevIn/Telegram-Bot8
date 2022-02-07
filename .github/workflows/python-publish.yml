@@ -48,16 +48,16 @@ jobs:
           fetch-depth: 0
       - name: Set environment variables for version number
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-      - name: Changelog
-        uses: Bullrich/generate-release-changelog@master
+      - name: "✏️ Generate release changelog"
+        uses: heinrichreimer/github-changelog-generator-action@v2.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
         id: Changelog
-        env:
-          REPO: ${{ github.repository }}
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.RELEASE_VERSION }}
           release_name: Release ${{ env.RELEASE_VERSION }}
