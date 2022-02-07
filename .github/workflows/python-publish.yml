@@ -27,6 +27,15 @@ jobs:
         pip install build
     - name: Build package
       run: python -m build
+    - if: ${{failure()}}
+      name: Create Issues
+      uses: nashmaniac/create-issue-action@v1.1
+      with:
+        title: Build Failed for CD on Tag Push Events
+        token: ${{secrets.GITHUB_TOKEN}}
+        assignees: ${{github.actor}}
+        labels: worflow-failed
+        body: Workflow failed for commit ${{github.sha}} @ ${{github.ref}}
   release:
     runs-on: ubuntu-latest
     env:
