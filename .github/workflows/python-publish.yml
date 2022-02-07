@@ -10,26 +10,12 @@ name: Upload Python Package
 
 on:
   push:
-    branches:
-      - 'release/**'
+    tags:
+      - 'v*'
 jobs:
-  deploy:
-
+  build:
     runs-on: ubuntu-latest
-
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Check out code
-      uses: actions/checkout@master
-      with:
-        fetch-depth: '0'
-    - name: Bump version and push tag
-      uses: ChloePlanet/github-tag-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        WITH_V: true
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
@@ -40,9 +26,29 @@ jobs:
         pip install build
     - name: Build package
       run: python -m build
-    - name: Publish package
-      uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
-      with:
-        user: __token__
-        password: ${{ secrets.PYPI_API_TOKEN }}
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set environment variables for version number
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Check out code
+        uses: actions/checkout@master
+        with:
+          fetch-depth: '0'
+      - name: Bump version and push tag
+        uses: ChloePlanet/github-tag-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CUSTOM_TAG: ${{ env.RELEASE_VERSION }}
+#  deploy_to_pypi:
+#    runs-on: ubuntu-latest
+#    steps:
+#    - name: Publish package
+#      uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
+#      with:
+#        user: __token__
+#        password: ${{ secrets.PYPI_API_TOKEN }}
 
