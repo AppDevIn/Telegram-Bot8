@@ -191,15 +191,17 @@ class TeleBot:
 
     def forward_messaged(self, chat_id, from_chat_id, message_id: int,
                          disable_notification: bool = None, protect_content: bool = None) -> ForwardResponse:
-        """
-        Use this method to forward messages of any kind. Service messages can't be forwarded.
-        On success, the sent Message is returned.
-        :param chat_id: Unique identifier for the target chat or username of the target channel
-        :param from_chat_id: Unique identifier for the chat group where the original message was sent
-        :param message_id: Message id in the chat group specified in from_chat_id
-        :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
-        :param protect_content: Protects the contents of the forwarded message from forwarding and saving
-        :return: ForwardResponse containing the message
+        """Use this method to forward messages of any kind. Service messages can't be forwarded.
+         On success, the sent Message is returned.
+
+
+         :param chat_id: Unique identifier for the target chat or username of the target channel
+         :param from_chat_id: Unique identifier for the chat group where the original message was sent
+         :param message_id: Message id in the chat group specified in from_chat_id
+         :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
+         :param protect_content: Protects the contents of the forwarded message from forwarding and saving
+
+         :return: ForwardResponse containing the message
         """
         url = f'{self.base}forwardMessage'
         request_body = ForwardRequest()
@@ -210,12 +212,14 @@ class TeleBot:
         return forward_from_dict(response.text)
 
     def set_my_commands(self, commands: [BotCommand], scope: {} = None, language_code: str = None):
-        """
-        This allows you to set a list of commands in the page where your bot will exist
+        """This allows you to set a list of commands in the page where your bot will exist
+
         :param commands: Is an array of CommandDto. At most 100 commands can be specified.
-        :param scope: A JSON-serialized object, describing scope of users for which the commands are relevant.
-        Defaults to BotCommandScopeDefault. You can use the BotCommandScope to get values in
-        :param language_code: A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands
+        :param scope: A JSON-serialized object, describing scope of users for which the commands are relevant.Defaults \
+        to BotCommandScopeDefault. You can use the BotCommandScope to get values in
+        :param language_code: A two-letter ISO 639-1 language code. If empty, commands will be applied to all users \
+        from the given scope, for whose language there are no dedicated commands.
+
         :return: Error or success messages
         """
 
