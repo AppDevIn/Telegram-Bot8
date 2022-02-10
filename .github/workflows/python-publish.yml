@@ -37,6 +37,7 @@ jobs:
         labels: worflow-failed
         body: Workflow failed for commit ${{github.sha}} @ ${{github.ref}}
   deploy_to_pypi:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
