@@ -6,7 +6,6 @@ import Bot.Model.Constants as const
 from Bot.Model.Reqest.CommandRequest import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
     bot_commands_from_dict
 from Bot.Model.Reqest.ForwardReqest import ForwardRequest
-from Bot.Model.Response import Response
 from Bot.Model.Response.Response import error_from_dict, BaseResponse
 from Bot.Model.Response.ForwardResponse import ForwardResponse, forward_from_dict
 from Bot.Model.Response.GetMeResponse import GetMeResponse, get_me_response_from_dict
@@ -67,8 +66,8 @@ class TeleBot:
             raise ValueError(response['error'])
 
     def add_regex_helper(self, regex):
-        """
-        Method to look at each chat and if the message matches it will triggers
+        """Method to look at each chat and if the message matches it will triggers
+
         :param regex: The regex pattern you want the text to match
         """
         def decorator(func):
@@ -81,8 +80,8 @@ class TeleBot:
         return decorator
 
     def add_command_helper(self, command):
-        """
-        This method allows you handle commands send from telegram
+        """This method allows you handle commands send from telegram
+
         :param command: Add the command you want to handle e.g. /hello_world
         """
         def decorator(func):
@@ -98,16 +97,17 @@ class TeleBot:
 
     def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault()[0], description="",
                                 language=None):
-        """
-        This method allows you handle commands send from telegram and allows add the
+        """This method allows you handle commands send from telegram and allows add the \
         command to telegram menu
+
         :param command: Add the command you want to handle e.g. /hello_world
-        :param scope: Use BotCommandScope to view the different scopes. A JSON-serialized object,
+        :param scope: Use BotCommandScope to view the different scopes. A JSON-serialized object, \
         describing scope of users for which the commands are relevant.
         :param description: Description of the command
-        :param language: A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands
+        :param language: A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from \
+        the given scope, for whose language there are no dedicated commands
+
         :return: Error or success messages
-        :return:
         """
         def decorator(func):
             if command is None: return
@@ -214,7 +214,7 @@ class TeleBot:
         response = requests.post(url, headers={}, data=request_body)
         return forward_from_dict(response.text)
 
-    def set_my_commands(self, commands: [BotCommand], scope: {} = None, language_code: str = None):
+    def set_my_commands(self, commands: [BotCommand], scope: {} = None, language_code: str = None) -> BaseResponse:
         """This allows you to set a list of commands in the page where your bot will exist
 
         :param commands: Is an array of CommandDto. At most 100 commands can be specified.
@@ -234,15 +234,14 @@ class TeleBot:
         response = requests.post(url, headers=self.headers, data=payload)
 
         if response.status_code != 200:
-            return error_from_dict(response.text)
+            return error_from_dict(response.text).status_code(response.status_code)
         else:
             return success_from_dict(response.text)
 
     def get_my_commands(self, scope: {} = None, language_code: str = None):
         """Use this method to get the current list of the bot's commands for the given scope and user language.
 
-        :param scope: A JSON-serialized object, describing scope of users.
-        Defaults to BotCommandScopeDefault.
+        :param scope: A JSON-serialized object, describing scope of users. Defaults to BotCommandScopeDefault.
         :param language_code: A two-letter ISO 639-1 language code or an empty string
 
         :return: Array of BotCommand on success. If commands aren't set, an empty list is returned.
@@ -256,7 +255,7 @@ class TeleBot:
         response = requests.post(url, headers=self.headers, data=payload)
 
         if response.status_code != 200:
-            return error_from_dict(response.text)
+            return error_from_dict(response.text).status_code(response.status_code)
         else:
             return bot_commands_from_dict(response.text)
 
@@ -264,8 +263,7 @@ class TeleBot:
         """Use this method to delete the list of the bot's commands for the given scope and user language. \
         After deletion, higher level commands will be shown to affected users.
 
-        :param scope: A JSON-serialized object, describing scope of users.
-        Defaults to BotCommandScopeDefault.
+        :param scope: A JSON-serialized object, describing scope of users. Defaults to BotCommandScopeDefault.
         :param language_code: A two-letter ISO 639-1 language code or an empty string
 
         :return: True on success
@@ -279,7 +277,7 @@ class TeleBot:
         response = requests.post(url, headers=self.headers, data=payload)
 
         if response.status_code != 200:
-            return error_from_dict(response.text).st
+            return error_from_dict(response.text).status_code(response.status_code)
         else:
             return success_from_dict(response.text)
 
