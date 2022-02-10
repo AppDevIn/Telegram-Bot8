@@ -6,10 +6,10 @@ import Bot.Model.Constants as const
 from Bot.Model.Reqest.CommandRequest import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
     bot_commands_from_dict
 from Bot.Model.Reqest.ForwardReqest import ForwardRequest
-from Bot.Model.Response.ErrorResponse import error_from_dict
+from Bot.Model.Response.Response import error_from_dict, BaseResponse
 from Bot.Model.Response.ForwardResponse import ForwardResponse, forward_from_dict
 from Bot.Model.Response.GetMeResponse import GetMeResponse, get_me_response_from_dict
-from Bot.Model.Response.SuccessResponse import success_from_dict
+from Bot.Model.Response.Response import success_from_dict
 from Bot.Handlers.CommandHandler import Commands
 
 from Bot.Model.Update import UpdateType, Update
@@ -44,23 +44,30 @@ class TeleBot:
         lastUpdate = None
         while True:
             if lastUpdate is None:
-                response = self.get_updates(offset=-1, timeout=timeout, allowed_types=allowed_types)
+                response = self._get_updates(offset=-1, timeout=timeout, allowed_types=allowed_types)
             else:
-                response = self.get_updates(offset=lastUpdate.getNextUpdateID(), timeout=timeout,
+                response = self._get_updates(offset=lastUpdate.getNextUpdateID(), timeout=timeout,
                                             allowed_types=allowed_types)
 
-            updates = self.generate_updates(response)
+            updates = self._generate_updates(response)
 
             if updates:
                 for item in updates:
                     lastUpdate = item
-                    self.process_update(item)
+                    self._process_update(item)
                     if update is not None:
                         update(item)
 
+    def _generate_updates(self, response) -> List[Update]:
+
+        if response.get('ok', False) is True:
+            return list(map(lambda update: Update(response=update), response["result"]))
+        else:
+            raise ValueError(response['error'])
+
     def add_regex_helper(self, regex):
-        """
-        Method to look at each chat and if the message matches it will triggers
+        """Method to look at each chat and if the message matches it will triggers
+
         :param regex: The regex pattern you want the text to match
         """
         def decorator(func):
@@ -73,8 +80,8 @@ class TeleBot:
         return decorator
 
     def add_command_helper(self, command):
-        """
-        This method allows you handle commands send from telegram
+        """This method allows you handle commands send from telegram
+
         :param command: Add the command you want to handle e.g. /hello_world
         """
         def decorator(func):
@@ -90,16 +97,17 @@ class TeleBot:
 
     def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault()[0], description="",
                                 language=None):
-        """
-        This method allows you handle commands send from telegram and allows add the
+        """This method allows you handle commands send from telegram and allows you to add the \
         command to telegram menu
+
         :param command: Add the command you want to handle e.g. /hello_world
-        :param scope: Use BotCommandScope to view the different scopes. A JSON-serialized object,
+        :param scope: Use BotCommandScope to view the different scopes. A JSON-serialized object, \
         describing scope of users for which the commands are relevant.
         :param description: Description of the command
-        :param language: A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands
+        :param language: A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from \
+        the given scope, for whose language there are no dedicated commands
+
         :return: Error or success messages
-        :return:
         """
         def decorator(func):
             if command is None: return
@@ -115,12 +123,17 @@ class TeleBot:
         return decorator
 
     def add_callback(self, callback_data):
+        """Method yet to be implemented
+
+        :param callback_data:
+        :return:
+        """
         def decorator(func):
             self._callback[callback_data] = func
 
         return decorator
 
-    def get_updates(self, offset, timeout, allowed_types) -> {}:
+    def _get_updates(self, offset, timeout, allowed_types) -> {}:
         if allowed_types is None:
             allowed_types = [UpdateType.MESSAGE]
 
@@ -135,14 +148,7 @@ class TeleBot:
 
         return response
 
-    def generate_updates(self, response) -> List[Update]:
-
-        if response.get('ok', False) is True:
-            return list(map(lambda update: Update(response=update), response["result"]))
-        else:
-            raise ValueError(response['error'])
-
-    def process_update(self, item):
+    def _process_update(self, item):
         if item.message.fromUser.getID() != int(self.limited):
             return
         if len(item.message.entities) != 0 and item.message.entities[0].type == "bot_command" and \
@@ -161,7 +167,8 @@ class TeleBot:
             print("DEAD ☠️")
 
     def get_me(self) -> GetMeResponse:
-        """
+        """Get's information about the bot
+
         :return: Returns information about the bot using the GetMeResponse class
         """
         url = f'{self.base}getMe'
@@ -171,7 +178,8 @@ class TeleBot:
     def send_message(self, chat_id, text, parse_mode=None, disable_web_page_preview=None,
                      disable_notification=None, reply_to_message_id=None,
                      allow_sending_without_reply=None, reply_markup=None):
-        """
+        """To send message to telegram using this method
+
         :param chat_id: Unique identifier for the target chat or username of the target channel
         :param text: Text of the message to be sent, 1-4096 characters after entities parsing
         :param parse_mode: Mode for parsing entities in the message text allowing for bold and italic formats
@@ -191,15 +199,17 @@ class TeleBot:
 
     def forward_messaged(self, chat_id, from_chat_id, message_id: int,
                          disable_notification: bool = None, protect_content: bool = None) -> ForwardResponse:
-        """
-        Use this method to forward messages of any kind. Service messages can't be forwarded.
-        On success, the sent Message is returned.
-        :param chat_id: Unique identifier for the target chat or username of the target channel
-        :param from_chat_id: Unique identifier for the chat group where the original message was sent
-        :param message_id: Message id in the chat group specified in from_chat_id
-        :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
-        :param protect_content: Protects the contents of the forwarded message from forwarding and saving
-        :return: ForwardResponse containing the message
+        """Use this method to forward messages of any kind. Service messages can't be forwarded.
+         On success, the sent Message is returned.
+
+
+         :param chat_id: Unique identifier for the target chat or username of the target channel
+         :param from_chat_id: Unique identifier for the chat group where the original message was sent
+         :param message_id: Message id in the chat group specified in from_chat_id
+         :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
+         :param protect_content: Protects the contents of the forwarded message from forwarding and saving
+
+         :return: ForwardResponse containing the message
         """
         url = f'{self.base}forwardMessage'
         request_body = ForwardRequest()
@@ -209,13 +219,15 @@ class TeleBot:
         response = requests.post(url, headers={}, data=request_body)
         return forward_from_dict(response.text)
 
-    def set_my_commands(self, commands: [BotCommand], scope: {} = None, language_code: str = None):
-        """
-        This allows you to set a list of commands in the page where your bot will exist
+    def set_my_commands(self, commands: [BotCommand], scope: {} = None, language_code: str = None) -> BaseResponse:
+        """This allows you to set a list of commands in the page where your bot will exist
+
         :param commands: Is an array of CommandDto. At most 100 commands can be specified.
-        :param scope: A JSON-serialized object, describing scope of users for which the commands are relevant.
-        Defaults to BotCommandScopeDefault. You can use the BotCommandScope to get values in
-        :param language_code: A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands
+        :param scope: A JSON-serialized object, describing scope of users for which the commands are relevant.Defaults \
+        to BotCommandScopeDefault. You can use the BotCommandScope to get values in
+        :param language_code: A two-letter ISO 639-1 language code. If empty, commands will be applied to all users \
+        from the given scope, for whose language there are no dedicated commands.
+
         :return: Error or success messages
         """
 
@@ -227,16 +239,16 @@ class TeleBot:
         response = requests.post(url, headers=self.headers, data=payload)
 
         if response.status_code != 200:
-            return error_from_dict(response.text)
+            return error_from_dict(response.text).status_code(response.status_code)
         else:
             return success_from_dict(response.text)
 
     def get_my_commands(self, scope: {} = None, language_code: str = None):
-        """
-        Use this method to get the current list of the bot's commands for the given scope and user language.
-        :param scope: A JSON-serialized object, describing scope of users.
-        Defaults to BotCommandScopeDefault.
+        """Use this method to get the current list of the bot's commands for the given scope and user language.
+
+        :param scope: A JSON-serialized object, describing scope of users. Defaults to BotCommandScopeDefault.
         :param language_code: A two-letter ISO 639-1 language code or an empty string
+
         :return: Array of BotCommand on success. If commands aren't set, an empty list is returned.
         """
 
@@ -248,17 +260,17 @@ class TeleBot:
         response = requests.post(url, headers=self.headers, data=payload)
 
         if response.status_code != 200:
-            return error_from_dict(response.text)
+            return error_from_dict(response.text).status_code(response.status_code)
         else:
             return bot_commands_from_dict(response.text)
 
-    def delete_my_commands(self, scope: {} = None, language_code: str = None):
-        """
-        Use this method to delete the list of the bot's commands for the given scope and user language.
+    def delete_my_commands(self, scope: {} = None, language_code: str = None) -> BaseResponse:
+        """Use this method to delete the list of the bot's commands for the given scope and user language. \
         After deletion, higher level commands will be shown to affected users.
-        :param scope: A JSON-serialized object, describing scope of users.
-        Defaults to BotCommandScopeDefault.
+
+        :param scope: A JSON-serialized object, describing scope of users. Defaults to BotCommandScopeDefault.
         :param language_code: A two-letter ISO 639-1 language code or an empty string
+
         :return: True on success
         """
 
@@ -270,11 +282,17 @@ class TeleBot:
         response = requests.post(url, headers=self.headers, data=payload)
 
         if response.status_code != 200:
-            return error_from_dict(response.text)
+            return error_from_dict(response.text).status_code(response.status_code)
         else:
             return success_from_dict(response.text)
 
     def send_photo(self, chat_id, file):
+        """ Method send image to a specfic chat
+
+        :param chat_id: Unique identifier for the target chat or username of the target channel
+        :param file: The file which the whole belong to
+        :return:
+        """
         up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
         url = self.base + f"sendPhoto"
         requests.post(url, files=up, data={
