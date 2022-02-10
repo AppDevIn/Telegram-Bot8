@@ -12,14 +12,6 @@ Bot.Model.Response.BaseConvertors module
    :undoc-members:
    :show-inheritance:
 
-Bot.Model.Response.ErrorResponse module
----------------------------------------
-
-.. automodule:: Bot.Model.Response.ErrorResponse
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Bot.Model.Response.ForwardResponse module
 -----------------------------------------
 
@@ -36,10 +28,10 @@ Bot.Model.Response.GetMeResponse module
    :undoc-members:
    :show-inheritance:
 
-Bot.Model.Response.SuccessResponse module
------------------------------------------
+Bot.Model.Response.Response module
+----------------------------------
 
-.. automodule:: Bot.Model.Response.SuccessResponse
+.. automodule:: Bot.Model.Response.Response
    :members:
    :undoc-members:
    :show-inheritance:
