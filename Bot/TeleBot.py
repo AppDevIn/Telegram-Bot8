@@ -44,21 +44,21 @@ class TeleBot:
         lastUpdate = None
         while True:
             if lastUpdate is None:
-                response = self.get_updates(offset=-1, timeout=timeout, allowed_types=allowed_types)
+                response = self._get_updates(offset=-1, timeout=timeout, allowed_types=allowed_types)
             else:
-                response = self.get_updates(offset=lastUpdate.getNextUpdateID(), timeout=timeout,
+                response = self._get_updates(offset=lastUpdate.getNextUpdateID(), timeout=timeout,
                                             allowed_types=allowed_types)
 
-            updates = self.generate_updates(response)
+            updates = self._generate_updates(response)
 
             if updates:
                 for item in updates:
                     lastUpdate = item
-                    self.process_update(item)
+                    self._process_update(item)
                     if update is not None:
                         update(item)
 
-    def generate_updates(self, response) -> List[Update]:
+    def _generate_updates(self, response) -> List[Update]:
 
         if response.get('ok', False) is True:
             return list(map(lambda update: Update(response=update), response["result"]))
@@ -123,12 +123,17 @@ class TeleBot:
         return decorator
 
     def add_callback(self, callback_data):
+        """Method yet to be implemented
+
+        :param callback_data:
+        :return:
+        """
         def decorator(func):
             self._callback[callback_data] = func
 
         return decorator
 
-    def get_updates(self, offset, timeout, allowed_types) -> {}:
+    def _get_updates(self, offset, timeout, allowed_types) -> {}:
         if allowed_types is None:
             allowed_types = [UpdateType.MESSAGE]
 
@@ -143,7 +148,7 @@ class TeleBot:
 
         return response
 
-    def process_update(self, item):
+    def _process_update(self, item):
         if item.message.fromUser.getID() != int(self.limited):
             return
         if len(item.message.entities) != 0 and item.message.entities[0].type == "bot_command" and \
@@ -282,6 +287,12 @@ class TeleBot:
             return success_from_dict(response.text)
 
     def send_photo(self, chat_id, file):
+        """ Method send image to a specfic chat
+
+        :param chat_id: Unique identifier for the target chat or username of the target channel
+        :param file: The file which the whole belong to
+        :return:
+        """
         up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
         url = self.base + f"sendPhoto"
         requests.post(url, files=up, data={
