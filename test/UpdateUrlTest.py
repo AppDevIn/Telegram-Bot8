@@ -1,6 +1,6 @@
 import unittest
 
-from Bot.Url.UrlBuilder import UpdateUrl
+from TelegramBot8 import UpdateUrl
 
 
 class UpdateUrlTest(unittest.TestCase):
