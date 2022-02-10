@@ -2,18 +2,11 @@ from typing import List
 import re
 import requests
 import json
-import Model.Constants as const
-from Model.Reqest.CommandRequest import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
-    bot_commands_from_dict
-from Model.Reqest.ForwardReqest import ForwardRequest
-from Model.Response.Response import error_from_dict, BaseResponse
-from Model.Response.ForwardResponse import ForwardResponse, forward_from_dict
-from Model.Response.GetMeResponse import GetMeResponse, get_me_response_from_dict
-from Model.Response.Response import success_from_dict
-from Handlers.CommandHandler import Commands
-
-from Model.Update import UpdateType, Update
-from Url.UrlBuilder import UpdateUrl, SendMessageUrl
+import TelegramBot8.Model.Dto.Constants as const
+from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
+    bot_commands_from_dict, ForwardRequest, error_from_dict, BaseResponse, ForwardResponse, forward_from_dict, \
+    GetMeResponse, get_me_response_from_dict, success_from_dict, UpdateType, Update, UpdateUrl, SendMessageUrl
+from TelegramBot8.Handlers.CommandHandler import Commands
 
 
 class TeleBot:
@@ -47,7 +40,7 @@ class TeleBot:
                 response = self._get_updates(offset=-1, timeout=timeout, allowed_types=allowed_types)
             else:
                 response = self._get_updates(offset=lastUpdate.getNextUpdateID(), timeout=timeout,
-                                            allowed_types=allowed_types)
+                                             allowed_types=allowed_types)
 
             updates = self._generate_updates(response)
 
@@ -70,6 +63,7 @@ class TeleBot:
 
         :param regex: The regex pattern you want the text to match
         """
+
         def decorator(func):
             if isinstance(regex, list):
                 for t in regex:
@@ -84,6 +78,7 @@ class TeleBot:
 
         :param command: Add the command you want to handle e.g. /hello_world
         """
+
         def decorator(func):
             if command is None: return
 
@@ -109,6 +104,7 @@ class TeleBot:
 
         :return: Error or success messages
         """
+
         def decorator(func):
             if command is None: return
 
@@ -128,6 +124,7 @@ class TeleBot:
         :param callback_data:
         :return:
         """
+
         def decorator(func):
             self._callback[callback_data] = func
 
@@ -149,8 +146,6 @@ class TeleBot:
         return response
 
     def _process_update(self, item):
-        if item.message.fromUser.getID() != int(self.limited):
-            return
         if len(item.message.entities) != 0 and item.message.entities[0].type == "bot_command" and \
                 item.getUpdateType() == UpdateType.MESSAGE and item.message.entityType():
             command = item.message.text[item.message.entities[0].offset:item.message.entities[0].length]

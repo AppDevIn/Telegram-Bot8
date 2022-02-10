@@ -1,7 +1,7 @@
 import json
 from typing import Any, Optional
 
-from Bot.Model.Response.BaseConvertors import from_int, from_bool, from_str, to_class, from_union, from_none
+from . import from_int, from_bool, from_str, to_class, from_union, from_none
 
 
 class Chat:

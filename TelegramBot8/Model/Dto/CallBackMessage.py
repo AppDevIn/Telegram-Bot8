@@ -1,5 +1,4 @@
-from Bot.Model.Message import Message
-from Bot.Model.User import User
+from ..Dto import User, Message
 
 
 class CallbackMessage(object):

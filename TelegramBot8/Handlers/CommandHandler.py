@@ -1,4 +1,4 @@
-from Bot.Model.Reqest.CommandRequest import BotCommand, SetMyCommandRequest
+from ..Model import BotCommand, SetMyCommandRequest
 
 
 class Commands:

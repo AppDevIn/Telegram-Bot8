@@ -1,8 +1,8 @@
 import json
 from typing import List, Any
 
-from Bot.Model.Reqest.Base import BaseRequest
-from Bot.Model.Response.BaseConvertors import from_bool, from_str, from_list, to_class
+from ..Response import from_bool, from_str, from_list, to_class
+from . import BaseRequest
 
 
 class BotCommand(BaseRequest):

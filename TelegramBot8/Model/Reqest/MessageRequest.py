@@ -1,4 +1,4 @@
-from Bot.Model.Reqest.Base import BaseRequest
+from . import BaseRequest
 
 
 class MessageRequest(BaseRequest):
