@@ -6,10 +6,11 @@ import Bot.Model.Constants as const
 from Bot.Model.Reqest.CommandRequest import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
     bot_commands_from_dict
 from Bot.Model.Reqest.ForwardReqest import ForwardRequest
-from Bot.Model.Response.ErrorResponse import error_from_dict
+from Bot.Model.Response import Response
+from Bot.Model.Response.Response import error_from_dict, BaseResponse
 from Bot.Model.Response.ForwardResponse import ForwardResponse, forward_from_dict
 from Bot.Model.Response.GetMeResponse import GetMeResponse, get_me_response_from_dict
-from Bot.Model.Response.SuccessResponse import success_from_dict
+from Bot.Model.Response.Response import success_from_dict
 from Bot.Handlers.CommandHandler import Commands
 
 from Bot.Model.Update import UpdateType, Update
@@ -57,6 +58,13 @@ class TeleBot:
                     self.process_update(item)
                     if update is not None:
                         update(item)
+
+    def generate_updates(self, response) -> List[Update]:
+
+        if response.get('ok', False) is True:
+            return list(map(lambda update: Update(response=update), response["result"]))
+        else:
+            raise ValueError(response['error'])
 
     def add_regex_helper(self, regex):
         """
@@ -135,13 +143,6 @@ class TeleBot:
 
         return response
 
-    def generate_updates(self, response) -> List[Update]:
-
-        if response.get('ok', False) is True:
-            return list(map(lambda update: Update(response=update), response["result"]))
-        else:
-            raise ValueError(response['error'])
-
     def process_update(self, item):
         if item.message.fromUser.getID() != int(self.limited):
             return
@@ -161,7 +162,8 @@ class TeleBot:
             print("DEAD ☠️")
 
     def get_me(self) -> GetMeResponse:
-        """
+        """Get's information about the bot
+
         :return: Returns information about the bot using the GetMeResponse class
         """
         url = f'{self.base}getMe'
@@ -171,7 +173,8 @@ class TeleBot:
     def send_message(self, chat_id, text, parse_mode=None, disable_web_page_preview=None,
                      disable_notification=None, reply_to_message_id=None,
                      allow_sending_without_reply=None, reply_markup=None):
-        """
+        """To send message to telegram using this method
+
         :param chat_id: Unique identifier for the target chat or username of the target channel
         :param text: Text of the message to be sent, 1-4096 characters after entities parsing
         :param parse_mode: Mode for parsing entities in the message text allowing for bold and italic formats
@@ -236,11 +239,12 @@ class TeleBot:
             return success_from_dict(response.text)
 
     def get_my_commands(self, scope: {} = None, language_code: str = None):
-        """
-        Use this method to get the current list of the bot's commands for the given scope and user language.
+        """Use this method to get the current list of the bot's commands for the given scope and user language.
+
         :param scope: A JSON-serialized object, describing scope of users.
         Defaults to BotCommandScopeDefault.
         :param language_code: A two-letter ISO 639-1 language code or an empty string
+
         :return: Array of BotCommand on success. If commands aren't set, an empty list is returned.
         """
 
@@ -256,13 +260,14 @@ class TeleBot:
         else:
             return bot_commands_from_dict(response.text)
 
-    def delete_my_commands(self, scope: {} = None, language_code: str = None):
-        """
-        Use this method to delete the list of the bot's commands for the given scope and user language.
+    def delete_my_commands(self, scope: {} = None, language_code: str = None) -> BaseResponse:
+        """Use this method to delete the list of the bot's commands for the given scope and user language. \
         After deletion, higher level commands will be shown to affected users.
+
         :param scope: A JSON-serialized object, describing scope of users.
         Defaults to BotCommandScopeDefault.
         :param language_code: A two-letter ISO 639-1 language code or an empty string
+
         :return: True on success
         """
 
@@ -274,7 +279,7 @@ class TeleBot:
         response = requests.post(url, headers=self.headers, data=payload)
 
         if response.status_code != 200:
-            return error_from_dict(response.text)
+            return error_from_dict(response.text).st
         else:
             return success_from_dict(response.text)
 
