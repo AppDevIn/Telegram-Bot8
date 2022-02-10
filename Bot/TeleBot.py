@@ -97,7 +97,7 @@ class TeleBot:
 
     def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault()[0], description="",
                                 language=None):
-        """This method allows you handle commands send from telegram and allows add the \
+        """This method allows you handle commands send from telegram and allows you to add the \
         command to telegram menu
 
         :param command: Add the command you want to handle e.g. /hello_world

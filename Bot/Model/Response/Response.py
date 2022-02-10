@@ -8,6 +8,12 @@ T = TypeVar("T")
 class BaseResponse:
     status_code: int
 
+    def from_dict(self, obj: Any):
+        raise NotImplemented
+
+    def to_dict(self, obj: Any):
+        raise NotImplemented
+
 
 class Success(BaseResponse):
     ok: bool
@@ -26,9 +32,7 @@ class Success(BaseResponse):
         return Success(ok, result)
 
     def to_dict(self) -> dict:
-        result: dict = {}
-        result["ok"] = from_bool(self.ok)
-        result["result"] = from_bool(self.result)
+        result: dict = {"ok": from_bool(self.ok), "result": from_bool(self.result)}
         return result
 
 
@@ -63,10 +67,8 @@ class Error(BaseResponse):
         return Error(ok, error_code, description)
 
     def to_dict(self) -> dict:
-        result: dict = {}
-        result["ok"] = from_bool(self.ok)
-        result["error_code"] = from_int(self.error_code)
-        result["description"] = from_str(self.description)
+        result: dict = {"ok": from_bool(self.ok), "error_code": from_int(self.error_code),
+                        "description": from_str(self.description)}
         return result
 
 
