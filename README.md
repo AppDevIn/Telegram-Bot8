@@ -9,13 +9,13 @@ This project uses the telegram bot API to create a bot service
 To install with pip <br>
 
 ```
-$ python -m pip install repo_helper_github
+$ pip install Telegram-Bot8
 ```
 
 ## Usage
 
 ```python
-from TeleBot import TeleBot
+from Bot.TeleBot import TeleBot
 
 @bot.add_command_helper(command="/hi")
 def hi(message: Message):
