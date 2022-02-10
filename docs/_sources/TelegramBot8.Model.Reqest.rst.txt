@@ -1,0 +1,46 @@
+TelegramBot8.Model.Reqest package
+=================================
+
+Submodules
+----------
+
+TelegramBot8.Model.Reqest.Base module
+-------------------------------------
+
+.. automodule:: TelegramBot8.Model.Reqest.Base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+TelegramBot8.Model.Reqest.CommandRequest module
+-----------------------------------------------
+
+.. automodule:: TelegramBot8.Model.Reqest.CommandRequest
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+TelegramBot8.Model.Reqest.ForwardReqest module
+----------------------------------------------
+
+.. automodule:: TelegramBot8.Model.Reqest.ForwardReqest
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+TelegramBot8.Model.Reqest.MessageRequest module
+-----------------------------------------------
+
+.. automodule:: TelegramBot8.Model.Reqest.MessageRequest
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: TelegramBot8.Model.Reqest
+   :members:
+   :undoc-members:
+   :show-inheritance:

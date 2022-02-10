@@ -1,0 +1,19 @@
+TelegramBot8.Model package
+==========================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   TelegramBot8.Model.Dto
+   TelegramBot8.Model.Reqest
+   TelegramBot8.Model.Response
+
+Module contents
+---------------
+
+.. automodule:: TelegramBot8.Model
+   :members:
+   :undoc-members:
+   :show-inheritance:

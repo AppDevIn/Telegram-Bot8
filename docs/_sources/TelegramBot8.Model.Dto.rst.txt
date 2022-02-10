@@ -1,0 +1,78 @@
+TelegramBot8.Model.Dto package
+==============================
+
+Submodules
+----------
+
+TelegramBot8.Model.Dto.CallBackMessage module
+---------------------------------------------
+
+.. automodule:: TelegramBot8.Model.Dto.CallBackMessage
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+TelegramBot8.Model.Dto.Chat module
+----------------------------------
+
+.. automodule:: TelegramBot8.Model.Dto.Chat
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+TelegramBot8.Model.Dto.Constants module
+---------------------------------------
+
+.. automodule:: TelegramBot8.Model.Dto.Constants
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+TelegramBot8.Model.Dto.Entities module
+--------------------------------------
+
+.. automodule:: TelegramBot8.Model.Dto.Entities
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+TelegramBot8.Model.Dto.InlineKeyboard module
+--------------------------------------------
+
+.. automodule:: TelegramBot8.Model.Dto.InlineKeyboard
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+TelegramBot8.Model.Dto.Message module
+-------------------------------------
+
+.. automodule:: TelegramBot8.Model.Dto.Message
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+TelegramBot8.Model.Dto.Update module
+------------------------------------
+
+.. automodule:: TelegramBot8.Model.Dto.Update
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+TelegramBot8.Model.Dto.User module
+----------------------------------
+
+.. automodule:: TelegramBot8.Model.Dto.User
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: TelegramBot8.Model.Dto
+   :members:
+   :undoc-members:
+   :show-inheritance:

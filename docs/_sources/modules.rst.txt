@@ -1,7 +1,7 @@
-Bot
-===
+TelegramBot8
+============
 
 .. toctree::
    :maxdepth: 4
 
-   Bot
+   TelegramBot8

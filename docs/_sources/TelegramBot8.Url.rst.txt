@@ -1,13 +1,13 @@
-Bot.Handlers package
-====================
+TelegramBot8.Url package
+========================
 
 Submodules
 ----------
 
-Bot.Handlers.CommandHandler module
+TelegramBot8.Url.UrlBuilder module
 ----------------------------------
 
-.. automodule:: Bot.Handlers.CommandHandler
+.. automodule:: TelegramBot8.Url.UrlBuilder
    :members:
    :undoc-members:
    :show-inheritance:
@@ -16,7 +16,7 @@ Bot.Handlers.CommandHandler module
 Module contents
 ---------------
 
-.. automodule:: Bot.Handlers
+.. automodule:: TelegramBot8.Url
    :members:
    :undoc-members:
    :show-inheritance:
