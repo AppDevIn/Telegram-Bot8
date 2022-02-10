@@ -52,7 +52,7 @@ jobs:
           pip install -r requirements.txt --upgrade
       - name: Publish a project to PyPi
         run: |
-          python setup.py sdist bdist_wheel
+          python -m build
           twine upload dist/* -u __token__ -p ${{ secrets.PYPI_API_TOKEN}}
   release:
     runs-on: ubuntu-latest
