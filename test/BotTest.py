@@ -8,7 +8,7 @@ class BotTest(unittest.TestCase):
         self.bot = TeleBot("Token")
 
     def test_generate_updated(self):
-        updates = generate_updates({
+        updates = self.bot._generate_updates({
             "ok": True,
             "result": [
                 {
@@ -38,7 +38,7 @@ class BotTest(unittest.TestCase):
         assert len(updates) == 1
 
     def test_generate_updated_throw_value_exception(self):
-        self.assertRaises(ValueError, generate_updates, {
+        self.assertRaises(ValueError, self.bot._generate_updates, {
             "ok": False,
             "error":"Hello error"
         })
