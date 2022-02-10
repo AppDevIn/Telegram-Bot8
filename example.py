@@ -1,8 +1,6 @@
 import os
 
-from Bot.TeleBot import TeleBot
-from Bot.Model.Message import Message, ParseMode
-from Bot.Model.Update import Update
+
 
 API_KEY = os.getenv('telegramApiKey')
 bot = TeleBot(API_KEY)

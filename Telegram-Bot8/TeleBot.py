@@ -2,18 +2,18 @@ from typing import List
 import re
 import requests
 import json
-import Bot.Model.Constants as const
-from Bot.Model.Reqest.CommandRequest import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
+import Model.Constants as const
+from Model.Reqest.CommandRequest import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
     bot_commands_from_dict
-from Bot.Model.Reqest.ForwardReqest import ForwardRequest
-from Bot.Model.Response.Response import error_from_dict, BaseResponse
-from Bot.Model.Response.ForwardResponse import ForwardResponse, forward_from_dict
-from Bot.Model.Response.GetMeResponse import GetMeResponse, get_me_response_from_dict
-from Bot.Model.Response.Response import success_from_dict
-from Bot.Handlers.CommandHandler import Commands
+from Model.Reqest.ForwardReqest import ForwardRequest
+from Model.Response.Response import error_from_dict, BaseResponse
+from Model.Response.ForwardResponse import ForwardResponse, forward_from_dict
+from Model.Response.GetMeResponse import GetMeResponse, get_me_response_from_dict
+from Model.Response.Response import success_from_dict
+from Handlers.CommandHandler import Commands
 
-from Bot.Model.Update import UpdateType, Update
-from Bot.Url.UrlBuilder import UpdateUrl, SendMessageUrl
+from Model.Update import UpdateType, Update
+from Url.UrlBuilder import UpdateUrl, SendMessageUrl
 
 
 class TeleBot:
