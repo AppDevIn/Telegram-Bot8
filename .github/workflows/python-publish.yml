@@ -36,9 +36,18 @@ jobs:
         assignees: ${{github.actor}}
         labels: worflow-failed
         body: Workflow failed for commit ${{github.sha}} @ ${{github.ref}}
-  release:
+  deploy_to_pypi:
     runs-on: ubuntu-latest
     needs: build
+    steps:
+    - name: Publish package
+      uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}
+  release:
+    runs-on: ubuntu-latest
+    needs: deploy_to_pypi
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -70,13 +79,4 @@ jobs:
             ${{ steps.Changelog.outputs.changelog }}
           draft: false
           prerelease: false
-  deploy_to_pypi:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-    - name: Publish package
-      uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
-      with:
-        user: __token__
-        password: ${{ secrets.PYPI_API_TOKEN }}
 
