@@ -1,0 +1,22 @@
+TelegramBot8.Url package
+========================
+
+Submodules
+----------
+
+TelegramBot8.Url.UrlBuilder module
+----------------------------------
+
+.. automodule:: TelegramBot8.Url.UrlBuilder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: TelegramBot8.Url
+   :members:
+   :undoc-members:
+   :show-inheritance:

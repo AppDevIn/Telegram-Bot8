@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 
 setuptools.setup(
-    name="Telegram-Bot8",
+    name="TelegramBot8",
     version="0.1.5",
     author="AppDevIn Sliver",
     author_email=" teamprojectlive@example.com",

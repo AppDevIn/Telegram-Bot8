@@ -1,0 +1,22 @@
+TelegramBot8.Handlers package
+=============================
+
+Submodules
+----------
+
+TelegramBot8.Handlers.CommandHandler module
+-------------------------------------------
+
+.. automodule:: TelegramBot8.Handlers.CommandHandler
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: TelegramBot8.Handlers
+   :members:
+   :undoc-members:
+   :show-inheritance:

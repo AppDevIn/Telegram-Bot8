@@ -1,0 +1,31 @@
+TelegramBot8 package
+====================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   TelegramBot8.Handlers
+   TelegramBot8.Model
+   TelegramBot8.Url
+
+Submodules
+----------
+
+TelegramBot8.TeleBot module
+---------------------------
+
+.. automodule:: TelegramBot8.TeleBot
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: TelegramBot8
+   :members:
+   :undoc-members:
+   :show-inheritance:
