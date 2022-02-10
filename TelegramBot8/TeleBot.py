@@ -5,8 +5,7 @@ import json
 import TelegramBot8.Model.Dto.Constants as const
 from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
     bot_commands_from_dict, ForwardRequest, error_from_dict, BaseResponse, ForwardResponse, forward_from_dict, \
-    GetMeResponse, get_me_response_from_dict, success_from_dict, UpdateType, Update, UpdateUrl, SendMessageUrl
-from TelegramBot8.Handlers.CommandHandler import Commands
+    GetMeResponse, get_me_response_from_dict, success_from_dict, UpdateType, Update, UpdateUrl, SendMessageUrl, Commands
 
 
 class TeleBot:
