@@ -1,4 +1,5 @@
-from ..Dto import User, Message
+from ..Dto import User
+from ..Response import Message
 
 
 class CallbackMessage(object):

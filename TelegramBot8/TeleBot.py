@@ -5,7 +5,8 @@ import json
 import TelegramBot8.Model.Dto.Constants as const
 from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
     bot_commands_from_dict, ForwardRequest, error_from_dict, BaseResponse, ForwardResponse, forward_from_dict, \
-    GetMeResponse, get_me_response_from_dict, success_from_dict, UpdateType, Update, UpdateUrl, SendMessageUrl, Commands
+    GetMeResponse, get_me_response_from_dict, success_from_dict, Update, UpdateUrl, SendMessageUrl, \
+    Commands, update_list_from_dict, Result
 
 
 class TeleBot:
@@ -53,7 +54,7 @@ class TeleBot:
     def _generate_updates(self, response) -> List[Update]:
 
         if response.get('ok', False) is True:
-            return list(map(lambda update: Update(response=update), response["result"]))
+            return update_list_from_dict(json.dumps(response)).result
         else:
             raise ValueError(response['error'])
 
@@ -123,6 +124,7 @@ class TeleBot:
         :param callback_data:
         :return:
         """
+        raise NotImplemented
 
         def decorator(func):
             self._callback[callback_data] = func
@@ -131,7 +133,7 @@ class TeleBot:
 
     def _get_updates(self, offset, timeout, allowed_types) -> {}:
         if allowed_types is None:
-            allowed_types = [UpdateType.MESSAGE]
+            allowed_types = ["message"]
 
         get_update_url = UpdateUrl(self.base) \
             .timeout(timeout) \
@@ -144,9 +146,9 @@ class TeleBot:
 
         return response
 
-    def _process_update(self, item):
-        if len(item.message.entities) != 0 and item.message.entities[0].type == "bot_command" and \
-                item.getUpdateType() == UpdateType.MESSAGE and item.message.entityType():
+    def _process_update(self, item: Update):
+        if item.message.entities is not None and item.message.entities[0].type == "bot_command" and \
+                item.message is not None and item.message.entities is not None:
             command = item.message.text[item.message.entities[0].offset:item.message.entities[0].length]
             if self._command.has_command(command): self._command.get_command(command)(item.message)
         elif item.message.text:
@@ -154,9 +156,9 @@ class TeleBot:
                 r = re.compile(p)
                 if re.fullmatch(r, item.message.text.lower()):
                     self._text.get(p)(item.message)
-        elif item.getUpdateType() == UpdateType.CALLBACK:
-            callback = item.callback.message.replyMarkup.keyboards[0].callbackData.split("@")[1]
-            self._callback.get(callback)(item.message)
+        # elif item.getUpdateType() == UpdateType.CALLBACK:
+        #     callback = item.callback.message.replyMarkup.keyboards[0].callbackData.split("@")[1]
+        #     self._callback.get(callback)(item.message)
         else:
             print("DEAD ☠️")
 
