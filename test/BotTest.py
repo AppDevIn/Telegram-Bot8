@@ -29,12 +29,12 @@ class BotTest(unittest.TestCase):
                             "type": "private"
                         },
                         "date": 1639191220,
-                        "regex": "Mm"
+                        "text": "Mm"
                     }
                 }
             ]
         })
-
+        print(updates)
         assert len(updates) == 1
 
     def test_generate_updated_throw_value_exception(self):
