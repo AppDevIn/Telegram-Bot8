@@ -5,8 +5,8 @@ import json
 import TelegramBot8.Model.Dto.Constants as const
 from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
     bot_commands_from_dict, ForwardRequest, error_from_dict, BaseResponse, ForwardResponse, forward_from_dict, \
-    GetMeResponse, get_me_response_from_dict, success_from_dict, Update, UpdateUrl, SendMessageUrl, \
-    Commands, update_list_from_dict, Result
+    GetMeResponse, get_me_response_from_dict, success_from_dict, Update, Commands, update_list_from_dict
+from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest
 
 
 class TeleBot:
@@ -135,13 +135,15 @@ class TeleBot:
         if allowed_types is None:
             allowed_types = ["message"]
 
-        get_update_url = UpdateUrl(self.base) \
+        url = f"{self.base}getUpdates"
+
+        request_body = UpdateRequest() \
             .timeout(timeout) \
             .allowed_updates(allowed_types) \
             .offset(offset, condition=offset is not None) \
             .build()
 
-        response = requests.request("GET", get_update_url, headers={}, data={})
+        response = requests.request("GET", url, headers={}, data=request_body)
         response = json.loads(response.content)
 
         return response
@@ -185,13 +187,14 @@ class TeleBot:
         :param allow_sending_without_reply: Pass True, if the message should be sent even if the specified replied-to message is not found
         :param reply_markup: Pass True, if the message should be sent even if the specified replied-to message is not found
         """
-        sendMessageUrl = SendMessageUrl(self.base).text(text).chat_id(chat_id).parse_mode(parse_mode) \
+        url = f"{self.base}sendMessage"
+        request_body = SendMessageRequest().text(text).chat_id(chat_id).parse_mode(parse_mode) \
             .disable_web_page_preview(disable_web_page_preview) \
             .disable_notification(disable_notification) \
             .reply_to_message_id(reply_to_message_id) \
             .allow_sending_without_reply(allow_sending_without_reply) \
             .reply_markup(reply_markup).build()
-        requests.request("POST", sendMessageUrl, headers={}, data={})
+        requests.request("POST", url, headers={}, data=request_body)
 
     def forward_messaged(self, chat_id, from_chat_id, message_id: int,
                          disable_notification: bool = None, protect_content: bool = None) -> ForwardResponse:
