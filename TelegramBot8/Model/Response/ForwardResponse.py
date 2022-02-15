@@ -49,7 +49,7 @@ class From:
         self.language_code = language_code
 
     @staticmethod
-    def from_dict(obj: Any) -> 'From':
+    def from_dict(obj: Any) -> 'User':
         assert isinstance(obj, dict)
         id = from_int(obj.get("id"))
         is_bot = from_bool(obj.get("is_bot"))

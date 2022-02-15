@@ -8,6 +8,7 @@ bot = TeleBot(API_KEY)
 
 # Just listening to updated
 def update(data: Update):
+    print(data.to_dict())
     print(f"User {data.message.message_from.id} has entered {data.message.text}")
 
 
@@ -74,3 +75,4 @@ print(bot.get_my_commands().to_dict())
 
 # To starting the bot listening
 bot.poll(update=update)
+print("Hello from below")
