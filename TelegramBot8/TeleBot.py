@@ -90,7 +90,7 @@ class TeleBot:
 
         return decorator
 
-    def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault()[0], description="",
+    def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault(), description="",
                                 language=None):
         """This method allows you handle commands send from telegram and allows you to add the \
         command to telegram menu
@@ -111,10 +111,10 @@ class TeleBot:
             if isinstance(command, list):
                 for c in command:
                     self._command.add_command(c, func)
-                self._command.add_command_menu(command[0], func, description, scope, language)
+                self._command.add_command_menu(command[0], func, description, scope[0], language)
             else:
                 self._command.add_command(command, func)
-                self._command.add_command_menu(command, func, description, scope, language)
+                self._command.add_command_menu(command, func, description, scope[0], language)
 
         return decorator
 

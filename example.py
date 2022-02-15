@@ -1,6 +1,6 @@
 import os
 
-from TelegramBot8 import Message, TeleBot, ParseMode, Update
+from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope
 
 API_KEY = os.getenv('telegramApiKey')
 bot = TeleBot(API_KEY)
@@ -25,6 +25,13 @@ def endServer(message: Message):
 
 # Listens to single command
 @bot.add_command_menu_helper(command="/bye", description="Trigger the bye message")
+def endServer(message: Message):
+    bot.send_message(message.chat.id, "Bye")
+
+
+# Listens to single command
+@bot.add_command_menu_helper(command="/bye", description="Trigger the bye message",
+                             scope=BotCommandScope.BotCommandScopeAllGroupChats())
 def endServer(message: Message):
     bot.send_message(message.chat.id, "Bye")
 
