@@ -13,8 +13,10 @@ class Chat:
     first_name: Optional[str]
     last_name: Optional[str]
     all_members_are_administrators: Optional[bool]
+    _ori_dict = {}
 
-    def __init__(self, id: int, type: Optional[str], first_name: Optional[str] = None, username: Optional[str] = None,
+    def __init__(self, id: int, type: Optional[str], original: {}, first_name: Optional[str] = None,
+                 username: Optional[str] = None,
                  title: Optional[str] = None, all_members_are_administrators: Optional[bool] = None) -> None:
         self.id = id
         self.first_name = first_name
@@ -22,6 +24,7 @@ class Chat:
         self.type = type
         self.title = title
         self.all_members_are_administrators = all_members_are_administrators
+        self._ori_dict = original
 
     @staticmethod
     def from_dict(obj: Any) -> 'Chat':
@@ -32,7 +35,7 @@ class Chat:
         username = from_union([from_str, from_none], obj.get("username"))
         title = from_union([from_str, from_none], obj.get("title"))
         all_members_are_administrators = from_union([from_bool, from_none], obj.get("all_members_are_administrators"))
-        return Chat(id, first_name, username, type, title, all_members_are_administrators)
+        return Chat(id, type, obj, first_name, username, title, all_members_are_administrators)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -41,7 +44,9 @@ class Chat:
         result["username"] = from_union([from_str, from_none], self.username)
         result["type"] = from_union([from_str, from_none], self.type)
         result["title"] = from_union([from_str, from_none], self.title)
-        result["all_members_are_administrators"] = from_union([from_bool, from_none], self.all_members_are_administrators)
+        result["all_members_are_administrators"] = from_union([from_bool, from_none],
+                                                              self.all_members_are_administrators)
+        result.update(self._ori_dict)
         return result
 
 
@@ -49,11 +54,13 @@ class MessageEntity:
     offset: int
     length: int
     type: str
+    _ori_dict = {}
 
-    def __init__(self, offset: int, length: int, type: str) -> None:
+    def __init__(self, offset: int, length: int, type: str, original: {}) -> None:
         self.offset = offset
         self.length = length
         self.type = type
+        self._ori_dict = original
 
     @staticmethod
     def from_dict(obj: Any) -> 'MessageEntity':
@@ -61,13 +68,14 @@ class MessageEntity:
         offset = from_int(obj.get("offset"))
         length = from_int(obj.get("length"))
         type = from_str(obj.get("type"))
-        return MessageEntity(offset, length, type)
+        return MessageEntity(offset, length, type, obj)
 
     def to_dict(self) -> dict:
         result: dict = {"offset": from_int(self.offset),
                         "length": from_int(self.length),
                         "type": from_str(self.type)
                         }
+        result.update(self._ori_dict)
         return result
 
 
@@ -77,14 +85,16 @@ class User:
     first_name: str
     username: Optional[str]
     language_code: Optional[str]
+    _ori_dict = {}
 
     def __init__(self, id: int, is_bot: bool, first_name: str, username: Optional[str],
-                 language_code: Optional[str]) -> None:
+                 language_code: Optional[str], original: {}) -> None:
         self.id = id
         self.is_bot = is_bot
         self.first_name = first_name
         self.username = username
         self.language_code = language_code
+        self._ori_dict = original
 
     @staticmethod
     def from_dict(obj: Any) -> 'User':
@@ -94,7 +104,7 @@ class User:
         first_name = from_str(obj.get("first_name"))
         username = from_union([from_str, from_none], obj.get("username"))
         language_code = from_union([from_str, from_none], obj.get("language_code"))
-        return User(id, is_bot, first_name, username, language_code)
+        return User(id, is_bot, first_name, username, language_code, obj)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -103,6 +113,7 @@ class User:
         result["first_name"] = from_union([from_str, from_none], self.first_name)
         result["username"] = from_union([from_str, from_none], self.username)
         result["language_code"] = from_union([from_str, from_none], self.language_code)
+        result.update(self._ori_dict)
         return result
 
 
@@ -116,11 +127,12 @@ class Message:
     new_chat_participant: Optional[User]
     new_chat_member: Optional[User]
     new_chat_members: Optional[List[User]]
+    _ori_dict = {}
 
     def __init__(self, message_id: int, message_from: Optional[User], chat: Optional[Chat],
                  date: Optional[int], text: Optional[str], entities: Optional[List[MessageEntity]],
                  new_chat_participant: Optional[User], new_chat_member: Optional[User],
-                 new_chat_members: Optional[List[User]]) -> None:
+                 new_chat_members: Optional[List[User]], original: {}) -> None:
         self.message_id = message_id
         self.message_from = message_from
         self.chat = chat
@@ -130,6 +142,7 @@ class Message:
         self.new_chat_participant = new_chat_participant
         self.new_chat_member = new_chat_member
         self.new_chat_members = new_chat_members
+        self._ori_dict = original
 
     @staticmethod
     def from_dict(obj: Any) -> 'Message':
@@ -144,7 +157,7 @@ class Message:
         new_chat_member = from_union([User.from_dict, from_none], obj.get("new_chat_member"))
         new_chat_members = from_union([lambda x: from_list(User.from_dict, x), from_none], obj.get("new_chat_members"))
         return Message(message_id, message_from, chat, date, text, entities, new_chat_participant, new_chat_member,
-                       new_chat_members)
+                       new_chat_members, obj)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -159,16 +172,19 @@ class Message:
         result["new_chat_member"] = from_union([lambda x: to_class(User, x), from_none], self.new_chat_member)
         result["new_chat_members"] = from_union([lambda x: from_list(lambda x: to_class(User, x), x), from_none],
                                                 self.new_chat_members)
+        result.update(self._ori_dict)
         return result
 
 
 class Update:
     update_id: int
     message: Optional[Message]
+    _ori_dict = {}
 
-    def __init__(self, update_id: int, message: Optional[Message]) -> None:
+    def __init__(self, update_id: int, message: Optional[Message], original: {}) -> None:
         self.update_id = update_id
         self.message = message
+        self._ori_dict = original
 
     def getNextUpdateID(self) -> int:
         return self.update_id + 1
@@ -178,12 +194,13 @@ class Update:
         assert isinstance(obj, dict)
         update_id = from_int(obj.get("update_id"))
         message = from_union([Message.from_dict, from_none], obj.get("message"))
-        return Update(update_id, message)
+        return Update(update_id, message, obj)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["update_id"] = from_int(self.update_id)
         result["message"] = from_union([lambda x: to_class(Message, x), from_none], self.message)
+        result.update(self._ori_dict)
         return result
 
 
@@ -215,7 +232,6 @@ class UpdateList:
 
 def update_list_from_dict(s: Any) -> UpdateList:
     data = json.loads(s)
-    print(data)
     return UpdateList.from_dict(data)
 
 

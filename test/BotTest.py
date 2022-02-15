@@ -1,6 +1,7 @@
 import unittest
+from typing import List
 
-from TelegramBot8 import TeleBot
+from TelegramBot8 import TeleBot, UpdateList, Update
 
 
 class BotTest(unittest.TestCase):
@@ -12,18 +13,18 @@ class BotTest(unittest.TestCase):
             "ok": True,
             "result": [
                 {
-                    "update_id": 452461090,
+                    "update_id": 1,
                     "message": {
                         "message_id": 96,
                         "from": {
-                            "id": 645812448,
+                            "id": 3,
                             "is_bot": False,
                             "first_name": "Jeya",
                             "username": "jrjeya",
                             "language_code": "en"
                         },
                         "chat": {
-                            "id": 645812448,
+                            "id": 200,
                             "first_name": "Jeya",
                             "username": "jrjeya",
                             "type": "private"
@@ -41,18 +42,18 @@ class BotTest(unittest.TestCase):
             "ok": True,
             "result": [
                 {
-                    "update_id": 221364578,
+                    "update_id": 1,
                     "message": {
                         "message_id": 310,
                         "from": {
-                            "id": 645812448,
+                            "id": 3,
                             "is_bot": False,
                             "first_name": "Jeya",
                             "username": "jrjeya",
                             "language_code": "en"
                         },
                         "chat": {
-                            "id": 645812448,
+                            "id": 200,
                             "first_name": "Jeya",
                             "username": "jrjeya",
                             "type": "private"
@@ -69,18 +70,18 @@ class BotTest(unittest.TestCase):
                     }
                 },
                 {
-                    "update_id": 221364579,
+                    "update_id": 1,
                     "message": {
                         "message_id": 311,
                         "from": {
-                            "id": 645812448,
+                            "id": 3,
                             "is_bot": False,
                             "first_name": "Jeya",
                             "username": "jrjeya",
                             "language_code": "en"
                         },
                         "chat": {
-                            "id": 645812448,
+                            "id": 200,
                             "first_name": "Jeya",
                             "username": "jrjeya",
                             "type": "private"
@@ -98,18 +99,18 @@ class BotTest(unittest.TestCase):
             "ok": True,
             "result": [
                 {
-                    "update_id": 221364591,
+                    "update_id": 1,
                     "message": {
                         "message_id": 330,
                         "from": {
-                            "id": 645812448,
+                            "id": 3,
                             "is_bot": False,
                             "first_name": "Jeya",
                             "username": "jrjeya",
                             "language_code": "en"
                         },
                         "chat": {
-                            "id": 645812448,
+                            "id": 200,
                             "first_name": "Jeya",
                             "username": "jrjeya",
                             "type": "private"
@@ -129,23 +130,23 @@ class BotTest(unittest.TestCase):
         })
         assert len(updates) == 1
 
-    def check_if_the_update_id_is_correct(self):
+    def test_check_if_the_update_id_is_correct(self):
         updates = self.bot._generate_updates({
             "ok": True,
             "result": [
                 {
-                    "update_id": 221364591,
+                    "update_id": 1,
                     "message": {
                         "message_id": 1,
                         "from": {
-                            "id": 645812448,
+                            "id": 3,
                             "is_bot": False,
                             "first_name": "Jeya",
                             "username": "jrjeya",
                             "language_code": "en"
                         },
                         "chat": {
-                            "id": 645812448,
+                            "id": 200,
                             "first_name": "Jeya",
                             "username": "jrjeya",
                             "type": "private"
@@ -165,8 +166,83 @@ class BotTest(unittest.TestCase):
         })
         assert updates[0].getNextUpdateID() == 2
 
+    def test_check_if_able_to_process_group_update(self):
+        updates = self.bot._generate_updates({
+            "ok": True,
+            "result": [
+                {
+                    "update_id": 1,
+                    "message": {
+                        "message_id": 222,
+                        "from": {
+                            "id": 2343,
+                            "is_bot": False,
+                            "first_name": "Jeya",
+                            "username": "jrjeya",
+                            "language_code": "en"
+                        },
+                        "chat": {
+                            "id": 4323423,
+                            "title": "Eth Bot",
+                            "type": "group",
+                            "all_members_are_administrators": True
+                        },
+                        "date": 1644938471,
+                        "text": "/hello@SliverFridayDevBot",
+                        "entities": [
+                            {
+                                "offset": 0,
+                                "length": 25,
+                                "type": "bot_command"
+                            }
+                        ]
+                    }
+                }
+            ]
+        })
+        assert len(updates) == 1
+
+    def test_when_unknown_field_exist_is_it_able_to_process(self):
+        updates: List[Update] = self.bot._generate_updates({
+            "ok": True,
+            "result": [
+                {
+                    "update_id": 1,
+                    "message": {
+                        "message_id": 222,
+                        "from": {
+                            "id": 2343,
+                            "is_bot": False,
+                            "first_name": "Jeya",
+                            "username": "jrjeya",
+                            "language_code": "en"
+                        },
+                        "Unknown": "HAHAHHAHA",
+                        "chat": {
+                            "id": 32443232,
+                            "title": "Eth Bot",
+                            "type": "group",
+                            "all_members_are_administrators": True
+                        },
+                        "date": 1644938471,
+                        "text": "/hello@SliverFridayDevBot",
+                        "entities": [
+                            {
+                                "offset": 0,
+                                "length": 25,
+                                "type": "bot_command"
+                            }
+                        ]
+                    }
+                }
+            ]
+        })
+
+        assert updates[0].to_dict().get("message").get("Unknown") == "HAHAHHAHA"
+        assert len(updates) == 1
+
     def test_generate_updated_throw_value_exception(self):
         self.assertRaises(ValueError, self.bot._generate_updates, {
             "ok": False,
-            "error":"Hello error"
+            "error": "Hello error"
         })
