@@ -148,21 +148,25 @@ class TeleBot:
 
         return response
 
-    def _process_update(self, item: Update):
+    def _process_update(self, item: Update) -> bool:
         if item.message.entities is not None and item.message.entities[0].type == "bot_command" and \
                 item.message is not None and item.message.entities is not None:
-            command = item.message.text[item.message.entities[0].offset:item.message.entities[0].length]
-            if self._command.has_command(command): self._command.get_command(command)(item.message)
+            command = item.message.text[item.message.entities[0].offset:item.message.entities[0].length].split("@")[0]
+            if self._command.has_command(command):
+                self._command.get_command(command)(item.message)
+                return True
         elif item.message.text:
             for p in self._text.keys():
                 r = re.compile(p)
                 if re.fullmatch(r, item.message.text.lower()):
                     self._text.get(p)(item.message)
+                    return True
         # elif item.getUpdateType() == UpdateType.CALLBACK:
         #     callback = item.callback.message.replyMarkup.keyboards[0].callbackData.split("@")[1]
         #     self._callback.get(callback)(item.message)
         else:
             print("DEAD ☠️")
+        return False
 
     def get_me(self) -> GetMeResponse:
         """Get's information about the bot

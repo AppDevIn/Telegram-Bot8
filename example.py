@@ -30,8 +30,8 @@ def endServer(message: Message):
     bot.send_message(message.chat.id, "Bye")
 
 
-# Listens to single command
-@bot.add_command_menu_helper(command="/bye", description="Trigger the bye message",
+# Adding command to groups only
+@bot.add_command_menu_helper(command="/group", description="Trigger the group bye",
                              scope=BotCommandScope.BotCommandScopeAllGroupChats())
 def endServer(message: Message):
     bot.send_message(message.chat.id, "Bye")

@@ -1,7 +1,7 @@
 import unittest
 from typing import List
 
-from TelegramBot8 import TeleBot, UpdateList, Update
+from TelegramBot8 import TeleBot, UpdateList, Update, Message
 
 
 class BotTest(unittest.TestCase):
@@ -240,6 +240,44 @@ class BotTest(unittest.TestCase):
 
         assert updates[0].to_dict().get("message").get("Unknown") == "HAHAHHAHA"
         assert len(updates) == 1
+
+    def test_when_user_listen_command_update_response_to_the_method(self):
+        updates: List[Update] = self.bot._generate_updates({
+            "ok": True,
+            "result": [
+                {
+                    "update_id": 34432,
+                    "message": {
+                        "message_id": 370,
+                        "from": {
+                            "id": 234324,
+                            "is_bot": False,
+                            "first_name": "Jeya",
+                            "username": "jrjeya",
+                            "language_code": "en"
+                        },
+                        "chat": {
+                            "id": -3243232423,
+                            "title": "Eth Bot",
+                            "type": "group",
+                            "all_members_are_administrators": True
+                        },
+                        "date": 1644942692,
+                        "text": "/group@SliverFridayDevBot",
+                        "entities": [
+                            {
+                                "offset": 0,
+                                "length": 25,
+                                "type": "bot_command"
+                            }
+                        ]
+                    }
+                }
+            ]
+        })
+        self.bot._command.add_command("/group", lambda message: message)
+        assert self.bot._process_update(updates[0])
+
 
     def test_generate_updated_throw_value_exception(self):
         self.assertRaises(ValueError, self.bot._generate_updates, {
