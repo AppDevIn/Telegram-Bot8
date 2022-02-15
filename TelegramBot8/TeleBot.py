@@ -289,15 +289,23 @@ class TeleBot:
         else:
             return success_from_dict(response.text)
 
-    def send_photo(self, chat_id, file):
+    def send_photo(self, chat_id, file=None, image_url=None):
         """ Method send image to a specfic chat
 
         :param chat_id: Unique identifier for the target chat or username of the target channel
-        :param file: The file which the whole belong to
+        :param file: The file to which the image file is located at
+        :param image_url: The image that you wish to send
         :return:
         """
-        up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
         url = self.base + f"sendPhoto"
-        requests.post(url, files=up, data={
-            "chat_id": chat_id,
-        })
+        if file:
+            up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
+            requests.post(url, files=up, data={
+                "chat_id": chat_id,
+                "photo": image_url
+            })
+        elif image_url:
+            requests.post(url, data={
+                "chat_id": chat_id,
+                "photo": image_url
+            })

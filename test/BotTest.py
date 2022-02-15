@@ -278,7 +278,6 @@ class BotTest(unittest.TestCase):
         self.bot._command.add_command("/group", lambda message: message)
         assert self.bot._process_update(updates[0])
 
-
     def test_generate_updated_throw_value_exception(self):
         self.assertRaises(ValueError, self.bot._generate_updates, {
             "ok": False,

@@ -56,7 +56,7 @@ def send_bold(message: Message):
                                message_id=message.message_id))
 
 
-# Getting information about the bot
+# Getting information about the bot"
 @bot.add_regex_helper(regex="^get me$")
 def send_bold(message: Message):
     info = bot.get_me()
@@ -68,6 +68,11 @@ def send_bold(message: Message):
 def send_bold(message: Message):
     response = bot.delete_my_commands()
     print(response.to_dict())
+
+
+@bot.add_command_menu_helper(command="/sendphoto", description="Send photo")
+def sendPhoto(message: Message):
+    bot.send_photo(message.chat.id, image_url="https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg")
 
 
 # Printing the commands
