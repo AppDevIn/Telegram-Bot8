@@ -70,7 +70,7 @@ def send_bold(message: Message):
     print(response.to_dict())
 
 
-@bot.add_command_menu_helper(command="/sendphoto", description="Send photo")
+@bot.add_command_menu_helper(command="/send-photo", description="Send photo")
 def sendPhoto(message: Message):
     bot.send_photo(message.chat.id, image_url="https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg")
 

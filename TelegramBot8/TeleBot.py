@@ -5,7 +5,8 @@ import json
 import TelegramBot8.Model.Dto.Constants as const
 from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
     bot_commands_from_dict, ForwardRequest, error_from_dict, BaseResponse, ForwardResponse, forward_from_dict, \
-    GetMeResponse, get_me_response_from_dict, success_from_dict, Update, Commands, update_list_from_dict
+    GetMeResponse, get_me_response_from_dict, success_from_dict, Update, Commands, update_list_from_dict, \
+    SettingCommandException
 from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest
 
 
@@ -242,7 +243,8 @@ class TeleBot:
         response = requests.post(url, headers=self.headers, data=payload)
 
         if response.status_code != 200:
-            return error_from_dict(response.text).status_code(response.status_code)
+            err = error_from_dict(response.text).status_code(response.status_code)
+            raise SettingCommandException(err, f"Error when setting the commands due to {err.to_dict()}")
         else:
             return success_from_dict(response.text)
 
