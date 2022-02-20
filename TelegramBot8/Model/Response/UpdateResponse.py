@@ -1,4 +1,5 @@
 import json
+import pdb
 from enum import Enum
 from typing import Any, Optional, List
 
@@ -77,10 +78,10 @@ class Chat:
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["id"] = self.id
+        result["id"] = from_int(self.id)
         result["first_name"] = from_union([from_str, from_none], self.first_name)
         result["username"] = from_union([from_str, from_none], self.username)
-        result["type"] = from_union([from_str, from_none], self.type)
+        result["type"] = from_str(self.type)
         result["title"] = from_union([from_str, from_none], self.title)
         result["all_members_are_administrators"] = from_union([from_bool, from_none],
                                                               self.all_members_are_administrators)
@@ -92,12 +93,12 @@ class MessageEntity:
     offset: int
     length: int
     type: str
-    url: str
-    user: User
-    language: str
+    url: Optional[str]
+    user: Optional[User]
+    language: Optional[str]
     _ori_dict = {}
 
-    def __init__(self, offset: int, length: int, type: str, original: {}, url: str, user: User, language: str) -> None:
+    def __init__(self, offset: int, length: int, type: str, original: {}, url: Optional[str], user: Optional[User], language: Optional[str]) -> None:
         self.offset = offset
         self.length = length
         self.type = type
@@ -112,18 +113,18 @@ class MessageEntity:
         offset = from_int(obj.get("offset"))
         length = from_int(obj.get("length"))
         type = from_str(obj.get("type"))
-        url = from_str(obj.get("url"))
-        user = from_union(User.from_dict, obj.get("user"))
-        language = from_str(obj.get("language"))
+        url = from_union([from_str, from_none], obj.get("url"))
+        user = from_union([User.from_dict, from_none], obj.get("user"))
+        language = from_union([from_str, from_none], obj.get("language"))
         return MessageEntity(offset, length, type, obj, url, user, language)
 
     def to_dict(self) -> dict:
         result: dict = {"offset": from_int(self.offset),
                         "length": from_int(self.length),
                         "type": from_str(self.type),
-                        "url": from_str(self.url),
-                        "user": to_class(User, self.user),
-                        "language": from_str(self.language)
+                        "url": from_union([from_str, from_none], self.url),
+                        "user": from_union([lambda x: to_class(User, x), from_none], self.user),
+                        "language": from_union([from_str, from_none], self.language)
                         }
         result.update(self._ori_dict)
         return result

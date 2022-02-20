@@ -325,7 +325,8 @@ class TeleBot:
 
         up = None
         if file:
-            up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
+            poss_name = file.split("/")
+            up = {'photo': (poss_name[-1], open(file, 'rb'), "multipart/form-data")}
         elif image_url:
             request.photo(image_url)
 
@@ -379,12 +380,14 @@ class TeleBot:
 
         up = None
         if file:
-            up = {'audio': ("i.mp3", open(file, 'rb'), "multipart/form-data")}
+            poss_name = file.split("/")
+            up = {'audio': (poss_name[-1], open(file, 'rb'), "multipart/form-data")}
         elif audio_url:
             request.audio(audio_url)
 
         response = requests.post(url, files=up, data=request.build())
         if response.status_code == 200:
+            print(response.text)
             return audio_response_from_dict(response.text)
         else:
             return error_from_dict(response.text).status_code(response.status_code)
