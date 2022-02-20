@@ -1,3 +1,4 @@
+import json
 import unittest
 from typing import List
 
@@ -279,7 +280,7 @@ class BotTest(unittest.TestCase):
         assert self.bot._process_update(updates[0])
 
     def test_when_user_return_response_of_send_photo(self):
-        response = photo_response_from_dict({
+        response = photo_response_from_dict(json.dumps({
             "ok": True,
             "result": {
                 "message_id": 321,
@@ -327,7 +328,7 @@ class BotTest(unittest.TestCase):
                     }
                 ]
             }
-        })
+        }))
 
         assert len(response.result.photo) == 4
 

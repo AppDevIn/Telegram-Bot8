@@ -298,7 +298,7 @@ class TeleBot:
         :param chat_id: Unique identifier for the target chat or username of the target channel
         :param file: The file to which the image file is located at
         :param image_url: The image that you wish to send
-        :return:
+        :return: BaseResponse which can be casted into either PhotoResponse or Error
         """
         url = self.base + f"sendPhoto"
 
