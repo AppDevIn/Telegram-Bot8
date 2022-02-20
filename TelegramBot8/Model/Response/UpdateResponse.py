@@ -3,7 +3,44 @@ from enum import Enum
 from typing import Any, Optional, List
 
 from . import from_int, from_str, from_list, from_bool, from_union, from_none, to_class
-from ... import User
+
+
+class User:
+    id: int
+    is_bot: bool
+    first_name: str
+    username: Optional[str]
+    language_code: Optional[str]
+    _ori_dict = {}
+
+    def __init__(self, id: int, is_bot: bool, first_name: str, username: Optional[str],
+                 language_code: Optional[str], original: {}) -> None:
+        self.id = id
+        self.is_bot = is_bot
+        self.first_name = first_name
+        self.username = username
+        self.language_code = language_code
+        self._ori_dict = original
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'User':
+        assert isinstance(obj, dict)
+        id = from_int(obj.get("id"))
+        is_bot = from_bool(obj.get("is_bot"))
+        first_name = from_str(obj.get("first_name"))
+        username = from_union([from_str, from_none], obj.get("username"))
+        language_code = from_union([from_str, from_none], obj.get("language_code"))
+        return User(id, is_bot, first_name, username, language_code, obj)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["id"] = from_union([from_int, from_none], self.id)
+        result["is_bot"] = from_union([from_bool, from_none], self.is_bot)
+        result["first_name"] = from_union([from_str, from_none], self.first_name)
+        result["username"] = from_union([from_str, from_none], self.username)
+        result["language_code"] = from_union([from_str, from_none], self.language_code)
+        result.update(self._ori_dict)
+        return result
 
 
 class Chat:
@@ -76,7 +113,7 @@ class MessageEntity:
         length = from_int(obj.get("length"))
         type = from_str(obj.get("type"))
         url = from_str(obj.get("url"))
-        user = from_str(obj.get("user"))
+        user = from_union(User.from_dict, obj.get("user"))
         language = from_str(obj.get("language"))
         return MessageEntity(offset, length, type, obj, url, user, language)
 
@@ -88,44 +125,6 @@ class MessageEntity:
                         "user": to_class(User, self.user),
                         "language": from_str(self.language)
                         }
-        result.update(self._ori_dict)
-        return result
-
-
-class User:
-    id: int
-    is_bot: bool
-    first_name: str
-    username: Optional[str]
-    language_code: Optional[str]
-    _ori_dict = {}
-
-    def __init__(self, id: int, is_bot: bool, first_name: str, username: Optional[str],
-                 language_code: Optional[str], original: {}) -> None:
-        self.id = id
-        self.is_bot = is_bot
-        self.first_name = first_name
-        self.username = username
-        self.language_code = language_code
-        self._ori_dict = original
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'User':
-        assert isinstance(obj, dict)
-        id = from_int(obj.get("id"))
-        is_bot = from_bool(obj.get("is_bot"))
-        first_name = from_str(obj.get("first_name"))
-        username = from_union([from_str, from_none], obj.get("username"))
-        language_code = from_union([from_str, from_none], obj.get("language_code"))
-        return User(id, is_bot, first_name, username, language_code, obj)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["id"] = from_union([from_int, from_none], self.id)
-        result["is_bot"] = from_union([from_bool, from_none], self.is_bot)
-        result["first_name"] = from_union([from_str, from_none], self.first_name)
-        result["username"] = from_union([from_str, from_none], self.username)
-        result["language_code"] = from_union([from_str, from_none], self.language_code)
         result.update(self._ori_dict)
         return result
 
@@ -179,7 +178,8 @@ class Audio:
     _ori_dict = {}
 
     def __init__(self, duration: int, file_name: Optional[str], mime_type: Optional[str],
-                 performer: Optional[str], file_id: str, file_unique_id: str, file_size: Optional[int], original: {}) -> None:
+                 performer: Optional[str], file_id: str, file_unique_id: str, file_size: Optional[int],
+                 original: {}) -> None:
         self.duration = duration
         self.file_name = file_name
         self.mime_type = mime_type

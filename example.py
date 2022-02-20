@@ -47,7 +47,7 @@ def endServer(message: Message):
 # Sending bold message and types is possible
 @bot.add_regex_helper(regex="^bold$")
 def send_bold(message: Message):
-    bot.send_message(message.chat.id, "<b>Hello</b>", parse_mode=ParseMode.HTML.value)
+    bot.send_message(message.chat.id, "<b>Hello</b>", parse_mode=ParseMode.HTML)
 
 
 # Forwarding message in telegram bot

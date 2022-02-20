@@ -179,14 +179,15 @@ class TeleBot:
         response = requests.post(url, headers={}, data={})
         return get_me_response_from_dict(response.text)
 
-    def send_message(self, chat_id, text, parse_mode=None, disable_web_page_preview=None,
+    def send_message(self, chat_id, text, parse_mode: ParseMode =None, disable_web_page_preview=None,
                      disable_notification=None, reply_to_message_id=None,
                      allow_sending_without_reply=None, reply_markup=None):
         """To send message to telegram using this method
 
         :param chat_id: Unique identifier for the target chat or username of the target channel
         :param text: Text of the message to be sent, 1-4096 characters after entities parsing
-        :param parse_mode: Mode for parsing entities in the message text allowing for bold and italic formats
+        :param parse_mode: Mode for parsing entities in the message text allowing for bold and italic formats. \
+         ParseMode enum is available to user
         :param disable_web_page_preview: Disables link previews for links in this message
         :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
         :param reply_to_message_id: If the message is a reply, ID of the original message

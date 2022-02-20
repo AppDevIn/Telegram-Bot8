@@ -1,4 +1,5 @@
 from . import BaseRequest
+from ... import ParseMode
 
 
 class UpdateRequest(BaseRequest):
@@ -31,7 +32,9 @@ class SendMessageRequest(BaseRequest):
         self.addParameter("chat_id", chat_id)
         return self
 
-    def parse_mode(self, parse_mode):
+    def parse_mode(self, parse_mode: ParseMode):
+        if parse_mode is not None:
+            parse_mode = parse_mode.value
         self.addParameter("parse_mode", parse_mode)
         return self
 
