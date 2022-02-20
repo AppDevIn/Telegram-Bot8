@@ -6,7 +6,7 @@ import TelegramBot8.Model.Dto.Constants as const
 from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
     bot_commands_from_dict, ForwardRequest, error_from_dict, BaseResponse, ForwardResponse, forward_from_dict, \
     GetMeResponse, get_me_response_from_dict, success_from_dict, Update, Commands, update_list_from_dict, \
-    SettingCommandException, photo_response_from_dict, audio_response_from_dict
+    SettingCommandException, photo_response_from_dict, audio_response_from_dict, ParseMode, MessageEntity
 from TelegramBot8.Model.Reqest.MediaRequest import PhotoRequest, AudioRequest
 from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest
 
@@ -292,17 +292,36 @@ class TeleBot:
         else:
             return success_from_dict(response.text)
 
-    def send_photo(self, chat_id, file=None, image_url=None) -> BaseResponse:
-        """ Method send image to a specfic chat
+    def send_photo(self, chat_id, file=None, image_url=None, caption: str = None, parse_mode: ParseMode = None,
+                   caption_entities: List[MessageEntity] = None, disable_notification: bool = None,
+                   protect_content: bool = None, reply_to_message_id: int = None,
+                   allow_sending_without_reply: bool = None, reply_markup=None) -> BaseResponse:
+        """ Method send image to a specific chat
 
         :param chat_id: Unique identifier for the target chat or username of the target channel
         :param file: The file to which the image file is located at
         :param image_url: The image that you wish to send
+        :param reply_markup: Additional interface options. A JSON-serialized object for an inline keyboard, \
+        custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+        :param allow_sending_without_reply: Pass True, if the message should be sent even if the specified replied-to \
+        message is not found
+        :param reply_to_message_id: If the message is a reply, ID of the original message
+        :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
+        :param protect_content: Protects the contents of the sent message from forwarding and saving
+        :param caption: Photo caption (may also be used when resending photos by file_id), 0-1024 characters after \
+        entities parsing
+        :param parse_mode: Mode for parsing entities in the photo caption. See formatting options for more details.
+        :param caption_entities: A JSON-serialized list of special entities that appear in the caption, which can be\
+         specified instead of parse_mode
         :return: BaseResponse which can be casted into either PhotoResponse or Error
         """
         url = self.base + f"sendPhoto"
 
-        request = PhotoRequest().chat_id(chat_id)
+        request = PhotoRequest().chat_id(chat_id).caption(caption).parse_mode(parse_mode) \
+            .caption_entities(caption_entities).disable_notification(disable_notification). \
+            protect_content(protect_content).reply_to_message_id(reply_to_message_id) \
+            .allow_sending_without_reply(allow_sending_without_reply).reply_markup(reply_markup)
+
         up = None
         if file:
             up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
@@ -315,11 +334,47 @@ class TeleBot:
         else:
             return error_from_dict(response.text).status_code(response.status_code)
 
-    def send_audio(self, chat_id, file=None, audio_url=None) -> BaseResponse:
+    def send_audio(self, chat_id, file=None, audio_url=None, caption: str = None, parse_mode: ParseMode = None,
+                   caption_entities: List[MessageEntity] = None, disable_notification: bool = None,
+                   protect_content: bool = None, reply_to_message_id: int = None,
+                   allow_sending_without_reply: bool = None, reply_markup=None, duration: int = None,
+                   performer: str = None, title: str = None, thumb: str = None) -> BaseResponse:
+
+        """Method send audio to a specific chat
+        
+        :param chat_id: Unique identifier for the target chat or username of the target channel
+        :param file: The file to which the image file is located at
+        :param audio_url: The audio that you wish to send
+        :param caption: Photo caption (may also be used when resending photos by file_id), 0-1024 characters after \
+        entities parsing
+        :param parse_mode: Mode for parsing entities in the photo caption. See formatting options for more details.
+        :param caption_entities: A JSON-serialized list of special entities that appear in the caption, which can be\
+         specified instead of parse_mode
+        :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
+        :param protect_content: Protects the contents of the sent message from forwarding and saving
+        :param reply_to_message_id: If the message is a reply, ID of the original message
+        :param allow_sending_without_reply: Pass True, if the message should be sent even if the specified replied-to \
+        message is not found
+        :param reply_markup: Additional interface options. A JSON-serialized object for an inline keyboard, \
+        custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+        :param duration: Duration of the audio in seconds
+        :param performer: Performer
+        :param title: Track name
+        :param thumb: humbnail of the file sent; can be ignored if thumbnail generation for the file is supported \
+        server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and \
+        height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails \
+        can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the \
+        thumbnail was uploaded using multipart/form-data under <file_attach_name>.
+        :return:
+        """
 
         url = self.base + f"sendAudio"
 
-        request = AudioRequest().chat_id(chat_id)
+        request = AudioRequest().chat_id(chat_id).caption(caption).parse_mode(parse_mode) \
+            .caption_entities(caption_entities).disable_notification(disable_notification). \
+            protect_content(protect_content).reply_to_message_id(reply_to_message_id) \
+            .allow_sending_without_reply(allow_sending_without_reply).reply_markup(reply_markup).duration(duration) \
+            .performer(performer).title(title).thumb(thumb)
 
         up = None
         if file:

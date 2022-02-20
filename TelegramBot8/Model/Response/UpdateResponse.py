@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Any, Optional, List
 
 from . import from_int, from_str, from_list, from_bool, from_union, from_none, to_class
+from ... import User
 
 
 class Chat:
@@ -54,12 +55,18 @@ class MessageEntity:
     offset: int
     length: int
     type: str
+    url: str
+    user: User
+    language: str
     _ori_dict = {}
 
-    def __init__(self, offset: int, length: int, type: str, original: {}) -> None:
+    def __init__(self, offset: int, length: int, type: str, original: {}, url: str, user: User, language: str) -> None:
         self.offset = offset
         self.length = length
         self.type = type
+        self.url = url
+        self.language = language
+        self.user = user
         self._ori_dict = original
 
     @staticmethod
@@ -68,12 +75,18 @@ class MessageEntity:
         offset = from_int(obj.get("offset"))
         length = from_int(obj.get("length"))
         type = from_str(obj.get("type"))
-        return MessageEntity(offset, length, type, obj)
+        url = from_str(obj.get("url"))
+        user = from_str(obj.get("user"))
+        language = from_str(obj.get("language"))
+        return MessageEntity(offset, length, type, obj, url, user, language)
 
     def to_dict(self) -> dict:
         result: dict = {"offset": from_int(self.offset),
                         "length": from_int(self.length),
-                        "type": from_str(self.type)
+                        "type": from_str(self.type),
+                        "url": from_str(self.url),
+                        "user": to_class(User, self.user),
+                        "language": from_str(self.language)
                         }
         result.update(self._ori_dict)
         return result
