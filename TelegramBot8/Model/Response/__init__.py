@@ -4,4 +4,4 @@ from .ForwardResponse import *
 from .GetMeResponse import *
 from .Response import *
 from .UpdateResponse import *
-from .PhotoResponse import *
+from .MediaResponse import *

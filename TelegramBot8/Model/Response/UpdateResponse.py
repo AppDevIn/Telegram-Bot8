@@ -155,7 +155,53 @@ class Photo:
         return result
 
 
-class Message():
+class Audio:
+    file_id: str
+    file_unique_id: str
+    duration: int
+    file_name: Optional[str]
+    mime_type: Optional[str]
+    performer: Optional[str]
+    file_size: Optional[int]
+    _ori_dict = {}
+
+    def __init__(self, duration: int, file_name: Optional[str], mime_type: Optional[str],
+                 performer: Optional[str], file_id: str, file_unique_id: str, file_size: Optional[int], original: {}) -> None:
+        self.duration = duration
+        self.file_name = file_name
+        self.mime_type = mime_type
+        self.performer = performer
+        self.file_id = file_id
+        self.file_unique_id = file_unique_id
+        self.file_size = file_size
+        self._ori_dict = original
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'Audio':
+        assert isinstance(obj, dict)
+        duration = from_int(obj.get("duration"))
+        file_name = from_union([from_str, from_none], obj.get("file_name"))
+        mime_type = from_union([from_str, from_none], obj.get("mime_type"))
+        performer = from_union([from_str, from_none], obj.get("performer"))
+        file_id = from_str(obj.get("file_id"))
+        file_unique_id = from_str(obj.get("file_unique_id"))
+        file_size = from_union([from_int, from_none], obj.get("file_size"))
+        return Audio(duration, file_name, mime_type, performer, file_id, file_unique_id, file_size, obj)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["duration"] = from_int(self.duration)
+        result["file_name"] = from_union([from_str, from_none], self.file_name)
+        result["mime_type"] = from_union([from_str, from_none], self.mime_type)
+        result["performer"] = from_union([from_str, from_none], self.performer)
+        result["file_id"] = from_str(self.file_id)
+        result["file_unique_id"] = from_str(self.file_unique_id)
+        result["file_size"] = from_union([from_int, from_none], self.file_size)
+        result.update(self._ori_dict)
+        return result
+
+
+class Message:
     message_id: int
     message_from: Optional[User]
     chat: Optional[Chat]
@@ -165,13 +211,15 @@ class Message():
     new_chat_participant: Optional[User]
     new_chat_member: Optional[User]
     new_chat_members: Optional[List[User]]
-    photo = Optional[List[Photo]]
+    photo: Optional[List[Photo]]
+    audio: Optional[Audio]
     _ori_dict = {}
 
     def __init__(self, message_id: int, message_from: Optional[User], chat: Optional[Chat],
                  date: Optional[int], text: Optional[str], entities: Optional[List[MessageEntity]],
                  new_chat_participant: Optional[User], new_chat_member: Optional[User],
-                 new_chat_members: Optional[List[User]], original: {}, photo: Optional[List[Photo]]) -> None:
+                 new_chat_members: Optional[List[User]], original: {}, photo: Optional[List[Photo]],
+                 audio: Optional[Audio]) -> None:
         self.message_id = message_id
         self.message_from = message_from
         self.chat = chat
@@ -183,6 +231,7 @@ class Message():
         self.new_chat_members = new_chat_members
         self._ori_dict = original
         self.photo = photo
+        self.audio = audio
 
     @staticmethod
     def from_dict(obj: Any) -> 'Message':
@@ -197,8 +246,9 @@ class Message():
         new_chat_member = from_union([User.from_dict, from_none], obj.get("new_chat_member"))
         new_chat_members = from_union([lambda x: from_list(User.from_dict, x), from_none], obj.get("new_chat_members"))
         photo = from_union([lambda x: from_list(Photo.from_dict, x), from_none], obj.get("photo"))
+        audio = from_union([Audio.from_dict, from_none], obj.get("audio"))
         return Message(message_id, message_from, chat, date, text, entities, new_chat_participant, new_chat_member,
-                       new_chat_members, obj, photo)
+                       new_chat_members, obj, photo, audio)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -214,6 +264,7 @@ class Message():
         result["new_chat_members"] = from_union([lambda x: from_list(lambda x: to_class(User, x), x), from_none],
                                                 self.new_chat_members)
         result["photo"] = from_union([lambda x: from_list(lambda x: to_class(Photo, x), x), from_none], self.photo)
+        result["audio"] = from_union([lambda x: to_class(Audio, x), from_none], self.audio)
         result.update(self._ori_dict)
         return result
 

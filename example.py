@@ -1,6 +1,7 @@
 import os
 
-from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope, PhotoResponse, Error, BaseResponse
+from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope, PhotoResponse, Error, BaseResponse, \
+    AudioResponse
 
 API_KEY = os.getenv('telegramApiKey')
 bot = TeleBot(API_KEY)
@@ -77,6 +78,17 @@ def sendPhoto(message: Message):
     response: BaseResponse = bot.send_photo(message.chat.id, image_url="https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A")
     if response.status_code == 200:
         response: PhotoResponse = PhotoResponse.cast(response)
+    else:
+        print(response.to_dict())
+
+
+@bot.add_command_menu_helper(command="/sendaudio", description="Send audio")
+def sendAudio(message: Message):
+    # To send image using file
+    # response: BaseResponse = bot.send_audio(message.chat.id, file="/Users/jeyavishnu/Downloads/audio.mp3")
+    response: BaseResponse = bot.send_audio(message.chat.id, audio_url="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")
+    if response.status_code == 200:
+        response: AudioResponse = AudioResponse.cast(response)
     else:
         print(response.to_dict())
 

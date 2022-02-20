@@ -44,3 +44,25 @@ class PhotoRequest(MediaRequestBase):
     def photo(self, photo):
         self.addParameter("photo", photo)
         return self
+
+
+class AudioRequest(MediaRequestBase):
+    def audio(self, audio):
+        self.addParameter("audio", audio)
+        return self
+
+    def duration(self, duration):
+        self.addParameter("duration", duration)
+        return self
+
+    def performer(self, performer):
+        self.addParameter("performer", performer)
+        return self
+
+    def title(self, title):
+        self.addParameter("title", title)
+        return self
+
+    def thumb(self, thumb):
+        self.addParameter("thumb", thumb)
+        return self

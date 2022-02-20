@@ -6,8 +6,8 @@ import TelegramBot8.Model.Dto.Constants as const
 from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
     bot_commands_from_dict, ForwardRequest, error_from_dict, BaseResponse, ForwardResponse, forward_from_dict, \
     GetMeResponse, get_me_response_from_dict, success_from_dict, Update, Commands, update_list_from_dict, \
-    SettingCommandException, photo_response_from_dict
-from TelegramBot8.Model.Reqest.MediaRequest import PhotoRequest
+    SettingCommandException, photo_response_from_dict, audio_response_from_dict
+from TelegramBot8.Model.Reqest.MediaRequest import PhotoRequest, AudioRequest
 from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest
 
 
@@ -303,8 +303,6 @@ class TeleBot:
         url = self.base + f"sendPhoto"
 
         request = PhotoRequest().chat_id(chat_id)
-
-        response = None
         up = None
         if file:
             up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
@@ -314,5 +312,23 @@ class TeleBot:
         response = requests.post(url, files=up, data=request.build())
         if response.status_code == 200:
             return photo_response_from_dict(response.text)
+        else:
+            return error_from_dict(response.text).status_code(response.status_code)
+
+    def send_audio(self, chat_id, file=None, audio_url=None) -> BaseResponse:
+
+        url = self.base + f"sendAudio"
+
+        request = AudioRequest().chat_id(chat_id)
+
+        up = None
+        if file:
+            up = {'audio': ("i.mp3", open(file, 'rb'), "multipart/form-data")}
+        elif audio_url:
+            request.audio(audio_url)
+
+        response = requests.post(url, files=up, data=request.build())
+        if response.status_code == 200:
+            return audio_response_from_dict(response.text)
         else:
             return error_from_dict(response.text).status_code(response.status_code)
