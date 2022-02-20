@@ -44,22 +44,6 @@ TelegramBot8.Model.Dto.InlineKeyboard module
    :undoc-members:
    :show-inheritance:
 
-TelegramBot8.Model.Dto.Message module
--------------------------------------
-
-.. automodule:: TelegramBot8.Model.Dto.Message
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-TelegramBot8.Model.Dto.Update module
-------------------------------------
-
-.. automodule:: TelegramBot8.Model.Dto.Update
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 TelegramBot8.Model.Dto.User module
 ----------------------------------
 

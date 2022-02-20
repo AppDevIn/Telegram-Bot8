@@ -28,10 +28,26 @@ TelegramBot8.Model.Reqest.ForwardReqest module
    :undoc-members:
    :show-inheritance:
 
+TelegramBot8.Model.Reqest.MediaRequest module
+---------------------------------------------
+
+.. automodule:: TelegramBot8.Model.Reqest.MediaRequest
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 TelegramBot8.Model.Reqest.MessageRequest module
 -----------------------------------------------
 
 .. automodule:: TelegramBot8.Model.Reqest.MessageRequest
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+TelegramBot8.Model.Reqest.UrlRequest module
+-------------------------------------------
+
+.. automodule:: TelegramBot8.Model.Reqest.UrlRequest
    :members:
    :undoc-members:
    :show-inheritance:

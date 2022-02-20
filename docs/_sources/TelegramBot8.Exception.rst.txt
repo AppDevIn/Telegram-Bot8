@@ -1,0 +1,22 @@
+TelegramBot8.Exception package
+==============================
+
+Submodules
+----------
+
+TelegramBot8.Exception.CommandException module
+----------------------------------------------
+
+.. automodule:: TelegramBot8.Exception.CommandException
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: TelegramBot8.Exception
+   :members:
+   :undoc-members:
+   :show-inheritance:

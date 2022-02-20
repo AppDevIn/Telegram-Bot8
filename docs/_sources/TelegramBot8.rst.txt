@@ -6,9 +6,9 @@ Subpackages
 
 .. toctree::
 
+   TelegramBot8.Exception
    TelegramBot8.Handlers
    TelegramBot8.Model
-   TelegramBot8.Url
 
 Submodules
 ----------

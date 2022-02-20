@@ -12,6 +12,14 @@ TelegramBot8.Model.Response.BaseConvertors module
    :undoc-members:
    :show-inheritance:
 
+TelegramBot8.Model.Response.BaseResponse module
+-----------------------------------------------
+
+.. automodule:: TelegramBot8.Model.Response.BaseResponse
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 TelegramBot8.Model.Response.ForwardResponse module
 --------------------------------------------------
 
@@ -28,10 +36,26 @@ TelegramBot8.Model.Response.GetMeResponse module
    :undoc-members:
    :show-inheritance:
 
+TelegramBot8.Model.Response.MediaResponse module
+------------------------------------------------
+
+.. automodule:: TelegramBot8.Model.Response.MediaResponse
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 TelegramBot8.Model.Response.Response module
 -------------------------------------------
 
 .. automodule:: TelegramBot8.Model.Response.Response
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+TelegramBot8.Model.Response.UpdateResponse module
+-------------------------------------------------
+
+.. automodule:: TelegramBot8.Model.Response.UpdateResponse
    :members:
    :undoc-members:
    :show-inheritance:
