@@ -97,8 +97,8 @@ def sendAudio(message: Message):
 @bot.add_command_menu_helper(command="/senddocument", description="Send document")
 def sendDocument(message: Message):
     # To send image using file
-    response: BaseResponse = bot.send_document(message.chat.id, file="/Users/jeyavishnu/Downloads/Weekly_Report_Jeyavishnu_Week_19.docx")
-    # response: BaseResponse = bot.send_document(message.chat.id, document_url="URL_TO_DOC")
+    # response: BaseResponse = bot.send_document(message.chat.id, file="/Users/jeyavishnu/Downloads/some-doc.docx")
+    response: BaseResponse = bot.send_document(message.chat.id, document_url="URL_TO_DOC")
     if response.status_code == 200:
         response: MediaResponse = MediaResponse.cast(response)
     else:

@@ -12,7 +12,7 @@ from TelegramBot8.Model.Reqest.MediaRequest import PhotoRequest, AudioRequest, D
 from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest
 
 
-def _sending_media(url, file, request: MediaRequestBase, media_type: str):
+def _sending_media(url, file, request: MediaRequestBase, media_type: str) -> BaseResponse:
     up = None
     if file:
         poss_name = file.split("/")
@@ -337,18 +337,13 @@ class TeleBot:
             protect_content(protect_content).reply_to_message_id(reply_to_message_id) \
             .allow_sending_without_reply(allow_sending_without_reply).reply_markup(reply_markup)
 
-        up = None
-        if file:
-            poss_name = file.split("/")
-            up = {'photo': (poss_name[-1], open(file, 'rb'), "multipart/form-data")}
-        elif image_url:
+        if url is None and file is None:
+            raise MissingUrlOrFile
+
+        if url:
             request.photo(image_url)
 
-        response = requests.post(url, files=up, data=request.build())
-        if response.status_code == 200:
-            return media_response_from_dict(response.text)
-        else:
-            return error_from_dict(response.text).status_code(response.status_code)
+        return _sending_media(url, file, request, "photo")
 
     def send_audio(self, chat_id, file=None, audio_url=None, caption: str = None, parse_mode: ParseMode = None,
                    caption_entities: List[MessageEntity] = None, disable_notification: bool = None,
@@ -392,18 +387,13 @@ class TeleBot:
             .allow_sending_without_reply(allow_sending_without_reply).reply_markup(reply_markup).duration(duration) \
             .performer(performer).title(title).thumb(thumb)
 
-        up = None
-        if file:
-            poss_name = file.split("/")
-            up = {'audio': (poss_name[-1], open(file, 'rb'), "multipart/form-data")}
-        elif audio_url:
+        if url is None and file is None:
+            raise MissingUrlOrFile
+
+        if url:
             request.audio(audio_url)
 
-        response = requests.post(url, files=up, data=request.build())
-        if response.status_code == 200:
-            return media_response_from_dict(response.text)
-        else:
-            return error_from_dict(response.text).status_code(response.status_code)
+        return _sending_media(url, file, request, "audio")
 
     def send_document(self, chat_id, file=None, document_url=None, caption: str = None, parse_mode: ParseMode = None,
                       caption_entities: List[MessageEntity] = None, disable_notification: bool = None,
@@ -448,4 +438,4 @@ class TeleBot:
         if url:
             request.document(document_url)
 
-        _sending_media(url, file, request, "document")
+        return _sending_media(url, file, request, "document")
