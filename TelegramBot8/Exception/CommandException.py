@@ -13,3 +13,9 @@ class SettingCommandException(Exception):
 
     def getErrorResponse(self) -> BaseResponse:
         return self.error_response
+
+
+class MissingUrlOrFile(Exception):
+
+    def __init__(self, *args, **kwargs):
+        super(MissingUrlOrFile, self).__init__(*args, **kwargs)
