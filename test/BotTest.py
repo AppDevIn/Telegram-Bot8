@@ -1,7 +1,7 @@
 import unittest
 from typing import List
 
-from TelegramBot8 import TeleBot, UpdateList, Update, Message
+from TelegramBot8 import TeleBot, UpdateList, Update, Message, photo_response_from_dict
 
 
 class BotTest(unittest.TestCase):
@@ -277,6 +277,59 @@ class BotTest(unittest.TestCase):
         })
         self.bot._command.add_command("/group", lambda message: message)
         assert self.bot._process_update(updates[0])
+
+    def test_when_user_return_response_of_send_photo(self):
+        response = photo_response_from_dict({
+            "ok": True,
+            "result": {
+                "message_id": 321,
+                "from": {
+                    "id": 312,
+                    "is_bot": True,
+                    "first_name": "fds",
+                    "username": "fds"
+                },
+                "chat": {
+                    "id": 321,
+                    "first_name": "dsf",
+                    "username": "dfs",
+                    "type": "private"
+                },
+                "date": 1645329122,
+                "photo": [
+                    {
+                        "file_id": "AgACAgQAAxkDAAIBfGIRuuIROH8vPzQgHNFip1tVQplHAAL0rDEblFq8UWL51XJ0ofQnAQADAgADcwADIwQ",
+                        "file_unique_id": "AQAD9KwxG5RavFF4",
+                        "file_size": 1702,
+                        "width": 90,
+                        "height": 67
+                    },
+                    {
+                        "file_id": "AgACAgQAAxkDAAIBfGIRuuIROH8vPzQgHNFip1tVQplHAAL0rDEblFq8UWL51XJ0ofQnAQADAgADbQADIwQ",
+                        "file_unique_id": "AQAD9KwxG5RavFFy",
+                        "file_size": 21334,
+                        "width": 320,
+                        "height": 240
+                    },
+                    {
+                        "file_id": "AgACAgQAAxkDAAIBfGIRuuIROH8vPzQgHNFip1tVQplHAAL0rDEblFq8UWL51XJ0ofQnAQADAgADeAADIwQ",
+                        "file_unique_id": "AQAD9KwxG5RavFF9",
+                        "file_size": 95744,
+                        "width": 800,
+                        "height": 600
+                    },
+                    {
+                        "file_id": "AgACAgQAAxkDAAIBfGIRuuIROH8vPzQgHNFip1tVQplHAAL0rDEblFq8UWL51XJ0ofQnAQADAgADeQADIwQ",
+                        "file_unique_id": "AQAD9KwxG5RavFF-",
+                        "file_size": 165097,
+                        "width": 1200,
+                        "height": 900
+                    }
+                ]
+            }
+        })
+
+        assert len(response.result.photo) == 4
 
     def test_generate_updated_throw_value_exception(self):
         self.assertRaises(ValueError, self.bot._generate_updates, {

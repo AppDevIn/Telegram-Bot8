@@ -63,3 +63,5 @@ class From:
         result["first_name"] = from_str(self.first_name)
         result["username"] = from_str(self.username)
         result["language_code"] = from_union([from_str, from_none], self.language_code)
+
+

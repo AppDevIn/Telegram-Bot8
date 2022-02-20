@@ -1,6 +1,6 @@
 import json
 from enum import Enum
-from typing import Any, Optional, List, TypeVar, Type, cast
+from typing import Any, Optional, List
 
 from . import from_int, from_str, from_list, from_bool, from_union, from_none, to_class
 
@@ -117,7 +117,45 @@ class User:
         return result
 
 
-class Message:
+class Photo:
+    file_id: Optional[str]
+    file_unique_id: Optional[str]
+    file_size: Optional[int]
+    width: Optional[int]
+    height: Optional[int]
+    _ori_dict = {}
+
+    def __init__(self, file_id: Optional[str], file_unique_id: Optional[str], file_size: Optional[int],
+                 width: Optional[int], height: Optional[int], original: {}) -> None:
+        self.file_id = file_id
+        self.file_unique_id = file_unique_id
+        self.file_size = file_size
+        self.width = width
+        self.height = height
+        self._ori_dict = original
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'Photo':
+        assert isinstance(obj, dict)
+        file_id = from_union([from_str, from_none], obj.get("file_id"))
+        file_unique_id = from_union([from_str, from_none], obj.get("file_unique_id"))
+        file_size = from_union([from_int, from_none], obj.get("file_size"))
+        width = from_union([from_int, from_none], obj.get("width"))
+        height = from_union([from_int, from_none], obj.get("height"))
+        return Photo(file_id, file_unique_id, file_size, width, height, obj)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["file_id"] = from_union([from_str, from_none], self.file_id)
+        result["file_unique_id"] = from_union([from_str, from_none], self.file_unique_id)
+        result["file_size"] = from_union([from_int, from_none], self.file_size)
+        result["width"] = from_union([from_int, from_none], self.width)
+        result["height"] = from_union([from_int, from_none], self.height)
+        result.update(self._ori_dict)
+        return result
+
+
+class Message():
     message_id: int
     message_from: Optional[User]
     chat: Optional[Chat]
@@ -127,12 +165,13 @@ class Message:
     new_chat_participant: Optional[User]
     new_chat_member: Optional[User]
     new_chat_members: Optional[List[User]]
+    photo = Optional[List[Photo]]
     _ori_dict = {}
 
     def __init__(self, message_id: int, message_from: Optional[User], chat: Optional[Chat],
                  date: Optional[int], text: Optional[str], entities: Optional[List[MessageEntity]],
                  new_chat_participant: Optional[User], new_chat_member: Optional[User],
-                 new_chat_members: Optional[List[User]], original: {}) -> None:
+                 new_chat_members: Optional[List[User]], original: {}, photo: Optional[List[Photo]]) -> None:
         self.message_id = message_id
         self.message_from = message_from
         self.chat = chat
@@ -143,6 +182,7 @@ class Message:
         self.new_chat_member = new_chat_member
         self.new_chat_members = new_chat_members
         self._ori_dict = original
+        self.photo = photo
 
     @staticmethod
     def from_dict(obj: Any) -> 'Message':
@@ -156,8 +196,9 @@ class Message:
         new_chat_participant = from_union([User.from_dict, from_none], obj.get("new_chat_participant"))
         new_chat_member = from_union([User.from_dict, from_none], obj.get("new_chat_member"))
         new_chat_members = from_union([lambda x: from_list(User.from_dict, x), from_none], obj.get("new_chat_members"))
+        photo = from_union([lambda x: from_list(Photo.from_dict, x), from_none], obj.get("photo"))
         return Message(message_id, message_from, chat, date, text, entities, new_chat_participant, new_chat_member,
-                       new_chat_members, obj)
+                       new_chat_members, obj, photo)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -172,6 +213,7 @@ class Message:
         result["new_chat_member"] = from_union([lambda x: to_class(User, x), from_none], self.new_chat_member)
         result["new_chat_members"] = from_union([lambda x: from_list(lambda x: to_class(User, x), x), from_none],
                                                 self.new_chat_members)
+        result["photo"] = from_union([lambda x: from_list(lambda x: to_class(Photo, x), x), from_none], self.photo)
         result.update(self._ori_dict)
         return result
 

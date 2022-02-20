@@ -1,6 +1,6 @@
 import os
 
-from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope
+from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope, PhotoResponse, Error, BaseResponse
 
 API_KEY = os.getenv('telegramApiKey')
 bot = TeleBot(API_KEY)
@@ -8,7 +8,7 @@ bot = TeleBot(API_KEY)
 
 # Just listening to updated
 def update(data: Update):
-    print(data.to_dict())
+    # print(data.to_dict())
     print(f"User {data.message.message_from.id} has entered {data.message.text}")
 
 
@@ -70,9 +70,13 @@ def send_bold(message: Message):
     print(response.to_dict())
 
 
-@bot.add_command_menu_helper(command="/send-photo", description="Send photo")
+@bot.add_command_menu_helper(command="/sendphoto", description="Send photo")
 def sendPhoto(message: Message):
-    bot.send_photo(message.chat.id, image_url="https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg")
+    response: BaseResponse = bot.send_photo(message.chat.id, image_url="https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A")
+    if response.status_code == 200:
+        response: PhotoResponse = PhotoResponse.cast(response)
+    else:
+        print(response.to_dict())
 
 
 # Printing the commands
