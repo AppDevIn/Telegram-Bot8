@@ -70,3 +70,13 @@ class AudioRequest(MediaRequestBase):
     def thumb(self, thumb):
         self.addParameter("thumb", thumb)
         return self
+
+
+class DocumentRequest(MediaRequestBase):
+    def document(self, document):
+        self.addParameter("document", document)
+        return self
+
+    def thumb(self, thumb):
+        self.addParameter("thumb", thumb)
+        return self
