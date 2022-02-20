@@ -72,6 +72,8 @@ def send_bold(message: Message):
 
 @bot.add_command_menu_helper(command="/sendphoto", description="Send photo")
 def sendPhoto(message: Message):
+    # To send image using file
+    # response: BaseResponse = bot.send_photo(message.chat.id, file="/Users/jeyavishnu/Downloads/profile.png")
     response: BaseResponse = bot.send_photo(message.chat.id, image_url="https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A")
     if response.status_code == 200:
         response: PhotoResponse = PhotoResponse.cast(response)

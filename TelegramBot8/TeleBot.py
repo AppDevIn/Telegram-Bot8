@@ -7,6 +7,7 @@ from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, Comma
     bot_commands_from_dict, ForwardRequest, error_from_dict, BaseResponse, ForwardResponse, forward_from_dict, \
     GetMeResponse, get_me_response_from_dict, success_from_dict, Update, Commands, update_list_from_dict, \
     SettingCommandException, photo_response_from_dict
+from TelegramBot8.Model.Reqest.MediaRequest import PhotoRequest
 from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest
 
 
@@ -300,19 +301,17 @@ class TeleBot:
         :return:
         """
         url = self.base + f"sendPhoto"
+
+        request = PhotoRequest().chat_id(chat_id)
+
         response = None
+        up = None
         if file:
             up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
-            response = requests.post(url, files=up, data={
-                "chat_id": chat_id,
-                "photo": image_url
-            })
         elif image_url:
-            response = requests.post(url, data={
-                "chat_id": chat_id,
-                "photo": image_url
-            })
+            request.photo(image_url)
 
+        response = requests.post(url, files=up, data=request.build())
         if response.status_code == 200:
             return photo_response_from_dict(response.text)
         else:
