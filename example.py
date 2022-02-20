@@ -1,7 +1,6 @@
 import os
 
-from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope, PhotoResponse, Error, BaseResponse, \
-    AudioResponse
+from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope, MediaResponse, Error, BaseResponse
 
 API_KEY = os.getenv('telegramApiKey')
 bot = TeleBot(API_KEY)
@@ -75,9 +74,10 @@ def send_bold(message: Message):
 def sendPhoto(message: Message):
     # To send image using file
     # response: BaseResponse = bot.send_photo(message.chat.id, file="/Users/jeyavishnu/Downloads/profile.png")
-    response: BaseResponse = bot.send_photo(message.chat.id, image_url="https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg")
+    response: BaseResponse = bot.send_photo(message.chat.id,
+                                            image_url="https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg")
     if response.status_code == 200:
-        response: PhotoResponse = PhotoResponse.cast(response)
+        response: MediaResponse = MediaResponse.cast(response)
     else:
         print(response.to_dict())
 
@@ -86,9 +86,21 @@ def sendPhoto(message: Message):
 def sendAudio(message: Message):
     # To send image using file
     # response: BaseResponse = bot.send_audio(message.chat.id, file="/Users/jeyavishnu/Downloads/audio.mp3")
-    response: BaseResponse = bot.send_audio(message.chat.id, audio_url="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")
+    response: BaseResponse = bot.send_audio(message.chat.id,
+                                            audio_url="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")
     if response.status_code == 200:
-        response: AudioResponse = AudioResponse.cast(response)
+        response: MediaResponse = MediaResponse.cast(response)
+    else:
+        print(response.to_dict())
+
+
+@bot.add_command_menu_helper(command="/senddocument", description="Send document")
+def sendDocument(message: Message):
+    # To send image using file
+    # response: BaseResponse = bot.send_document(message.chat.id, file="/Users/jeyavishnu/Downloads/some-doc.docx")
+    response: BaseResponse = bot.send_document(message.chat.id, document_url="URL_TO_DOC")
+    if response.status_code == 200:
+        response: MediaResponse = MediaResponse.cast(response)
     else:
         print(response.to_dict())
 

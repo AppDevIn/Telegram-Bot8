@@ -16,7 +16,6 @@ class BaseResponse:
         raise NotImplemented
 
 
-
 class Success(BaseResponse):
     ok: bool
     result: bool

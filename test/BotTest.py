@@ -2,7 +2,7 @@ import json
 import unittest
 from typing import List
 
-from TelegramBot8 import TeleBot, UpdateList, Update, Message, photo_response_from_dict
+from TelegramBot8 import TeleBot, Update, media_response_from_dict
 
 
 class BotTest(unittest.TestCase):
@@ -280,7 +280,7 @@ class BotTest(unittest.TestCase):
         assert self.bot._process_update(updates[0])
 
     def test_when_user_return_response_of_send_photo(self):
-        response = photo_response_from_dict(json.dumps({
+        response = media_response_from_dict(json.dumps({
             "ok": True,
             "result": {
                 "message_id": 321,
@@ -299,29 +299,29 @@ class BotTest(unittest.TestCase):
                 "date": 1645329122,
                 "photo": [
                     {
-                        "file_id": "AgACAgQAAxkDAAIBfGIRuuIROH8vPzQgHNFip1tVQplHAAL0rDEblFq8UWL51XJ0ofQnAQADAgADcwADIwQ",
-                        "file_unique_id": "AQAD9KwxG5RavFF4",
+                        "file_id": "sdfdsfs",
+                        "file_unique_id": "fdsfds",
                         "file_size": 1702,
                         "width": 90,
                         "height": 67
                     },
                     {
-                        "file_id": "AgACAgQAAxkDAAIBfGIRuuIROH8vPzQgHNFip1tVQplHAAL0rDEblFq8UWL51XJ0ofQnAQADAgADbQADIwQ",
-                        "file_unique_id": "AQAD9KwxG5RavFFy",
+                        "file_id": "fdsfds",
+                        "file_unique_id": "dfsdsf",
                         "file_size": 21334,
                         "width": 320,
                         "height": 240
                     },
                     {
-                        "file_id": "AgACAgQAAxkDAAIBfGIRuuIROH8vPzQgHNFip1tVQplHAAL0rDEblFq8UWL51XJ0ofQnAQADAgADeAADIwQ",
-                        "file_unique_id": "AQAD9KwxG5RavFF9",
+                        "file_id": "dfsdsf",
+                        "file_unique_id": "dfsfs",
                         "file_size": 95744,
                         "width": 800,
                         "height": 600
                     },
                     {
-                        "file_id": "AgACAgQAAxkDAAIBfGIRuuIROH8vPzQgHNFip1tVQplHAAL0rDEblFq8UWL51XJ0ofQnAQADAgADeQADIwQ",
-                        "file_unique_id": "AQAD9KwxG5RavFF-",
+                        "file_id": "grdfgrddfg",
+                        "file_unique_id": "fgd-",
                         "file_size": 165097,
                         "width": 1200,
                         "height": 900
@@ -333,7 +333,7 @@ class BotTest(unittest.TestCase):
         assert len(response.result.photo) == 4
 
     def test_when_user_return_response_of_send_audio(self):
-        response = photo_response_from_dict(json.dumps({
+        response = media_response_from_dict(json.dumps({
             "ok": True,
             "result": {
                 "message_id": 21321,
@@ -355,14 +355,52 @@ class BotTest(unittest.TestCase):
                     "file_name": "SoundHelix-Song-1.mp3",
                     "mime_type": "audio/mpeg",
                     "performer": "SoundHelix",
-                    "file_id": "CQACAgQAAxkDAAIBoWIR2MQFHxzs9C0hb9W9ExOtVc-7AAL_AQAC80lEU2zGX4cFNifOIwQ",
-                    "file_unique_id": "AgAD_wEAAvNJRFM",
+                    "file_id": "dfsdfs-dsa",
+                    "file_unique_id": "dsf",
                     "file_size": 8945229
                 }
             }
         }))
 
         assert response.to_dict()["result"]["audio"]["file_name"] == "SoundHelix-Song-1.mp3"
+
+    def test_when_user_return_response_of_send_document(self):
+        response = media_response_from_dict(json.dumps({
+            "ok": True,
+            "result": {
+                "message_id": 432342,
+                "from": {
+                    "id": 32432,
+                    "is_bot": True,
+                    "first_name": "fdsdsffsd",
+                    "username": "dsfdsf"
+                },
+                "chat": {
+                    "id": 342324,
+                    "first_name": "dsdfs",
+                    "username": "fsddfds",
+                    "type": "private"
+                },
+                "date": 1645362665,
+                "document": {
+                    "file_name": "4057111.pdf",
+                    "mime_type": "application/pdf",
+                    "thumb": {
+                        "file_id": "fdsfdsfds-8z0LmfUBAAdtAAMjBA",
+                        "file_unique_id": "fdsfds",
+                        "file_size": 8956,
+                        "width": 226,
+                        "height": 320
+                    },
+                    "file_id": "fsdfdsdsfdfsfds",
+                    "file_unique_id": "AgADSQMAAmW5lVA",
+                    "file_size": 78148
+                },
+                "caption": "Hello"
+            }
+        }))
+
+        assert response.to_dict()["result"]["document"]["file_name"] == "4057111.pdf"
 
     def test_generate_updated_throw_value_exception(self):
         self.assertRaises(ValueError, self.bot._generate_updates, {
