@@ -332,6 +332,38 @@ class BotTest(unittest.TestCase):
 
         assert len(response.result.photo) == 4
 
+    def test_when_user_return_response_of_send_audio(self):
+        response = photo_response_from_dict(json.dumps({
+            "ok": True,
+            "result": {
+                "message_id": 21321,
+                "from": {
+                    "id": 23121,
+                    "is_bot": True,
+                    "first_name": "dcds",
+                    "username": "dfsfdsdfs"
+                },
+                "chat": {
+                    "id": 3234134,
+                    "first_name": "sdfdfs",
+                    "username": "dsfdfs",
+                    "type": "private"
+                },
+                "date": 1645336772,
+                "audio": {
+                    "duration": 372,
+                    "file_name": "SoundHelix-Song-1.mp3",
+                    "mime_type": "audio/mpeg",
+                    "performer": "SoundHelix",
+                    "file_id": "CQACAgQAAxkDAAIBoWIR2MQFHxzs9C0hb9W9ExOtVc-7AAL_AQAC80lEU2zGX4cFNifOIwQ",
+                    "file_unique_id": "AgAD_wEAAvNJRFM",
+                    "file_size": 8945229
+                }
+            }
+        }))
+
+        assert response.to_dict()["result"]["audio"]["file_name"] == "SoundHelix-Song-1.mp3"
+
     def test_generate_updated_throw_value_exception(self):
         self.assertRaises(ValueError, self.bot._generate_updates, {
             "ok": False,
