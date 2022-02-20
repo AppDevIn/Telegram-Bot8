@@ -5,7 +5,10 @@ import json
 import TelegramBot8.Model.Dto.Constants as const
 from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, CommandRequestBase, \
     bot_commands_from_dict, ForwardRequest, error_from_dict, BaseResponse, ForwardResponse, forward_from_dict, \
-    GetMeResponse, get_me_response_from_dict, success_from_dict, UpdateType, Update, UpdateUrl, SendMessageUrl, Commands
+    GetMeResponse, get_me_response_from_dict, success_from_dict, Update, Commands, update_list_from_dict, \
+    SettingCommandException, photo_response_from_dict, audio_response_from_dict, ParseMode, MessageEntity
+from TelegramBot8.Model.Reqest.MediaRequest import PhotoRequest, AudioRequest
+from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest
 
 
 class TeleBot:
@@ -53,7 +56,7 @@ class TeleBot:
     def _generate_updates(self, response) -> List[Update]:
 
         if response.get('ok', False) is True:
-            return list(map(lambda update: Update(response=update), response["result"]))
+            return update_list_from_dict(json.dumps(response)).result
         else:
             raise ValueError(response['error'])
 
@@ -89,7 +92,7 @@ class TeleBot:
 
         return decorator
 
-    def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault()[0], description="",
+    def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault(), description="",
                                 language=None):
         """This method allows you handle commands send from telegram and allows you to add the \
         command to telegram menu
@@ -110,10 +113,10 @@ class TeleBot:
             if isinstance(command, list):
                 for c in command:
                     self._command.add_command(c, func)
-                self._command.add_command_menu(command[0], func, description, scope, language)
+                self._command.add_command_menu(command[0], func, description, scope[0], language)
             else:
                 self._command.add_command(command, func)
-                self._command.add_command_menu(command, func, description, scope, language)
+                self._command.add_command_menu(command, func, description, scope[0], language)
 
         return decorator
 
@@ -123,6 +126,7 @@ class TeleBot:
         :param callback_data:
         :return:
         """
+        raise NotImplemented
 
         def decorator(func):
             self._callback[callback_data] = func
@@ -131,34 +135,40 @@ class TeleBot:
 
     def _get_updates(self, offset, timeout, allowed_types) -> {}:
         if allowed_types is None:
-            allowed_types = [UpdateType.MESSAGE]
+            allowed_types = ["message"]
 
-        get_update_url = UpdateUrl(self.base) \
+        url = f"{self.base}getUpdates"
+
+        request_body = UpdateRequest() \
             .timeout(timeout) \
             .allowed_updates(allowed_types) \
             .offset(offset, condition=offset is not None) \
             .build()
 
-        response = requests.request("GET", get_update_url, headers={}, data={})
+        response = requests.request("GET", url, headers={}, data=request_body)
         response = json.loads(response.content)
 
         return response
 
-    def _process_update(self, item):
-        if len(item.message.entities) != 0 and item.message.entities[0].type == "bot_command" and \
-                item.getUpdateType() == UpdateType.MESSAGE and item.message.entityType():
-            command = item.message.text[item.message.entities[0].offset:item.message.entities[0].length]
-            if self._command.has_command(command): self._command.get_command(command)(item.message)
+    def _process_update(self, item: Update) -> bool:
+        if item.message.entities is not None and item.message.entities[0].type == "bot_command" and \
+                item.message is not None and item.message.entities is not None:
+            command = item.message.text[item.message.entities[0].offset:item.message.entities[0].length].split("@")[0]
+            if self._command.has_command(command):
+                self._command.get_command(command)(item.message)
+                return True
         elif item.message.text:
             for p in self._text.keys():
                 r = re.compile(p)
                 if re.fullmatch(r, item.message.text.lower()):
                     self._text.get(p)(item.message)
-        elif item.getUpdateType() == UpdateType.CALLBACK:
-            callback = item.callback.message.replyMarkup.keyboards[0].callbackData.split("@")[1]
-            self._callback.get(callback)(item.message)
+                    return True
+        # elif item.getUpdateType() == UpdateType.CALLBACK:
+        #     callback = item.callback.message.replyMarkup.keyboards[0].callbackData.split("@")[1]
+        #     self._callback.get(callback)(item.message)
         else:
             print("DEAD ☠️")
+        return False
 
     def get_me(self) -> GetMeResponse:
         """Get's information about the bot
@@ -169,27 +179,29 @@ class TeleBot:
         response = requests.post(url, headers={}, data={})
         return get_me_response_from_dict(response.text)
 
-    def send_message(self, chat_id, text, parse_mode=None, disable_web_page_preview=None,
+    def send_message(self, chat_id, text, parse_mode: ParseMode =None, disable_web_page_preview=None,
                      disable_notification=None, reply_to_message_id=None,
                      allow_sending_without_reply=None, reply_markup=None):
         """To send message to telegram using this method
 
         :param chat_id: Unique identifier for the target chat or username of the target channel
         :param text: Text of the message to be sent, 1-4096 characters after entities parsing
-        :param parse_mode: Mode for parsing entities in the message text allowing for bold and italic formats
+        :param parse_mode: Mode for parsing entities in the message text allowing for bold and italic formats. \
+         ParseMode enum is available to user
         :param disable_web_page_preview: Disables link previews for links in this message
         :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
         :param reply_to_message_id: If the message is a reply, ID of the original message
         :param allow_sending_without_reply: Pass True, if the message should be sent even if the specified replied-to message is not found
         :param reply_markup: Pass True, if the message should be sent even if the specified replied-to message is not found
         """
-        sendMessageUrl = SendMessageUrl(self.base).text(text).chat_id(chat_id).parse_mode(parse_mode) \
+        url = f"{self.base}sendMessage"
+        request_body = SendMessageRequest().text(text).chat_id(chat_id).parse_mode(parse_mode) \
             .disable_web_page_preview(disable_web_page_preview) \
             .disable_notification(disable_notification) \
             .reply_to_message_id(reply_to_message_id) \
             .allow_sending_without_reply(allow_sending_without_reply) \
             .reply_markup(reply_markup).build()
-        requests.request("POST", sendMessageUrl, headers={}, data={})
+        requests.request("POST", url, headers={}, data=request_body)
 
     def forward_messaged(self, chat_id, from_chat_id, message_id: int,
                          disable_notification: bool = None, protect_content: bool = None) -> ForwardResponse:
@@ -233,7 +245,8 @@ class TeleBot:
         response = requests.post(url, headers=self.headers, data=payload)
 
         if response.status_code != 200:
-            return error_from_dict(response.text).status_code(response.status_code)
+            err = error_from_dict(response.text).status_code(response.status_code)
+            raise SettingCommandException(err, f"Error when setting the commands due to {err.to_dict()}")
         else:
             return success_from_dict(response.text)
 
@@ -280,15 +293,101 @@ class TeleBot:
         else:
             return success_from_dict(response.text)
 
-    def send_photo(self, chat_id, file):
-        """ Method send image to a specfic chat
+    def send_photo(self, chat_id, file=None, image_url=None, caption: str = None, parse_mode: ParseMode = None,
+                   caption_entities: List[MessageEntity] = None, disable_notification: bool = None,
+                   protect_content: bool = None, reply_to_message_id: int = None,
+                   allow_sending_without_reply: bool = None, reply_markup=None) -> BaseResponse:
+        """ Method send image to a specific chat
 
         :param chat_id: Unique identifier for the target chat or username of the target channel
-        :param file: The file which the whole belong to
+        :param file: The file to which the image file is located at
+        :param image_url: The image that you wish to send
+        :param reply_markup: Additional interface options. A JSON-serialized object for an inline keyboard, \
+        custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+        :param allow_sending_without_reply: Pass True, if the message should be sent even if the specified replied-to \
+        message is not found
+        :param reply_to_message_id: If the message is a reply, ID of the original message
+        :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
+        :param protect_content: Protects the contents of the sent message from forwarding and saving
+        :param caption: Photo caption (may also be used when resending photos by file_id), 0-1024 characters after \
+        entities parsing
+        :param parse_mode: Mode for parsing entities in the photo caption. See formatting options for more details.
+        :param caption_entities: A JSON-serialized list of special entities that appear in the caption, which can be\
+         specified instead of parse_mode
+        :return: BaseResponse which can be casted into either PhotoResponse or Error
+        """
+        url = self.base + f"sendPhoto"
+
+        request = PhotoRequest().chat_id(chat_id).caption(caption).parse_mode(parse_mode) \
+            .caption_entities(caption_entities).disable_notification(disable_notification). \
+            protect_content(protect_content).reply_to_message_id(reply_to_message_id) \
+            .allow_sending_without_reply(allow_sending_without_reply).reply_markup(reply_markup)
+
+        up = None
+        if file:
+            poss_name = file.split("/")
+            up = {'photo': (poss_name[-1], open(file, 'rb'), "multipart/form-data")}
+        elif image_url:
+            request.photo(image_url)
+
+        response = requests.post(url, files=up, data=request.build())
+        if response.status_code == 200:
+            return photo_response_from_dict(response.text)
+        else:
+            return error_from_dict(response.text).status_code(response.status_code)
+
+    def send_audio(self, chat_id, file=None, audio_url=None, caption: str = None, parse_mode: ParseMode = None,
+                   caption_entities: List[MessageEntity] = None, disable_notification: bool = None,
+                   protect_content: bool = None, reply_to_message_id: int = None,
+                   allow_sending_without_reply: bool = None, reply_markup=None, duration: int = None,
+                   performer: str = None, title: str = None, thumb: str = None) -> BaseResponse:
+
+        """Method send audio to a specific chat
+        
+        :param chat_id: Unique identifier for the target chat or username of the target channel
+        :param file: The file to which the image file is located at
+        :param audio_url: The audio that you wish to send
+        :param caption: Photo caption (may also be used when resending photos by file_id), 0-1024 characters after \
+        entities parsing
+        :param parse_mode: Mode for parsing entities in the photo caption. See formatting options for more details.
+        :param caption_entities: A JSON-serialized list of special entities that appear in the caption, which can be\
+         specified instead of parse_mode
+        :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
+        :param protect_content: Protects the contents of the sent message from forwarding and saving
+        :param reply_to_message_id: If the message is a reply, ID of the original message
+        :param allow_sending_without_reply: Pass True, if the message should be sent even if the specified replied-to \
+        message is not found
+        :param reply_markup: Additional interface options. A JSON-serialized object for an inline keyboard, \
+        custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+        :param duration: Duration of the audio in seconds
+        :param performer: Performer
+        :param title: Track name
+        :param thumb: humbnail of the file sent; can be ignored if thumbnail generation for the file is supported \
+        server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and \
+        height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails \
+        can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the \
+        thumbnail was uploaded using multipart/form-data under <file_attach_name>.
         :return:
         """
-        up = {'photo': ("i.png", open(file, 'rb'), "multipart/form-data")}
-        url = self.base + f"sendPhoto"
-        requests.post(url, files=up, data={
-            "chat_id": chat_id,
-        })
+
+        url = self.base + f"sendAudio"
+
+        request = AudioRequest().chat_id(chat_id).caption(caption).parse_mode(parse_mode) \
+            .caption_entities(caption_entities).disable_notification(disable_notification). \
+            protect_content(protect_content).reply_to_message_id(reply_to_message_id) \
+            .allow_sending_without_reply(allow_sending_without_reply).reply_markup(reply_markup).duration(duration) \
+            .performer(performer).title(title).thumb(thumb)
+
+        up = None
+        if file:
+            poss_name = file.split("/")
+            up = {'audio': (poss_name[-1], open(file, 'rb'), "multipart/form-data")}
+        elif audio_url:
+            request.audio(audio_url)
+
+        response = requests.post(url, files=up, data=request.build())
+        if response.status_code == 200:
+            print(response.text)
+            return audio_response_from_dict(response.text)
+        else:
+            return error_from_dict(response.text).status_code(response.status_code)

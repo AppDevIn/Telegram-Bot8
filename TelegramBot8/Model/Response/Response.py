@@ -6,13 +6,15 @@ T = TypeVar("T")
 
 
 class BaseResponse:
-    status_code: int
+    status_code: int = 200
 
-    def from_dict(self, obj: Any):
+    @staticmethod
+    def from_dict(obj: Any):
         raise NotImplemented
 
-    def to_dict(self, obj: Any):
+    def to_dict(self):
         raise NotImplemented
+
 
 
 class Success(BaseResponse):
@@ -56,6 +58,7 @@ class Error(BaseResponse):
         self.description = description
 
     def status_code(self, status_code) -> 'Error':
+        self.status_code = status_code
         return self
 
     @staticmethod
