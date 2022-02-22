@@ -257,6 +257,61 @@ class Document:
         return result
 
 
+class Video:
+    duration: Optional[int]
+    width: Optional[int]
+    height: Optional[int]
+    file_name: Optional[str]
+    mime_type: Optional[str]
+    thumb: Optional[Photo]
+    file_id: str
+    file_unique_id: str
+    file_size: Optional[int]
+    _ori_dict = {}
+
+    def __init__(self, duration: Optional[int], width: Optional[int], height: Optional[int], file_name: Optional[str],
+                 mime_type: Optional[str], thumb: Optional[Photo], file_id: str,
+                 file_unique_id: str, file_size: Optional[int], original: {}) -> None:
+        self.duration = duration
+        self.width = width
+        self.height = height
+        self.file_name = file_name
+        self.mime_type = mime_type
+        self.thumb = thumb
+        self.file_id = file_id
+        self.file_unique_id = file_unique_id
+        self.file_size = file_size
+        self._ori_dict = original
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'Video':
+        assert isinstance(obj, dict)
+        duration = from_union([from_int, from_none], obj.get("duration"))
+        width = from_union([from_int, from_none], obj.get("width"))
+        height = from_union([from_int, from_none], obj.get("height"))
+        file_name = from_union([from_str, from_none], obj.get("file_name"))
+        mime_type = from_union([from_str, from_none], obj.get("mime_type"))
+        thumb = from_union([Photo.from_dict, from_none], obj.get("thumb"))
+        file_id = from_str(obj.get("file_id"))
+        file_unique_id = from_str(obj.get("file_unique_id"))
+        file_size = from_union([from_int, from_none], obj.get("file_size"))
+        return Video(duration, width, height, file_name, mime_type, thumb, file_id, file_unique_id, file_size, obj)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["duration"] = from_union([from_int, from_none], self.duration)
+        result["width"] = from_union([from_int, from_none], self.width)
+        result["height"] = from_union([from_int, from_none], self.height)
+        result["file_name"] = from_union([from_str, from_none], self.file_name)
+        result["mime_type"] = from_union([from_str, from_none], self.mime_type)
+        result["thumb"] = from_union([lambda x: to_class(Photo, x), from_none], self.thumb)
+        result["file_id"] = from_str(self.file_id)
+        result["file_unique_id"] = from_str(self.file_unique_id)
+        result["file_size"] = from_union([from_int, from_none], self.file_size)
+        result.update(self._ori_dict)
+        return result
+
+
 class Message:
     message_id: int
     message_from: Optional[User]
@@ -270,13 +325,14 @@ class Message:
     photo: Optional[List[Photo]]
     audio: Optional[Audio]
     document: Optional[Document]
+    video: Optional[Video]
     _ori_dict = {}
 
     def __init__(self, message_id: int, message_from: Optional[User], chat: Optional[Chat],
                  date: Optional[int], text: Optional[str], entities: Optional[List[MessageEntity]],
                  new_chat_participant: Optional[User], new_chat_member: Optional[User],
                  new_chat_members: Optional[List[User]], original: {}, photo: Optional[List[Photo]],
-                 audio: Optional[Audio], document: Optional[Document]) -> None:
+                 audio: Optional[Audio], document: Optional[Document], video: Optional[Video]) -> None:
         self.message_id = message_id
         self.message_from = message_from
         self.chat = chat
@@ -290,6 +346,7 @@ class Message:
         self.photo = photo
         self.audio = audio
         self.document = document
+        self.video = video
 
     @staticmethod
     def from_dict(obj: Any) -> 'Message':
@@ -306,8 +363,9 @@ class Message:
         photo = from_union([lambda x: from_list(Photo.from_dict, x), from_none], obj.get("photo"))
         audio = from_union([Audio.from_dict, from_none], obj.get("audio"))
         document = from_union([Document.from_dict, from_none], obj.get("document"))
+        video = from_union([Video.from_dict, from_none], obj.get("video"))
         return Message(message_id, message_from, chat, date, text, entities, new_chat_participant, new_chat_member,
-                       new_chat_members, obj, photo, audio, document)
+                       new_chat_members, obj, photo, audio, document, video)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -325,6 +383,7 @@ class Message:
         result["photo"] = from_union([lambda x: from_list(lambda x: to_class(Photo, x), x), from_none], self.photo)
         result["audio"] = from_union([lambda x: to_class(Audio, x), from_none], self.audio)
         result["document"] = from_union([lambda x: to_class(Document, x), from_none], self.document)
+        result["video"] = from_union([lambda x: to_class(Video, x), from_none], self.video)
         result.update(self._ori_dict)
         return result
 

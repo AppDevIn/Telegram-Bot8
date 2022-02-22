@@ -108,6 +108,18 @@ def sendDocument(message: Message):
         print(response.to_dict())
 
 
+# Command to send video
+@bot.add_command_menu_helper(command="/sendvideo", description="Send Video")
+def sendVideo(message: Message):
+    # To send video using file
+    response: BaseResponse = bot.send_video(message.chat.id, file="/Users/jeyavishnu/Downloads/strange.mp4")
+    # response: BaseResponse = bot.send_video(message.chat.id, video_url="https://t.me/TelegramTips/320")
+    if response.status_code == 200:
+        response: MediaResponse = MediaResponse.cast(response)
+    else:
+        print(response.to_dict())
+
+
 # Printing the commands
 print(bot.get_my_commands().to_dict())
 
