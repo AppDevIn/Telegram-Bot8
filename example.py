@@ -120,6 +120,16 @@ def sendVideo(message: Message):
         print(response.to_dict())
 
 
+# Command to send animation
+@bot.add_command_menu_helper(command="/sendanimation", description="Send Animation")
+def sendAnimation(message: Message):
+    response: BaseResponse = bot.send_animation(message.chat.id, animation_url="https://media4.giphy.com/media/0YqqS9Nize8tKxfSWV/giphy360p.mp4?cid=ecf05e47a5snh4vbs0mwa5f20nfota9y0vkv7xw7ziwy7704&rid=giphy360p.mp4&ct=v")
+    if response.status_code == 200:
+        response: MediaResponse = MediaResponse.cast(response)
+    else:
+        print(response.to_dict())
+
+
 # Printing the commands
 print(bot.get_my_commands().to_dict())
 

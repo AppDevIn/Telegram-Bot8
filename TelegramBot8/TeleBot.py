@@ -258,7 +258,6 @@ class TeleBot:
 
         payload = json.dumps(request_body)
         response = requests.post(url, headers=self.headers, data=payload)
-
         if response.status_code != 200:
             err = error_from_dict(response.text).status_code(response.status_code)
             raise SettingCommandException(err, f"Error when setting the commands due to {err.to_dict()}")
@@ -527,7 +526,7 @@ class TeleBot:
         :return: BaseResponse which can be casted into either AudioResponse or Error
         """
 
-        url = self.base + f"sendVideo"
+        url = self.base + f"sendAnimation"
 
         request: AnimationRequest = AnimationRequest().chat_id(chat_id).caption(caption).parse_mode(parse_mode) \
             .caption_entities(caption_entities).disable_notification(disable_notification). \
