@@ -34,6 +34,10 @@ class MediaResponse(BaseResponse):
 
 
 def media_response_from_dict(s: Any) -> MediaResponse:
+    """
+
+    :rtype: object
+    """
     data = json.loads(s)
     return MediaResponse.from_dict(data)
 
