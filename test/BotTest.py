@@ -402,6 +402,89 @@ class BotTest(unittest.TestCase):
 
         assert response.to_dict()["result"]["document"]["file_name"] == "4057111.pdf"
 
+    def test_when_user_return_response_of_send_video(self):
+        response = media_response_from_dict(json.dumps({
+            "ok": True,
+            "result": {
+                "message_id": 43342,
+                "from": {
+                    "id": 43232,
+                    "is_bot": True,
+                    "first_name": "dfdfds",
+                    "username": "fsdsdfsfdsdss"
+                },
+                "chat": {
+                    "id": 34323243232,
+                    "first_name": "fsddfs",
+                    "username": "fdsdsffds",
+                    "type": "private"
+                },
+                "date": 1645516743,
+                "video": {
+                    "duration": 14,
+                    "width": 1080,
+                    "height": 1080,
+                    "file_name": "Better Reactions Android.mp4",
+                    "mime_type": "video/mp4",
+                    "thumb": {
+                        "file_id": "dfssdfdfas",
+                        "file_unique_id": "dfsfddfdsfa",
+                        "file_size": 17052,
+                        "width": 320,
+                        "height": 320
+                    },
+                    "file_id": "dffdadasfd",
+                    "file_unique_id": "dfssfasfdfsffdsa",
+                    "file_size": 4099232
+                }
+            }
+        }))
+
+        assert response.to_dict()["result"]["video"]["file_name"] == "Better Reactions Android.mp4"
+
+
+    def test_when_user_return_response_of_send_animation(self):
+        response = media_response_from_dict(json.dumps({
+            "ok": True,
+            "result": {
+                "message_id": 3433323,
+                "from": {
+                    "id": 3424343232,
+                    "is_bot": True,
+                    "first_name": "dfgfdggf",
+                    "username": "fgdfgdgfd"
+                },
+                "chat": {
+                    "id": 31221,
+                    "first_name": "ddfsdf",
+                    "username": "fdsfdsfsfds",
+                    "type": "private"
+                },
+                "date": 1645626167,
+                "video": {
+                    "duration": 5,
+                    "width": 640,
+                    "height": 360,
+                    "file_name": "giphy360p.mp4",
+                    "mime_type": "video/mp4",
+                    "thumb": {
+                        "file_id": "fdsfdsfsfdsdffds",
+                        "file_unique_id": "AQAD-dfsfdsfdsfdsfdsfdsfds",
+                        "file_size": 12177,
+                        "width": 320,
+                        "height": 180
+                    },
+                    "file_id": "sfdfdsfds-dfsdfsfdsfddfsfsdfds",
+                    "file_unique_id": "dfssdffsddfsfd-dsfdsfdsfdsfdsfds",
+                    "file_size": 430124
+                },
+                "caption": "Hello"
+            }
+        }))
+
+        assert response.to_dict()["result"]["video"]["file_name"] == "giphy360p.mp4"
+        assert response.to_dict()["result"]["video"]["mime_type"] == "video/mp4"
+
     def test_generate_updated_throw_value_exception(self):
         self.assertRaises(ValueError, self.bot._generate_updates, {
             "ok": False,

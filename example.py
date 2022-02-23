@@ -70,6 +70,7 @@ def send_bold(message: Message):
     print(response.to_dict())
 
 
+# Command to send photo
 @bot.add_command_menu_helper(command="/sendphoto", description="Send photo")
 def sendPhoto(message: Message):
     # To send image using file
@@ -82,9 +83,10 @@ def sendPhoto(message: Message):
         print(response.to_dict())
 
 
+# Command to send audio
 @bot.add_command_menu_helper(command="/sendaudio", description="Send audio")
 def sendAudio(message: Message):
-    # To send image using file
+    # To send audio using file
     # response: BaseResponse = bot.send_audio(message.chat.id, file="/Users/jeyavishnu/Downloads/audio.mp3")
     response: BaseResponse = bot.send_audio(message.chat.id,
                                             audio_url="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")
@@ -94,11 +96,34 @@ def sendAudio(message: Message):
         print(response.to_dict())
 
 
+# Command to send document
 @bot.add_command_menu_helper(command="/senddocument", description="Send document")
 def sendDocument(message: Message):
-    # To send image using file
+    # To send document using file
     # response: BaseResponse = bot.send_document(message.chat.id, file="/Users/jeyavishnu/Downloads/some-doc.docx")
     response: BaseResponse = bot.send_document(message.chat.id, document_url="URL_TO_DOC")
+    if response.status_code == 200:
+        response: MediaResponse = MediaResponse.cast(response)
+    else:
+        print(response.to_dict())
+
+
+# Command to send video
+@bot.add_command_menu_helper(command="/sendvideo", description="Send Video")
+def sendVideo(message: Message):
+    # To send video using file
+    response: BaseResponse = bot.send_video(message.chat.id, file="/Users/jeyavishnu/Downloads/strange.mp4")
+    # response: BaseResponse = bot.send_video(message.chat.id, video_url="https://t.me/TelegramTips/320")
+    if response.status_code == 200:
+        response: MediaResponse = MediaResponse.cast(response)
+    else:
+        print(response.to_dict())
+
+
+# Command to send animation
+@bot.add_command_menu_helper(command="/sendanimation", description="Send Animation")
+def sendAnimation(message: Message):
+    response: BaseResponse = bot.send_animation(message.chat.id, animation_url="https://media4.giphy.com/media/0YqqS9Nize8tKxfSWV/giphy360p.mp4?cid=ecf05e47a5snh4vbs0mwa5f20nfota9y0vkv7xw7ziwy7704&rid=giphy360p.mp4&ct=v")
     if response.status_code == 200:
         response: MediaResponse = MediaResponse.cast(response)
     else:

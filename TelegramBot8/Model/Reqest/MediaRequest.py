@@ -80,3 +80,51 @@ class DocumentRequest(MediaRequestBase):
     def thumb(self, thumb):
         self.addParameter("thumb", thumb)
         return self
+
+
+class VideoRequest(MediaRequestBase):
+    def video(self, video):
+        self.addParameter("video", video)
+        return self
+
+    def duration(self, duration):
+        self.addParameter("duration", duration)
+        return self
+
+    def width(self, width):
+        self.addParameter("width", width)
+        return self
+
+    def height(self, height):
+        self.addParameter("height", height)
+        return self
+
+    def thumb(self, thumb):
+        self.addParameter("thumb", thumb)
+        return self
+
+    def supports_streaming(self, supports_streaming):
+        self.addParameter("supports_streaming", supports_streaming)
+        return self
+
+
+class AnimationRequest(MediaRequestBase):
+    def animation(self, animation):
+        self.addParameter("animation", animation)
+        return self
+
+    def duration(self, duration):
+        self.addParameter("duration", duration)
+        return self
+
+    def width(self, width):
+        self.addParameter("width", width)
+        return self
+
+    def height(self, height):
+        self.addParameter("height", height)
+        return self
+
+    def thumb(self, thumb):
+        self.addParameter("thumb", thumb)
+        return self
