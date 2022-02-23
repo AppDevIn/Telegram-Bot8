@@ -351,7 +351,9 @@ class TeleBot:
                    allow_sending_without_reply: bool = None, reply_markup=None, duration: int = None,
                    performer: str = None, title: str = None, thumb: str = None) -> BaseResponse:
 
-        """Method send audio to a specific chat
+        """Use this method to send audio files, if you want Telegram clients to display them in the music player. \
+        Your audio must be in the .MP3 or .M4A format. Bots can currently \
+        send audio files of up to 50 MB in size, this limit may be changed in the future.
         
         :param chat_id: Unique identifier for the target chat or username of the target channel
         :param file: The file to which the image file is located at
@@ -376,7 +378,7 @@ class TeleBot:
         height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails \
         can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the \
         thumbnail was uploaded using multipart/form-data under <file_attach_name>.
-        :return: BaseResponse which can be casted into either AudioResponse or Error
+        :return: BaseResponse which can be casted into either MediaResponse or Error
         """
 
         url = self.base + f"sendAudio"
@@ -400,7 +402,8 @@ class TeleBot:
                       protect_content: bool = None, reply_to_message_id: int = None,
                       allow_sending_without_reply: bool = None, reply_markup=None, thumb: str = None) -> BaseResponse:
 
-        """Method send document to a specific chat
+        """Use this method to send general files. Bots can currently send files of any type of up to 50 MB in size, \
+        this limit may be changed in the future.
 
         :param chat_id: Unique identifier for the target chat or username of the target channel
         :param file: The file to which the image file is located at
@@ -422,7 +425,7 @@ class TeleBot:
         height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails \
         can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the \
         thumbnail was uploaded using multipart/form-data under <file_attach_name>.
-        :return: BaseResponse which can be casted into either AudioResponse or Error
+        :return: BaseResponse which can be casted into either MediaResponse or Error
         """
 
         url = self.base + f"sendDocument"
@@ -447,7 +450,9 @@ class TeleBot:
                    supports_streaming: bool = None, duration: int = None, width: int = None,
                    height: int = None) -> BaseResponse:
 
-        """Method send video to a specific chat
+        """Use this method to send video files, Telegram clients support mp4 videos \
+        (other formats may be sent as Document). Bots can currently send video files of up to 50 MB in size, \
+        this limit may be changed in the future.
 
         :param chat_id: Unique identifier for the target chat or username of the target channel
         :param file: The file to which the image file is located at
@@ -473,7 +478,7 @@ class TeleBot:
         :param supports_streaming: Pass True, if the uploaded video is suitable for streaming
         :param width: Video width
         :param height: Video height
-        :return: BaseResponse which can be casted into either AudioResponse or Error
+        :return: BaseResponse which can be casted into either MediaResponse or Error
         """
 
         url = self.base + f"sendVideo"
@@ -498,7 +503,9 @@ class TeleBot:
                        allow_sending_without_reply: bool = None, reply_markup=None, thumb: str = None,
                        duration: int = None, width: int = None, height: int = None) -> BaseResponse:
 
-        """Method send animation to a specific chat
+        """Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On success, \
+        the sent Message is returned. Bots can currently send animation files of up to 50 MB in size, \
+        this limit may be changed in the future.
 
         :param chat_id: Unique identifier for the target chat or username of the target channel
         :param file: The file to which the image file is located at
@@ -523,7 +530,7 @@ class TeleBot:
         :param duration: Duration of sent video in seconds
         :param width: Video width
         :param height: Video height
-        :return: BaseResponse which can be casted into either AudioResponse or Error
+        :return: BaseResponse which can be casted into either MediaResponse or Error
         """
 
         url = self.base + f"sendAnimation"
