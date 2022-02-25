@@ -134,3 +134,13 @@ class VoiceRequest(MediaRequestBase):
     def voice(self, voice):
         self.addParameter("voice", voice)
         return self
+
+
+class VideoNoteRequest(MediaRequestBase):
+    def video_note(self, video_note):
+        self.addParameter("video_note", video_note)
+        return self
+
+    def length(self, length):
+        self.addParameter("length", length)
+        return self
