@@ -144,3 +144,11 @@ class VideoNoteRequest(MediaRequestBase):
     def length(self, length):
         self.addParameter("length", length)
         return self
+
+    def duration(self, duration):
+        self.addParameter("duration", duration)
+        return self
+
+    def thumb(self, thumb):
+        self.addParameter("thumb", thumb)
+        return self

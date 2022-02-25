@@ -142,6 +142,16 @@ def sendVoice(message: Message):
         print(response.to_dict())
 
 
+# Command to send video note
+@bot.add_command_menu_helper(command="/sendvidenote", description="Send Video Note")
+def sendVideoNote(message: Message):
+    response: BaseResponse = bot.send_video_note(message.chat.id, video_note_url="https://t.me/TelegramTips/320")
+    if response.status_code == 200:
+        response: MediaResponse = MediaResponse.cast(response)
+    else:
+        print(response.to_dict())
+
+
 # Printing the commands
 print(bot.get_my_commands().to_dict())
 
