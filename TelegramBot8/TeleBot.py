@@ -9,7 +9,7 @@ from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, Comma
     SettingCommandException, ParseMode, MessageEntity, \
     media_response_from_dict, MissingUrlOrFile
 from TelegramBot8.Model.Reqest.MediaRequest import PhotoRequest, AudioRequest, DocumentRequest, MediaRequestBase, \
-    VideoRequest, AnimationRequest
+    VideoRequest, AnimationRequest, VoiceRequest
 from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest
 
 
@@ -548,3 +548,46 @@ class TeleBot:
             request.animation(animation_url)
 
         return _sending_media(url, file, request, "animation")
+
+    def send_voice(self, chat_id, file=None, voice_url=None, caption: str = None, parse_mode: ParseMode = None,
+                   caption_entities: List[MessageEntity] = None, disable_notification: bool = None,
+                   protect_content: bool = None, reply_to_message_id: int = None,
+                   allow_sending_without_reply: bool = None, reply_markup=None) -> BaseResponse:
+
+        """Use this method to send audio files, if you want Telegram clients to display the file as a playable voice \
+        message. For this to work, your audio must be in an .OGG file encoded with OPUS (other formats may be sent as \
+        Audio or Document). On success, the sent Message is returned. Bots can currently send voice messages of up \
+        to 50 MB in size, this limit may be changed in the future.
+
+        :param chat_id: Unique identifier for the target chat or username of the target channel
+        :param file: The file to which the image file is located at
+        :param voice_url: The animation that you wish to send
+        :param caption: Photo caption (may also be used when resending photos by file_id), 0-1024 characters after \
+        entities parsing
+        :param parse_mode: Mode for parsing entities in the photo caption. See formatting options for more details.
+        :param caption_entities: A JSON-serialized list of special entities that appear in the caption, which can be\
+         specified instead of parse_mode
+        :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
+        :param protect_content: Protects the contents of the sent message from forwarding and saving
+        :param reply_to_message_id: If the message is a reply, ID of the original message
+        :param allow_sending_without_reply: Pass True, if the message should be sent even if the specified replied-to \
+        message is not found
+        :param reply_markup: Additional interface options. A JSON-serialized object for an inline keyboard, \
+        custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+        :return: BaseResponse which can be casted into either MediaResponse or Error
+        """
+
+        url = self.base + f"sendVoice"
+
+        request: VoiceRequest = VoiceRequest().chat_id(chat_id).caption(caption).parse_mode(parse_mode) \
+            .caption_entities(caption_entities).disable_notification(disable_notification). \
+            protect_content(protect_content).reply_to_message_id(reply_to_message_id) \
+            .allow_sending_without_reply(allow_sending_without_reply).reply_markup(reply_markup)
+
+        if url is None and file is None:
+            raise MissingUrlOrFile
+
+        if url:
+            request.voice(voice_url)
+
+        return _sending_media(url, file, request, "voice")

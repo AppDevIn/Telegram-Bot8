@@ -128,3 +128,9 @@ class AnimationRequest(MediaRequestBase):
     def thumb(self, thumb):
         self.addParameter("thumb", thumb)
         return self
+
+
+class VoiceRequest(MediaRequestBase):
+    def voice(self, voice):
+        self.addParameter("voice", voice)
+        return self
