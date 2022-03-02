@@ -5,9 +5,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="Telegram-Bot8",
-    version="0.2.0",
+    version="0.2.1",
     author="AppDevIn Sliver",
-    author_email=" teamprojectlive@example.com",
+    author_email=" teamprojectlive@gmail.com",
     description="Python package to utilizes the telegram API to easily add commands and person other actions",
     long_description=long_description,
     long_description_content_type="text/markdown",
