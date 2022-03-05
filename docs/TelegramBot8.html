@@ -282,9 +282,39 @@ On success, the sent Message is returned.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="TelegramBot8.TeleBot.TeleBot.send_animation">
+<code class="sig-name descname">send_animation</code><span class="sig-paren">(</span><em class="sig-param">chat_id</em>, <em class="sig-param">file=None</em>, <em class="sig-param">animation_url=None</em>, <em class="sig-param">caption: str = None</em>, <em class="sig-param">parse_mode: TelegramBot8.Model.Response.UpdateResponse.ParseMode = None</em>, <em class="sig-param">caption_entities: List[TelegramBot8.Model.Response.UpdateResponse.MessageEntity] = None</em>, <em class="sig-param">disable_notification: bool = None</em>, <em class="sig-param">protect_content: bool = None</em>, <em class="sig-param">reply_to_message_id: int = None</em>, <em class="sig-param">allow_sending_without_reply: bool = None</em>, <em class="sig-param">reply_markup=None</em>, <em class="sig-param">thumb: str = None</em>, <em class="sig-param">duration: int = None</em>, <em class="sig-param">width: int = None</em>, <em class="sig-param">height: int = None</em><span class="sig-paren">)</span> &#x2192; TelegramBot8.Model.Response.Response.BaseResponse<a class="headerlink" href="#TelegramBot8.TeleBot.TeleBot.send_animation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On success,         the sent Message is returned. Bots can currently send animation files of up to 50 MB in size,         this limit may be changed in the future.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chat_id</strong> – Unique identifier for the target chat or username of the target channel</p></li>
+<li><p><strong>file</strong> – The file to which the image file is located at</p></li>
+<li><p><strong>animation_url</strong> – The animation that you wish to send</p></li>
+<li><p><strong>caption</strong> – Photo caption (may also be used when resending photos by file_id), 0-1024 characters after         entities parsing</p></li>
+<li><p><strong>parse_mode</strong> – Mode for parsing entities in the photo caption. See formatting options for more details.</p></li>
+<li><p><strong>caption_entities</strong> – A JSON-serialized list of special entities that appear in the caption, which can be         specified instead of parse_mode</p></li>
+<li><p><strong>disable_notification</strong> – Sends the message silently. Users will receive a notification with no sound.</p></li>
+<li><p><strong>protect_content</strong> – Protects the contents of the sent message from forwarding and saving</p></li>
+<li><p><strong>reply_to_message_id</strong> – If the message is a reply, ID of the original message</p></li>
+<li><p><strong>allow_sending_without_reply</strong> – Pass True, if the message should be sent even if the specified replied-to         message is not found</p></li>
+<li><p><strong>reply_markup</strong> – Additional interface options. A JSON-serialized object for an inline keyboard,         custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.</p></li>
+<li><p><strong>thumb</strong> – humbnail of the file sent; can be ignored if thumbnail generation for the file is supported         server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail’s width and         height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails         can’t be reused and can be only uploaded as a new file, so you can pass “attach://&lt;file_attach_name&gt;” if the         thumbnail was uploaded using multipart/form-data under &lt;file_attach_name&gt;.</p></li>
+<li><p><strong>duration</strong> – Duration of sent video in seconds</p></li>
+<li><p><strong>width</strong> – Video width</p></li>
+<li><p><strong>height</strong> – Video height</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>BaseResponse which can be casted into either MediaResponse or Error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="TelegramBot8.TeleBot.TeleBot.send_audio">
 <code class="sig-name descname">send_audio</code><span class="sig-paren">(</span><em class="sig-param">chat_id</em>, <em class="sig-param">file=None</em>, <em class="sig-param">audio_url=None</em>, <em class="sig-param">caption: str = None</em>, <em class="sig-param">parse_mode: TelegramBot8.Model.Response.UpdateResponse.ParseMode = None</em>, <em class="sig-param">caption_entities: List[TelegramBot8.Model.Response.UpdateResponse.MessageEntity] = None</em>, <em class="sig-param">disable_notification: bool = None</em>, <em class="sig-param">protect_content: bool = None</em>, <em class="sig-param">reply_to_message_id: int = None</em>, <em class="sig-param">allow_sending_without_reply: bool = None</em>, <em class="sig-param">reply_markup=None</em>, <em class="sig-param">duration: int = None</em>, <em class="sig-param">performer: str = None</em>, <em class="sig-param">title: str = None</em>, <em class="sig-param">thumb: str = None</em><span class="sig-paren">)</span> &#x2192; TelegramBot8.Model.Response.Response.BaseResponse<a class="headerlink" href="#TelegramBot8.TeleBot.TeleBot.send_audio" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method send audio to a specific chat</p>
+<dd><p>Use this method to send audio files, if you want Telegram clients to display them in the music player.         Your audio must be in the .MP3 or .M4A format. Bots can currently         send audio files of up to 50 MB in size, this limit may be changed in the future.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -306,7 +336,34 @@ On success, the sent Message is returned.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>BaseResponse which can be casted into either MediaResponse or Error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="TelegramBot8.TeleBot.TeleBot.send_document">
+<code class="sig-name descname">send_document</code><span class="sig-paren">(</span><em class="sig-param">chat_id</em>, <em class="sig-param">file=None</em>, <em class="sig-param">document_url=None</em>, <em class="sig-param">caption: str = None</em>, <em class="sig-param">parse_mode: TelegramBot8.Model.Response.UpdateResponse.ParseMode = None</em>, <em class="sig-param">caption_entities: List[TelegramBot8.Model.Response.UpdateResponse.MessageEntity] = None</em>, <em class="sig-param">disable_notification: bool = None</em>, <em class="sig-param">protect_content: bool = None</em>, <em class="sig-param">reply_to_message_id: int = None</em>, <em class="sig-param">allow_sending_without_reply: bool = None</em>, <em class="sig-param">reply_markup=None</em>, <em class="sig-param">thumb: str = None</em><span class="sig-paren">)</span> &#x2192; TelegramBot8.Model.Response.Response.BaseResponse<a class="headerlink" href="#TelegramBot8.TeleBot.TeleBot.send_document" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this method to send general files. Bots can currently send files of any type of up to 50 MB in size,         this limit may be changed in the future.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chat_id</strong> – Unique identifier for the target chat or username of the target channel</p></li>
+<li><p><strong>file</strong> – The file to which the image file is located at</p></li>
+<li><p><strong>document_url</strong> – The document that you wish to send</p></li>
+<li><p><strong>caption</strong> – Photo caption (may also be used when resending photos by file_id), 0-1024 characters after         entities parsing</p></li>
+<li><p><strong>parse_mode</strong> – Mode for parsing entities in the photo caption. See formatting options for more details.</p></li>
+<li><p><strong>caption_entities</strong> – A JSON-serialized list of special entities that appear in the caption, which can be         specified instead of parse_mode</p></li>
+<li><p><strong>disable_notification</strong> – Sends the message silently. Users will receive a notification with no sound.</p></li>
+<li><p><strong>protect_content</strong> – Protects the contents of the sent message from forwarding and saving</p></li>
+<li><p><strong>reply_to_message_id</strong> – If the message is a reply, ID of the original message</p></li>
+<li><p><strong>allow_sending_without_reply</strong> – Pass True, if the message should be sent even if the specified replied-to         message is not found</p></li>
+<li><p><strong>reply_markup</strong> – Additional interface options. A JSON-serialized object for an inline keyboard,         custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.</p></li>
+<li><p><strong>thumb</strong> – humbnail of the file sent; can be ignored if thumbnail generation for the file is supported         server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail’s width and         height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails         can’t be reused and can be only uploaded as a new file, so you can pass “attach://&lt;file_attach_name&gt;” if the         thumbnail was uploaded using multipart/form-data under &lt;file_attach_name&gt;.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>BaseResponse which can be casted into either MediaResponse or Error</p>
 </dd>
 </dl>
 </dd></dl>
@@ -352,7 +409,91 @@ On success, the sent Message is returned.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>BaseResponse which can be casted into either PhotoResponse or Error</p>
+<dd class="field-even"><p>BaseResponse which can be casted into either MediaResponse or Error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="TelegramBot8.TeleBot.TeleBot.send_video">
+<code class="sig-name descname">send_video</code><span class="sig-paren">(</span><em class="sig-param">chat_id</em>, <em class="sig-param">file=None</em>, <em class="sig-param">video_url=None</em>, <em class="sig-param">caption: str = None</em>, <em class="sig-param">parse_mode: TelegramBot8.Model.Response.UpdateResponse.ParseMode = None</em>, <em class="sig-param">caption_entities: List[TelegramBot8.Model.Response.UpdateResponse.MessageEntity] = None</em>, <em class="sig-param">disable_notification: bool = None</em>, <em class="sig-param">protect_content: bool = None</em>, <em class="sig-param">reply_to_message_id: int = None</em>, <em class="sig-param">allow_sending_without_reply: bool = None</em>, <em class="sig-param">reply_markup=None</em>, <em class="sig-param">thumb: str = None</em>, <em class="sig-param">supports_streaming: bool = None</em>, <em class="sig-param">duration: int = None</em>, <em class="sig-param">width: int = None</em>, <em class="sig-param">height: int = None</em><span class="sig-paren">)</span> &#x2192; TelegramBot8.Model.Response.Response.BaseResponse<a class="headerlink" href="#TelegramBot8.TeleBot.TeleBot.send_video" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this method to send video files, Telegram clients support mp4 videos         (other formats may be sent as Document). Bots can currently send video files of up to 50 MB in size,         this limit may be changed in the future.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chat_id</strong> – Unique identifier for the target chat or username of the target channel</p></li>
+<li><p><strong>file</strong> – The file to which the image file is located at</p></li>
+<li><p><strong>video_url</strong> – The video that you wish to send</p></li>
+<li><p><strong>caption</strong> – Photo caption (may also be used when resending photos by file_id), 0-1024 characters after         entities parsing</p></li>
+<li><p><strong>parse_mode</strong> – Mode for parsing entities in the photo caption. See formatting options for more details.</p></li>
+<li><p><strong>caption_entities</strong> – A JSON-serialized list of special entities that appear in the caption, which can be         specified instead of parse_mode</p></li>
+<li><p><strong>disable_notification</strong> – Sends the message silently. Users will receive a notification with no sound.</p></li>
+<li><p><strong>protect_content</strong> – Protects the contents of the sent message from forwarding and saving</p></li>
+<li><p><strong>reply_to_message_id</strong> – If the message is a reply, ID of the original message</p></li>
+<li><p><strong>allow_sending_without_reply</strong> – Pass True, if the message should be sent even if the specified replied-to         message is not found</p></li>
+<li><p><strong>reply_markup</strong> – Additional interface options. A JSON-serialized object for an inline keyboard,         custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.</p></li>
+<li><p><strong>thumb</strong> – humbnail of the file sent; can be ignored if thumbnail generation for the file is supported         server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail’s width and         height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails         can’t be reused and can be only uploaded as a new file, so you can pass “attach://&lt;file_attach_name&gt;” if the         thumbnail was uploaded using multipart/form-data under &lt;file_attach_name&gt;.</p></li>
+<li><p><strong>duration</strong> – Duration of sent video in seconds</p></li>
+<li><p><strong>supports_streaming</strong> – Pass True, if the uploaded video is suitable for streaming</p></li>
+<li><p><strong>width</strong> – Video width</p></li>
+<li><p><strong>height</strong> – Video height</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>BaseResponse which can be casted into either MediaResponse or Error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="TelegramBot8.TeleBot.TeleBot.send_video_note">
+<code class="sig-name descname">send_video_note</code><span class="sig-paren">(</span><em class="sig-param">chat_id</em>, <em class="sig-param">file=None</em>, <em class="sig-param">video_note_url=None</em>, <em class="sig-param">disable_notification: bool = None</em>, <em class="sig-param">protect_content: bool = None</em>, <em class="sig-param">reply_to_message_id: int = None</em>, <em class="sig-param">allow_sending_without_reply: bool = None</em>, <em class="sig-param">reply_markup=None</em>, <em class="sig-param">thumb: str = None</em>, <em class="sig-param">length: int = None</em>, <em class="sig-param">duration: int = None</em><span class="sig-paren">)</span> &#x2192; TelegramBot8.Model.Response.Response.BaseResponse<a class="headerlink" href="#TelegramBot8.TeleBot.TeleBot.send_video_note" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rounded square mp4 videos of up to 1 minute long. Use this method to send video messages.         On success, the sent Message is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>length</strong> – Video width and height, i.e. diameter of the video message</p></li>
+<li><p><strong>chat_id</strong> – Unique identifier for the target chat or username of the target channel</p></li>
+<li><p><strong>file</strong> – The file to which the image file is located at</p></li>
+<li><p><strong>video_note_url</strong> – The video that you wish to send
+specified instead of parse_mode</p></li>
+<li><p><strong>disable_notification</strong> – Sends the message silently. Users will receive a notification with no sound.</p></li>
+<li><p><strong>protect_content</strong> – Protects the contents of the sent message from forwarding and saving</p></li>
+<li><p><strong>reply_to_message_id</strong> – If the message is a reply, ID of the original message</p></li>
+<li><p><strong>allow_sending_without_reply</strong> – Pass True, if the message should be sent even if the specified replied-to         message is not found</p></li>
+<li><p><strong>reply_markup</strong> – Additional interface options. A JSON-serialized object for an inline keyboard,         custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.</p></li>
+<li><p><strong>thumb</strong> – humbnail of the file sent; can be ignored if thumbnail generation for the file is supported         server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail’s width and         height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails         can’t be reused and can be only uploaded as a new file, so you can pass “attach://&lt;file_attach_name&gt;” if the         thumbnail was uploaded using multipart/form-data under &lt;file_attach_name&gt;.</p></li>
+<li><p><strong>duration</strong> – Duration of sent video in seconds</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>BaseResponse which can be casted into either MediaResponse or Error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="TelegramBot8.TeleBot.TeleBot.send_voice">
+<code class="sig-name descname">send_voice</code><span class="sig-paren">(</span><em class="sig-param">chat_id</em>, <em class="sig-param">file=None</em>, <em class="sig-param">voice_url=None</em>, <em class="sig-param">caption: str = None</em>, <em class="sig-param">parse_mode: TelegramBot8.Model.Response.UpdateResponse.ParseMode = None</em>, <em class="sig-param">caption_entities: List[TelegramBot8.Model.Response.UpdateResponse.MessageEntity] = None</em>, <em class="sig-param">disable_notification: bool = None</em>, <em class="sig-param">protect_content: bool = None</em>, <em class="sig-param">reply_to_message_id: int = None</em>, <em class="sig-param">allow_sending_without_reply: bool = None</em>, <em class="sig-param">reply_markup=None</em><span class="sig-paren">)</span> &#x2192; TelegramBot8.Model.Response.Response.BaseResponse<a class="headerlink" href="#TelegramBot8.TeleBot.TeleBot.send_voice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this method to send audio files, if you want Telegram clients to display the file as a playable voice         message. For this to work, your audio must be in an .OGG file encoded with OPUS (other formats may be sent as         Audio or Document). On success, the sent Message is returned. Bots can currently send voice messages of up         to 50 MB in size, this limit may be changed in the future.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chat_id</strong> – Unique identifier for the target chat or username of the target channel</p></li>
+<li><p><strong>file</strong> – The file to which the image file is located at</p></li>
+<li><p><strong>voice_url</strong> – The animation that you wish to send</p></li>
+<li><p><strong>caption</strong> – Photo caption (may also be used when resending photos by file_id), 0-1024 characters after         entities parsing</p></li>
+<li><p><strong>parse_mode</strong> – Mode for parsing entities in the photo caption. See formatting options for more details.</p></li>
+<li><p><strong>caption_entities</strong> – A JSON-serialized list of special entities that appear in the caption, which can be         specified instead of parse_mode</p></li>
+<li><p><strong>disable_notification</strong> – Sends the message silently. Users will receive a notification with no sound.</p></li>
+<li><p><strong>protect_content</strong> – Protects the contents of the sent message from forwarding and saving</p></li>
+<li><p><strong>reply_to_message_id</strong> – If the message is a reply, ID of the original message</p></li>
+<li><p><strong>allow_sending_without_reply</strong> – Pass True, if the message should be sent even if the specified replied-to         message is not found</p></li>
+<li><p><strong>reply_markup</strong> – Additional interface options. A JSON-serialized object for an inline keyboard,         custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>BaseResponse which can be casted into either MediaResponse or Error</p>
 </dd>
 </dl>
 </dd></dl>
