@@ -49,7 +49,12 @@ class TeleBot:
             else:
                 self.set_my_commands(commands, command["scope"], None)
 
-    def run(self, response):
+    def start(self, response):
+        """
+        Method used to process the json structure. The method is to help with people using webhook
+
+        :param response: The json format of the update structure
+        """
         data = update_from_dict(response)
         self._process_update(data)
 
