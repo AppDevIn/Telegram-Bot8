@@ -7,7 +7,7 @@ from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, Comma
     bot_commands_from_dict, ForwardRequest, error_from_dict, BaseResponse, ForwardResponse, forward_from_dict, \
     GetMeResponse, get_me_response_from_dict, success_from_dict, Update, Commands, update_list_from_dict, \
     SettingCommandException, ParseMode, MessageEntity, \
-    media_response_from_dict, MissingUrlOrFile
+    media_response_from_dict, MissingUrlOrFile, update_from_dict
 from TelegramBot8.Model.Reqest.MediaRequest import PhotoRequest, AudioRequest, DocumentRequest, MediaRequestBase, \
     VideoRequest, AnimationRequest, VideoNoteRequest
 from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest
@@ -48,6 +48,10 @@ class TeleBot:
                 self.set_my_commands(commands, command["scope"], command["language_code"])
             else:
                 self.set_my_commands(commands, command["scope"], None)
+
+    def run(self, response):
+        data = update_from_dict(response)
+        self._process_update(data)
 
     def poll(self, update=None, timeout=1200, allowed_types=None):
         self._set_commands()
