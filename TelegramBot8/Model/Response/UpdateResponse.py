@@ -416,6 +416,11 @@ class Update:
         return result
 
 
+def update_from_dict(s: Any) -> Update:
+    data = json.loads(s)
+    return Update.from_dict(data)
+
+
 class UpdateList:
     ok: bool
     result: List[Update]
