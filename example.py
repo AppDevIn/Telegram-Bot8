@@ -1,7 +1,8 @@
 import json
 import os
 
-from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope, MediaResponse, Error, BaseResponse
+from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope, MediaResponse, Error, BaseResponse, \
+    InlineKeyboard
 
 API_KEY = os.getenv('telegramApiKey')
 bot = TeleBot(API_KEY)
@@ -152,6 +153,15 @@ def sendVideoNote(message: Message):
     else:
         print(response.to_dict())
 
+
+@bot.add_command_menu_helper(command="/domain_links", description="Send different browswer links")
+def browserLinks(message: Message):
+    response: BaseResponse = bot.send_message(message.chat.id, text="HELLO WORLD", reply_markup={"inline_keyboard":[[InlineKeyboard().text("Google.com").url("Google.com").build()]]})
+
+    if response.status_code == 200:
+        response: MediaResponse = MediaResponse.cast(response)
+    else:
+        print(response.to_dict())
 
 # Printing the commands
 print(bot.get_my_commands().to_dict())

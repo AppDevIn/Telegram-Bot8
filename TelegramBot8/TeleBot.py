@@ -225,7 +225,7 @@ class TeleBot:
             .reply_to_message_id(reply_to_message_id) \
             .allow_sending_without_reply(allow_sending_without_reply) \
             .reply_markup(reply_markup).build()
-        requests.request("POST", url, headers={}, data=request_body)
+        requests.request("POST", url, headers={'Content-Type': 'application/json'}, data=json.dumps(request_body))
 
     def forward_messaged(self, chat_id, from_chat_id, message_id: int,
                          disable_notification: bool = None, protect_content: bool = None) -> ForwardResponse:

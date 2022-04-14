@@ -1,3 +1,6 @@
+import json
+
+
 class BaseRequest(object):
     body = {}
 
@@ -12,3 +15,6 @@ class BaseRequest(object):
 
     def build(self) -> {}:
         return self.body
+
+    def to_json(self):
+        return json.dumps(self.body)
