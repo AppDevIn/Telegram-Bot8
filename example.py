@@ -1,7 +1,9 @@
 import json
 import os
+import uuid
 
-from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope, MediaResponse, Error, BaseResponse
+from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope, MediaResponse, Error, BaseResponse, \
+    InlineKeyboard, InlineKeyboardButton, CallBackQuery
 
 API_KEY = os.getenv('telegramApiKey')
 bot = TeleBot(API_KEY)
@@ -10,7 +12,10 @@ bot = TeleBot(API_KEY)
 # Just listening to updated
 def update(data: Update):
     # print(data.to_dict())
-    print(f"User {data.message.message_from.id} has entered {data.message.text}")
+    if data.hasMessage():
+        print(f"User {data.message.message_from.id} has entered {data.message.text}")
+    elif data.hasCallBack():
+        print(f"There has been a callback data {data.callback_query.data}")
 
 
 # Adds command into telegram menu and listen to multiple commands
@@ -151,6 +156,21 @@ def sendVideoNote(message: Message):
         response: MediaResponse = MediaResponse.cast(response)
     else:
         print(response.to_dict())
+
+
+@bot.add_command_menu_helper(command="/domain_links", description="Send different browswer links")
+def browserLinks(message: Message):
+    keybaords = InlineKeyboard()
+    button1 = InlineKeyboardButton(text="Google.com", callback_data="sendvidenote")
+    button2 = InlineKeyboardButton(text="Yahoo.com", callback_data="sendvidenote")
+    keybaords.add(button1, button2)
+    bot.send_message(message.chat.id, text="HELLO WORLD", reply_markup=keybaords)
+
+
+@bot.callback_handler(callback_data="sendvidenote")
+def callbackHandler(callback: CallBackQuery):
+    callback.answer("Hello world")
+    bot.send_message(callback.message.chat.id, text="HELLO WORLD")
 
 
 # Printing the commands

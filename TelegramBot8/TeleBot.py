@@ -7,10 +7,11 @@ from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, Comma
     bot_commands_from_dict, ForwardRequest, error_from_dict, BaseResponse, ForwardResponse, forward_from_dict, \
     GetMeResponse, get_me_response_from_dict, success_from_dict, Update, Commands, update_list_from_dict, \
     SettingCommandException, ParseMode, MessageEntity, \
-    media_response_from_dict, MissingUrlOrFile, update_from_dict
+    media_response_from_dict, MissingUrlOrFile, update_from_dict, Keyboard
 from TelegramBot8.Model.Reqest.MediaRequest import PhotoRequest, AudioRequest, DocumentRequest, MediaRequestBase, \
     VideoRequest, AnimationRequest, VideoNoteRequest
-from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest
+from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest, AnswerCallbackRequest, \
+    WebHookRequest
 
 
 def _sending_media(url, file, request: MediaRequestBase, media_type: str) -> BaseResponse:
@@ -116,6 +117,22 @@ class TeleBot:
 
         return decorator
 
+    def callback_handler(self, callback_data):
+        """Method yet to be implemented
+
+        :param callback_data:
+        :return:
+        """
+
+        def decorator(func):
+            if isinstance(callback_data, list):
+                for c in callback_data:
+                    self._callback[c] = func
+            else:
+                self._callback[callback_data] = func
+
+        return decorator
+
     def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault(), description="",
                                 language=None):
         """This method allows you handle commands send from telegram and allows you to add the \
@@ -144,22 +161,9 @@ class TeleBot:
 
         return decorator
 
-    def add_callback(self, callback_data):
-        """Method yet to be implemented
-
-        :param callback_data:
-        :return:
-        """
-        raise NotImplemented
-
-        def decorator(func):
-            self._callback[callback_data] = func
-
-        return decorator
-
     def _get_updates(self, offset, timeout, allowed_types) -> {}:
         if allowed_types is None:
-            allowed_types = ["message"]
+            allowed_types = ["message", "callback_query"]
 
         url = f"{self.base}getUpdates"
 
@@ -169,27 +173,30 @@ class TeleBot:
             .offset(offset, condition=offset is not None) \
             .build()
 
-        response = requests.request("GET", url, headers={}, data=request_body)
+        response = requests.request("GET", url, headers=self.headers, data=json.dumps(request_body))
         response = json.loads(response.content)
 
         return response
 
     def _process_update(self, item: Update) -> bool:
-        if item.message.entities is not None and item.message.entities[0].type == "bot_command" and \
-                item.message is not None and item.message.entities is not None:
+        if item.isBotCommand():
             command = item.message.text[item.message.entities[0].offset:item.message.entities[0].length].split("@")[0]
             if self._command.has_command(command):
                 self._command.get_command(command)(item.message)
                 return True
+        elif item.hasCallBack():
+            if item.callback_query.data in self._callback.keys():
+                item.callback_query.set_instance_of_bot(self)
+                self._callback.get(item.callback_query.data)(item.callback_query)
+                return True
+            else:
+                return False
         elif item.message.text:
             for p in self._text.keys():
                 r = re.compile(p)
                 if re.fullmatch(r, item.message.text.lower()):
                     self._text.get(p)(item.message)
                     return True
-        # elif item.getUpdateType() == UpdateType.CALLBACK:
-        #     callback = item.callback.message.replyMarkup.keyboards[0].callbackData.split("@")[1]
-        #     self._callback.get(callback)(item.message)
         else:
             print("DEAD ☠️")
         return False
@@ -205,7 +212,7 @@ class TeleBot:
 
     def send_message(self, chat_id, text, parse_mode: ParseMode = None, disable_web_page_preview=None,
                      disable_notification=None, reply_to_message_id=None,
-                     allow_sending_without_reply=None, reply_markup=None):
+                     allow_sending_without_reply=None, reply_markup: Keyboard = None):
         """To send message to telegram using this method
 
         :param chat_id: Unique identifier for the target chat or username of the target channel
@@ -216,7 +223,7 @@ class TeleBot:
         :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
         :param reply_to_message_id: If the message is a reply, ID of the original message
         :param allow_sending_without_reply: Pass True, if the message should be sent even if the specified replied-to message is not found
-        :param reply_markup: Pass True, if the message should be sent even if the specified replied-to message is not found
+        :param reply_markup: Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
         """
         url = f"{self.base}sendMessage"
         request_body = SendMessageRequest().text(text).chat_id(chat_id).parse_mode(parse_mode) \
@@ -224,8 +231,8 @@ class TeleBot:
             .disable_notification(disable_notification) \
             .reply_to_message_id(reply_to_message_id) \
             .allow_sending_without_reply(allow_sending_without_reply) \
-            .reply_markup(reply_markup).build()
-        requests.request("POST", url, headers={}, data=request_body)
+            .reply_markup(reply_markup.to_dict() if reply_markup is not None else None).build()
+        requests.request("POST", url, headers=self.headers, data=json.dumps(request_body))
 
     def forward_messaged(self, chat_id, from_chat_id, message_id: int,
                          disable_notification: bool = None, protect_content: bool = None) -> ForwardResponse:
@@ -246,7 +253,7 @@ class TeleBot:
         request_body = request_body.chat_id(chat_id).from_chat_id(from_chat_id).message_id(message_id). \
             disable_notification(disable_notification).protect_content(protect_content).build()
 
-        response = requests.post(url, headers={}, data=request_body)
+        response = requests.post(url, headers=self.headers, data=json.dumps(request_body))
         return forward_from_dict(response.text)
 
     def set_my_commands(self, commands: [BotCommand], scope: {} = None, language_code: str = None) -> BaseResponse:
@@ -644,3 +651,65 @@ class TeleBot:
             request.video_note(video_note_url)
 
         return _sending_media(url, file, request, "video_note")
+
+    def answer_call_back(self, callback_query_id: str, text: str = None, show_alert: bool = None,
+                         url_request: str = None, cache_time: int = None) -> BaseResponse:
+        """
+        Use this method to send answers to callback queries sent from inline keyboards. The answer will be displayed \
+         to the user as a notification at the top of the chat screen or as an alert.
+        :param callback_query_id: Unique identifier for the query to be answered
+        :param text: Text of the notification. If not specified, nothing will be shown to the user, 0-200 characters
+        :param show_alert: If True, an alert will be shown by the client instead of a notification at the top \
+         of the chat screen. Defaults to false.
+        :param url_request: URL that will be opened by the user's client. If you have created a Game and accepted the \
+         conditions via @Botfather, specify the URL that opens your game — note that this will only work if the query \
+          comes from a callback_game button.
+        :param cache_time: 	The maximum amount of time in seconds that the result of the callback query may be cached \
+         client-side. Telegram apps will support caching starting in version 3.14. Defaults to 0.
+        :return: On success, True is returned as a BaseResponse model
+        """
+        url = self.base + f"answerCallbackQuery"
+        request: AnswerCallbackRequest = AnswerCallbackRequest.builder().callback_query_id(callback_query_id) \
+            .text(text).show_alert(show_alert).url(url_request).cache_time(cache_time)
+
+        response = requests.post(url, headers=self.headers, data=request.to_json())
+
+        if response.status_code != 200:
+            return error_from_dict(response.text).status_code(response.status_code)
+        else:
+            return success_from_dict(response.text)
+
+    def set_webhook(self, url_webhook: str, ip_address: str = None, max_connections: str = None,
+                    allowed_updates: [str] = None, drop_pending_updates: bool = None) -> BaseResponse:
+
+        """
+        Use this method to specify a url and receive incoming updates via an outgoing webhook. Whenever there \
+        is an update for the bot, we will send an HTTPS POST request to the specified url, containing a JSON-serialized \
+        Update. In case of an unsuccessful request, we will give up after a reasonable amount of attempts
+
+        :param url_webhook: HTTPS url to send updates to. Use an empty string to remove webhook integration
+        :param ip_address: The fixed IP address which will be used to send webhook requests instead of the IP address \
+        resolved through DNS
+        :param max_connections: Maximum allowed number of simultaneous HTTPS connections to the webhook for update\
+         delivery, 1-100. Defaults to 40. Use lower values to limit the load on your bot's server, and higher values to increase your bot's throughput.
+        :param allowed_updates: A JSON-serialized list of the update types you want your bot to receive. For example,\
+         specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types. \
+         See Update for a complete list of available update types. Specify an empty list to receive all update \
+         types except chat_member (default). If not specified, the previous setting will be used. Please note that this\
+         parameter doesn't affect updates created before the call to the setWebhook, so unwanted updates may be \
+        received for a short period of time.
+        :param drop_pending_updates: Pass True to drop all pending updates
+        :return: True on success
+        """
+
+        url = self.base + f"setWebhook"
+        request: WebHookRequest = WebHookRequest.builder().url(url_webhook) \
+            .ip_address(ip_address).max_connections(max_connections).drop_pending_updates(drop_pending_updates)\
+            .allowed_updates(allowed_updates)
+
+        response = requests.post(url, headers=self.headers, data=request.to_json())
+
+        if response.status_code != 200:
+            return error_from_dict(response.text).status_code(response.status_code)
+        else:
+            return success_from_dict(response.text)

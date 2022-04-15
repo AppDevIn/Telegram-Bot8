@@ -57,3 +57,57 @@ class SendMessageRequest(BaseRequest):
     def reply_markup(self, reply_markup):
         self.addParameter("reply_markup", reply_markup)
         return self
+
+
+class AnswerCallbackRequest(BaseRequest):
+
+    @staticmethod
+    def builder():
+        return AnswerCallbackRequest()
+
+    def callback_query_id(self, callback_query_id):
+        self.addParameter("callback_query_id", callback_query_id)
+        return self
+
+    def text(self, text):
+        self.addParameter("text", text)
+        return self
+
+    def show_alert(self, show_alert):
+        self.addParameter("show_alert", show_alert)
+        return self
+
+    def url(self, url):
+        self.addParameter("url", url)
+        return self
+
+    def cache_time(self, cache_time):
+        self.addParameter("cache_time", cache_time)
+        return self
+
+
+class WebHookRequest(BaseRequest):
+
+    @staticmethod
+    def builder():
+        return WebHookRequest()
+
+    def url(self, url):
+        self.addParameter("url", url)
+        return self
+
+    def ip_address(self, ip_address):
+        self.addParameter("ip_address", ip_address)
+        return self
+
+    def max_connections(self, max_connections):
+        self.addParameter("max_connections", max_connections)
+        return self
+
+    def allowed_updates(self, allowed_updates):
+        self.addParameter("allowed_updates", allowed_updates)
+        return self
+
+    def drop_pending_updates(self, drop_pending_updates):
+        self.addParameter("drop_pending_updates", drop_pending_updates)
+        return self
