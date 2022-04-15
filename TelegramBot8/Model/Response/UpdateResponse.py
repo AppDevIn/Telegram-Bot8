@@ -388,30 +388,92 @@ class Message:
         return result
 
 
+class CallBackQuery:
+    id: str
+    from_user: User
+    message: Optional[Message]
+    inline_message_id: Optional[str]
+    chat_instance: Optional[str]
+    data: Optional[str]
+    game_short_name: Optional[str]
+    _ori_dict = {}
+
+    def __init__(self, id: str, from_user: User, message: Optional[Message], inline_message_id: Optional[str],
+                 chat_instance: Optional[str], data: Optional[str], game_short_name: Optional[str], original: {}) -> None:
+        self.id = id
+        self.from_user = from_user
+        self.message = message
+        self.inline_message_id = inline_message_id
+        self.chat_instance = chat_instance
+        self.data = data
+        self.game_short_name = game_short_name
+        self._ori_dict = original
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'CallBackQuery':
+        assert isinstance(obj, dict)
+        id = from_str(obj.get("id"))
+        from_user = User.from_dict(obj.get("from"))
+        message = from_union([Message.from_dict, from_none], obj.get("message"))
+        inline_message_id = from_union([from_str, from_none], obj.get("inline_message_id"))
+        chat_instance = from_union([from_str, from_none], obj.get("chat_instance"))
+        data = from_union([from_str, from_none], obj.get("data"))
+        game_short_name = from_union([from_str, from_none], obj.get("game_short_name"))
+        return CallBackQuery(id, from_user, message, inline_message_id, chat_instance, data, game_short_name, obj)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["id"] = from_int(self.id)
+        result["from"] = from_union([lambda x: to_class(User, x), from_none], self.from_user)
+        result["message"] = from_union([lambda x: to_class(Message, x), from_none], self.message)
+        result["inline_message_id"] = from_union([from_str, from_none], self.inline_message_id)
+        result["chat_instance"] = from_union([from_str, from_none], self.chat_instance)
+        result["data"] = from_union([from_str, from_none], self.data)
+        result["game_short_name"] = from_union([from_str, from_none], self.game_short_name)
+        result.update(self._ori_dict)
+        return result
+
+
 class Update:
     update_id: int
     message: Optional[Message]
+    callback_query: Optional[CallBackQuery]
     _ori_dict = {}
 
-    def __init__(self, update_id: int, message: Optional[Message], original: {}) -> None:
+    def __init__(self, update_id: int, message: Optional[Message], original: {}, callback_query: Optional[CallBackQuery]) -> None:
         self.update_id = update_id
         self.message = message
         self._ori_dict = original
+        self.callback_query = callback_query
 
     def getNextUpdateID(self) -> int:
         return self.update_id + 1
+
+    def hasMessage(self) -> bool:
+        return self.message is not None
+
+    def hasCallBack(self) -> bool:
+        return self.callback_query is not None
+
+    def isBotCommand(self) -> bool:
+        return self.hasMessage() and \
+               self.message.entities is not None and \
+               self.message.entities[0].type == "bot_command" and \
+               self.message is not None and self.message.entities is not None
 
     @staticmethod
     def from_dict(obj: Any) -> 'Update':
         assert isinstance(obj, dict)
         update_id = from_int(obj.get("update_id"))
         message = from_union([Message.from_dict, from_none], obj.get("message"))
-        return Update(update_id, message, obj)
+        callback_query = from_union([CallBackQuery.from_dict, from_none], obj.get("callback_query"))
+        return Update(update_id, message, obj, callback_query)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["update_id"] = from_int(self.update_id)
         result["message"] = from_union([lambda x: to_class(Message, x), from_none], self.message)
+        result["callback_query"] = from_union([lambda x: to_class(CallBackQuery, x), from_none], self.callback_query)
         result.update(self._ori_dict)
         return result
 

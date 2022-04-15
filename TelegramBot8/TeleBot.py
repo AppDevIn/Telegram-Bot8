@@ -7,7 +7,7 @@ from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, Comma
     bot_commands_from_dict, ForwardRequest, error_from_dict, BaseResponse, ForwardResponse, forward_from_dict, \
     GetMeResponse, get_me_response_from_dict, success_from_dict, Update, Commands, update_list_from_dict, \
     SettingCommandException, ParseMode, MessageEntity, \
-    media_response_from_dict, MissingUrlOrFile, update_from_dict
+    media_response_from_dict, MissingUrlOrFile, update_from_dict, Keyboard
 from TelegramBot8.Model.Reqest.MediaRequest import PhotoRequest, AudioRequest, DocumentRequest, MediaRequestBase, \
     VideoRequest, AnimationRequest, VideoNoteRequest
 from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest
@@ -159,7 +159,7 @@ class TeleBot:
 
     def _get_updates(self, offset, timeout, allowed_types) -> {}:
         if allowed_types is None:
-            allowed_types = ["message"]
+            allowed_types = ["message", "callback_query"]
 
         url = f"{self.base}getUpdates"
 
@@ -169,18 +169,19 @@ class TeleBot:
             .offset(offset, condition=offset is not None) \
             .build()
 
-        response = requests.request("GET", url, headers={}, data=request_body)
+        response = requests.request("GET", url, headers=self.headers, data=json.dumps(request_body))
         response = json.loads(response.content)
 
         return response
 
     def _process_update(self, item: Update) -> bool:
-        if item.message.entities is not None and item.message.entities[0].type == "bot_command" and \
-                item.message is not None and item.message.entities is not None:
+        if item.isBotCommand():
             command = item.message.text[item.message.entities[0].offset:item.message.entities[0].length].split("@")[0]
             if self._command.has_command(command):
                 self._command.get_command(command)(item.message)
                 return True
+        elif item.hasCallBack():
+            print("Callback")
         elif item.message.text:
             for p in self._text.keys():
                 r = re.compile(p)
@@ -205,7 +206,7 @@ class TeleBot:
 
     def send_message(self, chat_id, text, parse_mode: ParseMode = None, disable_web_page_preview=None,
                      disable_notification=None, reply_to_message_id=None,
-                     allow_sending_without_reply=None, reply_markup=None):
+                     allow_sending_without_reply=None, reply_markup: Keyboard = None):
         """To send message to telegram using this method
 
         :param chat_id: Unique identifier for the target chat or username of the target channel
@@ -224,7 +225,7 @@ class TeleBot:
             .disable_notification(disable_notification) \
             .reply_to_message_id(reply_to_message_id) \
             .allow_sending_without_reply(allow_sending_without_reply) \
-            .reply_markup(reply_markup).build()
+            .reply_markup(reply_markup.to_dict() if reply_markup is not None else None).build()
         requests.request("POST", url, headers=self.headers, data=json.dumps(request_body))
 
     def forward_messaged(self, chat_id, from_chat_id, message_id: int,
