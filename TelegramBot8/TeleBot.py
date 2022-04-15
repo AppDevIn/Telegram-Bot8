@@ -10,7 +10,8 @@ from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, Comma
     media_response_from_dict, MissingUrlOrFile, update_from_dict, Keyboard
 from TelegramBot8.Model.Reqest.MediaRequest import PhotoRequest, AudioRequest, DocumentRequest, MediaRequestBase, \
     VideoRequest, AnimationRequest, VideoNoteRequest
-from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest, AnswerCallbackRequest
+from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest, AnswerCallbackRequest, \
+    WebHookRequest
 
 
 def _sending_media(url, file, request: MediaRequestBase, media_type: str) -> BaseResponse:
@@ -653,10 +654,58 @@ class TeleBot:
 
     def answer_call_back(self, callback_query_id: str, text: str = None, show_alert: bool = None,
                          url_request: str = None, cache_time: int = None) -> BaseResponse:
-
+        """
+        Use this method to send answers to callback queries sent from inline keyboards. The answer will be displayed \
+         to the user as a notification at the top of the chat screen or as an alert.
+        :param callback_query_id: Unique identifier for the query to be answered
+        :param text: Text of the notification. If not specified, nothing will be shown to the user, 0-200 characters
+        :param show_alert: If True, an alert will be shown by the client instead of a notification at the top \
+         of the chat screen. Defaults to false.
+        :param url_request: URL that will be opened by the user's client. If you have created a Game and accepted the \
+         conditions via @Botfather, specify the URL that opens your game — note that this will only work if the query \
+          comes from a callback_game button.
+        :param cache_time: 	The maximum amount of time in seconds that the result of the callback query may be cached \
+         client-side. Telegram apps will support caching starting in version 3.14. Defaults to 0.
+        :return: On success, True is returned as a BaseResponse model
+        """
         url = self.base + f"answerCallbackQuery"
         request: AnswerCallbackRequest = AnswerCallbackRequest.builder().callback_query_id(callback_query_id) \
             .text(text).show_alert(show_alert).url(url_request).cache_time(cache_time)
+
+        response = requests.post(url, headers=self.headers, data=request.to_json())
+
+        if response.status_code != 200:
+            return error_from_dict(response.text).status_code(response.status_code)
+        else:
+            return success_from_dict(response.text)
+
+    def set_webhook(self, url_webhook: str, ip_address: str = None, max_connections: str = None,
+                    allowed_updates: [str] = None, drop_pending_updates: bool = None) -> BaseResponse:
+
+        """
+        Use this method to specify a url and receive incoming updates via an outgoing webhook. Whenever there \
+        is an update for the bot, we will send an HTTPS POST request to the specified url, containing a JSON-serialized \
+        Update. In case of an unsuccessful request, we will give up after a reasonable amount of attempts
+
+        :param url_webhook: HTTPS url to send updates to. Use an empty string to remove webhook integration
+        :param ip_address: The fixed IP address which will be used to send webhook requests instead of the IP address \
+        resolved through DNS
+        :param max_connections: Maximum allowed number of simultaneous HTTPS connections to the webhook for update\
+         delivery, 1-100. Defaults to 40. Use lower values to limit the load on your bot's server, and higher values to increase your bot's throughput.
+        :param allowed_updates: A JSON-serialized list of the update types you want your bot to receive. For example,\
+         specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types. \
+         See Update for a complete list of available update types. Specify an empty list to receive all update \
+         types except chat_member (default). If not specified, the previous setting will be used. Please note that this\
+         parameter doesn't affect updates created before the call to the setWebhook, so unwanted updates may be \
+        received for a short period of time.
+        :param drop_pending_updates: Pass True to drop all pending updates
+        :return: True on success
+        """
+
+        url = self.base + f"setWebhook"
+        request: WebHookRequest = WebHookRequest.builder().url(url_webhook) \
+            .ip_address(ip_address).max_connections(max_connections).drop_pending_updates(drop_pending_updates)\
+            .allowed_updates(allowed_updates)
 
         response = requests.post(url, headers=self.headers, data=request.to_json())
 

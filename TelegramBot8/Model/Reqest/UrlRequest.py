@@ -84,3 +84,30 @@ class AnswerCallbackRequest(BaseRequest):
     def cache_time(self, cache_time):
         self.addParameter("cache_time", cache_time)
         return self
+
+
+class WebHookRequest(BaseRequest):
+
+    @staticmethod
+    def builder():
+        return WebHookRequest()
+
+    def url(self, url):
+        self.addParameter("url", url)
+        return self
+
+    def ip_address(self, ip_address):
+        self.addParameter("ip_address", ip_address)
+        return self
+
+    def max_connections(self, max_connections):
+        self.addParameter("max_connections", max_connections)
+        return self
+
+    def allowed_updates(self, allowed_updates):
+        self.addParameter("allowed_updates", allowed_updates)
+        return self
+
+    def drop_pending_updates(self, drop_pending_updates):
+        self.addParameter("drop_pending_updates", drop_pending_updates)
+        return self
