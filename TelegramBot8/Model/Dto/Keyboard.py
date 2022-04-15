@@ -2,7 +2,7 @@ from ..Reqest import BaseRequest
 
 
 # TODO: Add login_url and callback_game
-class InlineKeyboard(BaseRequest):
+class InlineKeyboardButton(BaseRequest):
 
     def text(self, text):
         self.addParameter("text", text)
@@ -27,3 +27,19 @@ class InlineKeyboard(BaseRequest):
     def pay(self, pay):
         self.addParameter("pay", pay)
         return self
+
+
+class InlineKeyboard:
+
+    def __init__(self, *args, **kwargs):
+        self.list = []
+
+    def add_row(self, keyboards: [InlineKeyboardButton]):
+        self.list.append(keyboards)
+
+    def append_row(self, keyboard: InlineKeyboardButton, row_num=None):
+        if row_num is not None:
+            keyboards = self.list[row_num]
+            keyboards.append(keyboard)
+        else:
+            self.list.append([keyboard])

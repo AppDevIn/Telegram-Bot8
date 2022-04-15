@@ -216,7 +216,7 @@ class TeleBot:
         :param disable_notification: Sends the message silently. Users will receive a notification with no sound.
         :param reply_to_message_id: If the message is a reply, ID of the original message
         :param allow_sending_without_reply: Pass True, if the message should be sent even if the specified replied-to message is not found
-        :param reply_markup: Pass True, if the message should be sent even if the specified replied-to message is not found
+        :param reply_markup: Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
         """
         url = f"{self.base}sendMessage"
         request_body = SendMessageRequest().text(text).chat_id(chat_id).parse_mode(parse_mode) \
