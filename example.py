@@ -169,6 +169,7 @@ def browserLinks(message: Message):
 
 @bot.callback_handler(callback_data="sendvidenote")
 def callbackHandler(callback: CallBackQuery):
+    callback.answer("Hello world")
     bot.send_message(callback.message.chat.id, text="HELLO WORLD")
 
 

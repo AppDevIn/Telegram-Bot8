@@ -397,9 +397,20 @@ class CallBackQuery:
     data: Optional[str]
     game_short_name: Optional[str]
     _ori_dict = {}
+    bot = None
+
+    def set_instance_of_bot(self, bot):
+        self.bot = bot
+
+    def answer(self, text: str = None, show_alert: bool = None, url_request: str = None, cache_time: int = None):
+        if self.bot is None:
+            raise Exception("Bot instance is not created")
+        else:
+            self.bot.answer_call_back(self.id, text, show_alert, url_request, cache_time)
 
     def __init__(self, id: str, from_user: User, message: Optional[Message], inline_message_id: Optional[str],
-                 chat_instance: Optional[str], data: Optional[str], game_short_name: Optional[str], original: {}) -> None:
+                 chat_instance: Optional[str], data: Optional[str], game_short_name: Optional[str],
+                 original: {}) -> None:
         self.id = id
         self.from_user = from_user
         self.message = message
@@ -440,7 +451,8 @@ class Update:
     callback_query: Optional[CallBackQuery]
     _ori_dict = {}
 
-    def __init__(self, update_id: int, message: Optional[Message], original: {}, callback_query: Optional[CallBackQuery]) -> None:
+    def __init__(self, update_id: int, message: Optional[Message], original: {},
+                 callback_query: Optional[CallBackQuery]) -> None:
         self.update_id = update_id
         self.message = message
         self._ori_dict = original

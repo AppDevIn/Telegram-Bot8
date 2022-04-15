@@ -10,7 +10,7 @@ from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, Comma
     media_response_from_dict, MissingUrlOrFile, update_from_dict, Keyboard
 from TelegramBot8.Model.Reqest.MediaRequest import PhotoRequest, AudioRequest, DocumentRequest, MediaRequestBase, \
     VideoRequest, AnimationRequest, VideoNoteRequest
-from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest
+from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest, AnswerCallbackRequest
 
 
 def _sending_media(url, file, request: MediaRequestBase, media_type: str) -> BaseResponse:
@@ -185,6 +185,7 @@ class TeleBot:
                 return True
         elif item.hasCallBack():
             if item.callback_query.data in self._callback.keys():
+                item.callback_query.set_instance_of_bot(self)
                 self._callback.get(item.callback_query.data)(item.callback_query)
                 return True
             else:
@@ -649,3 +650,17 @@ class TeleBot:
             request.video_note(video_note_url)
 
         return _sending_media(url, file, request, "video_note")
+
+    def answer_call_back(self, callback_query_id: str, text: str = None, show_alert: bool = None,
+                         url_request: str = None, cache_time: int = None) -> BaseResponse:
+
+        url = self.base + f"answerCallbackQuery"
+        request: AnswerCallbackRequest = AnswerCallbackRequest.builder().callback_query_id(callback_query_id) \
+            .text(text).show_alert(show_alert).url(url_request).cache_time(cache_time)
+
+        response = requests.post(url, headers=self.headers, data=request.to_json())
+
+        if response.status_code != 200:
+            return error_from_dict(response.text).status_code(response.status_code)
+        else:
+            return success_from_dict(response.text)

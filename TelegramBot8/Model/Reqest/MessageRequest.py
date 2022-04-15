@@ -16,11 +16,11 @@ class MessageRequest(BaseRequest):
         return self
 
 
-class CallBackQuery(BaseRequest):
+class CallBackQueryRequest(BaseRequest):
 
     @staticmethod
     def builder():
-        return CallBackQuery()
+        return CallBackQueryRequest()
 
     def id(self, id):
         self.addParameter("id", id)

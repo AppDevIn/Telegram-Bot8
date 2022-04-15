@@ -57,3 +57,30 @@ class SendMessageRequest(BaseRequest):
     def reply_markup(self, reply_markup):
         self.addParameter("reply_markup", reply_markup)
         return self
+
+
+class AnswerCallbackRequest(BaseRequest):
+
+    @staticmethod
+    def builder():
+        return AnswerCallbackRequest()
+
+    def callback_query_id(self, callback_query_id):
+        self.addParameter("callback_query_id", callback_query_id)
+        return self
+
+    def text(self, text):
+        self.addParameter("text", text)
+        return self
+
+    def show_alert(self, show_alert):
+        self.addParameter("show_alert", show_alert)
+        return self
+
+    def url(self, url):
+        self.addParameter("url", url)
+        return self
+
+    def cache_time(self, cache_time):
+        self.addParameter("cache_time", cache_time)
+        return self
