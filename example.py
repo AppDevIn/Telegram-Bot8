@@ -167,6 +167,11 @@ def browserLinks(message: Message):
     bot.send_message(message.chat.id, text="HELLO WORLD", reply_markup=keybaords)
 
 
+@bot.callback_handler(callback_data="sendvidenote")
+def callbackHandler(callback: CallBackQuery):
+    bot.send_message(callback.message.chat.id, text="HELLO WORLD")
+
+
 # Printing the commands
 print(bot.get_my_commands().to_dict())
 

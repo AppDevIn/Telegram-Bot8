@@ -116,6 +116,22 @@ class TeleBot:
 
         return decorator
 
+    def callback_handler(self, callback_data):
+        """Method yet to be implemented
+
+        :param callback_data:
+        :return:
+        """
+
+        def decorator(func):
+            if isinstance(callback_data, list):
+                for c in callback_data:
+                    self._callback[c] = func
+            else:
+                self._callback[callback_data] = func
+
+        return decorator
+
     def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault(), description="",
                                 language=None):
         """This method allows you handle commands send from telegram and allows you to add the \
@@ -144,19 +160,6 @@ class TeleBot:
 
         return decorator
 
-    def add_callback(self, callback_data):
-        """Method yet to be implemented
-
-        :param callback_data:
-        :return:
-        """
-        raise NotImplemented
-
-        def decorator(func):
-            self._callback[callback_data] = func
-
-        return decorator
-
     def _get_updates(self, offset, timeout, allowed_types) -> {}:
         if allowed_types is None:
             allowed_types = ["message", "callback_query"]
@@ -181,16 +184,17 @@ class TeleBot:
                 self._command.get_command(command)(item.message)
                 return True
         elif item.hasCallBack():
-            print("Callback")
+            if item.callback_query.data in self._callback.keys():
+                self._callback.get(item.callback_query.data)(item.callback_query)
+                return True
+            else:
+                return False
         elif item.message.text:
             for p in self._text.keys():
                 r = re.compile(p)
                 if re.fullmatch(r, item.message.text.lower()):
                     self._text.get(p)(item.message)
                     return True
-        # elif item.getUpdateType() == UpdateType.CALLBACK:
-        #     callback = item.callback.message.replyMarkup.keyboards[0].callbackData.split("@")[1]
-        #     self._callback.get(callback)(item.message)
         else:
             print("DEAD ☠️")
         return False
