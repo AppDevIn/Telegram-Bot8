@@ -3,7 +3,7 @@ import os
 import uuid
 
 from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope, MediaResponse, Error, BaseResponse, \
-    InlineKeyboard, InlineKeyboardButton, CallBackQuery
+    InlineKeyboard, InlineKeyboardButton, CallBackQuery, ReplyKeyboard, ReplyKeyboardButton
 
 API_KEY = os.getenv('telegramApiKey')
 bot = TeleBot(API_KEY)
@@ -163,6 +163,15 @@ def browserLinks(message: Message):
     keybaords = InlineKeyboard()
     button1 = InlineKeyboardButton(text="Google.com", callback_data="123")
     button2 = InlineKeyboardButton(text="Yahoo.com", callback_data="123")
+    keybaords.add([button1, button2, button2], [button1])
+    bot.send_message(message.chat.id, text="HELLO WORLD", reply_markup=keybaords)
+
+
+@bot.add_command_menu_helper(command="/emoji", description="Send different browswer links")
+def emoji(message: Message):
+    keybaords = ReplyKeyboard()
+    button1 = ReplyKeyboardButton(text="😭")
+    button2 = ReplyKeyboardButton(text="😳")
     keybaords.add([button1, button2, button2], [button1])
     bot.send_message(message.chat.id, text="HELLO WORLD", reply_markup=keybaords)
 

@@ -36,6 +36,18 @@ class InlineKeyboardButton(Keyboard):
         self.addParameter("pay", pay)
 
 
+class ReplyKeyboardButton(Keyboard):
+
+    def __init__(self, text, request_contact=None,
+                 request_location=None, request_poll=None):
+        super(ReplyKeyboardButton, self).__init__()
+        self.addParameter("text", text)
+        self.addParameter("request_contact", request_contact)
+        self.addParameter("request_location", request_location)
+        if request_poll is not None:
+            self.addParameter("request_poll", {"type": request_poll})
+
+
 class InlineKeyboard(Keyboard):
 
     def __init__(self):
@@ -62,3 +74,29 @@ class InlineKeyboard(Keyboard):
 
     def to_json(self):
         return json.dumps({"inline_keyboard": self.list})
+
+
+class ReplyKeyboard(InlineKeyboard):
+    resize_keyboard = None
+    one_time_keyboard = None
+    input_field_placeholder = None
+    selective = None
+
+    def __init__(self, resize_keyboard=None, one_time_keyboard=None,
+                 input_field_placeholder=None, selective=None):
+        super(ReplyKeyboard, self).__init__()
+        self.resize_keyboard = resize_keyboard
+        self.one_time_keyboard = one_time_keyboard
+        self.input_field_placeholder = input_field_placeholder
+        self.selective = selective
+
+    def to_dict(self):
+        self.addParameter("keyboard", self.list)
+        self.addParameter("resize_keyboard", self.resize_keyboard)
+        self.addParameter("one_time_keyboard", self.one_time_keyboard)
+        self.addParameter("input_field_placeholder", self.input_field_placeholder)
+        self.addParameter("selective", self.selective)
+        return self.body
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
