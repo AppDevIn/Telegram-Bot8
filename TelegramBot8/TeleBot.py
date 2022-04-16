@@ -719,6 +719,8 @@ class TeleBot:
         :return: True on success
         """
 
+        self._set_commands()
+
         url = self.base + f"setWebhook"
         request: WebHookRequest = WebHookRequest.builder().url(url_webhook) \
             .ip_address(ip_address).max_connections(max_connections).drop_pending_updates(drop_pending_updates) \

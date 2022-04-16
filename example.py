@@ -178,6 +178,7 @@ def callbackHandlerRegex(callback: CallBackQuery):
     callback.answer("Hello world")
     bot.send_message(callback.message.chat.id, text="HELLO WORLD")
 
+
 # Printing the commands
 print(bot.get_my_commands().to_dict())
 
