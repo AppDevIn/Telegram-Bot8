@@ -9,7 +9,7 @@ from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, Comma
     SettingCommandException, ParseMode, MessageEntity, \
     media_response_from_dict, MissingUrlOrFile, update_from_dict, Keyboard
 from TelegramBot8.Model.Reqest.MediaRequest import PhotoRequest, AudioRequest, DocumentRequest, MediaRequestBase, \
-    VideoRequest, AnimationRequest, VideoNoteRequest
+    VideoRequest, AnimationRequest, VideoNoteRequest, VoiceRequest
 from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest, AnswerCallbackRequest, \
     WebHookRequest
 
@@ -612,7 +612,7 @@ class TeleBot:
 
         url = self.base + f"sendVoice"
 
-        request: VideoNoteRequest = VideoNoteRequest().chat_id(chat_id).caption(caption).parse_mode(parse_mode) \
+        request: VoiceRequest = VoiceRequest().chat_id(chat_id).caption(caption).parse_mode(parse_mode) \
             .caption_entities(caption_entities).disable_notification(disable_notification). \
             protect_content(protect_content).reply_to_message_id(reply_to_message_id) \
             .allow_sending_without_reply(allow_sending_without_reply).reply_markup(reply_markup)
