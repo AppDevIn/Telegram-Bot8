@@ -173,7 +173,7 @@ def callbackHandler(callback: CallBackQuery):
     bot.send_message(callback.message.chat.id, text="HELLO WORLD")
 
 
-@bot.add_callback_handler_regex_helper(regex="^123$")
+@bot.callback_handler(regex="^123$")
 def callbackHandlerRegex(callback: CallBackQuery):
     callback.answer("Hello world")
     bot.send_message(callback.message.chat.id, text="HELLO WORLD")

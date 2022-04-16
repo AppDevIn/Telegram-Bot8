@@ -118,36 +118,31 @@ class TeleBot:
 
         return decorator
 
-    def callback_handler(self, callback_data):
+    def callback_handler(self, callback_data=None, regex=None):
         """Method yet to be implemented
 
         :param callback_data:
         :return:
         """
 
-        def decorator(func):
-            if isinstance(callback_data, list):
-                for c in callback_data:
-                    self._callback[c] = func
-            else:
-                self._callback[callback_data] = func
-
-        return decorator
-
-    def add_callback_handler_regex_helper(self, regex):
-        """Method to look at each chat and if the message matches it will triggers
-
-        :param regex: The regex pattern you want the text to match
-        """
+        if regex is None and callback_data is None:
+            raise Exception("Both the callback_data and regex are null")
 
         def decorator(func):
-            if isinstance(regex, list):
-                for t in regex:
-                    self._callback_regex[t] = func
+            if callback_data is not None:
+                if isinstance(callback_data, list):
+                    for c in callback_data:
+                        self._callback[c] = func
+                else:
+                    self._callback[callback_data] = func
             else:
-                self._callback_regex[regex] = func
-
+                if isinstance(regex, list):
+                    for t in regex:
+                        self._callback_regex[t] = func
+                else:
+                    self._callback_regex[regex] = func
         return decorator
+
 
     def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault(), description="",
                                 language=None):
