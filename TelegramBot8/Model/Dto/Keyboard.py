@@ -43,8 +43,19 @@ class InlineKeyboard(Keyboard):
         self.list = []
 
     def add(self, *keyboards):
-        listKeyboard = list(map(lambda k: k.to_dict(), keyboards))
-        self.list.append(listKeyboard)
+        for k in keyboards:
+            if isinstance(k, list):
+                listKeyboard = list(map(lambda k: k.to_dict(), k))
+                self.list.append(listKeyboard)
+            else:
+                self.list.append([k.to_dict()])
+
+    def insert(self, keyboard: Keyboard, position):
+        listOfKeyboard = self.list[position]
+        listOfKeyboard.append(keyboard.to_dict())
+
+    def getSize(self) -> int:
+        return len(self.list)
 
     def to_dict(self):
         return {"inline_keyboard": self.list}

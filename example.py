@@ -163,7 +163,7 @@ def browserLinks(message: Message):
     keybaords = InlineKeyboard()
     button1 = InlineKeyboardButton(text="Google.com", callback_data="123")
     button2 = InlineKeyboardButton(text="Yahoo.com", callback_data="123")
-    keybaords.add(button1, button2)
+    keybaords.add([button1, button2, button2], [button1])
     bot.send_message(message.chat.id, text="HELLO WORLD", reply_markup=keybaords)
 
 
