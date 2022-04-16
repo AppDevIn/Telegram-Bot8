@@ -44,15 +44,15 @@ def endServer(message: Message):
 
 
 # Listen to regex based messages
-@bot.add_regex_helper(regex="^hi$")
-def endServer(message: Message):
-    bot.send_message(message.chat.id, "Hello")
-
-
-# Sending bold message and types is possible
 @bot.add_regex_helper(regex="^bold$")
 def send_bold(message: Message):
     bot.send_message(message.chat.id, "<b>Hello</b>", parse_mode=ParseMode.HTML)
+
+
+# Sending bold message and types is possible
+@bot.add_regex_helper(regex="^hi$")
+def endServer(message: Message):
+    bot.send_message(message.chat.id, "Hello")
 
 
 # Forwarding message in telegram bot
@@ -161,8 +161,8 @@ def sendVideoNote(message: Message):
 @bot.add_command_menu_helper(command="/domain_links", description="Send different browswer links")
 def browserLinks(message: Message):
     keybaords = InlineKeyboard()
-    button1 = InlineKeyboardButton(text="Google.com", callback_data="sendvidenote")
-    button2 = InlineKeyboardButton(text="Yahoo.com", callback_data="sendvidenote")
+    button1 = InlineKeyboardButton(text="Google.com", callback_data="123")
+    button2 = InlineKeyboardButton(text="Yahoo.com", callback_data="123")
     keybaords.add(button1, button2)
     bot.send_message(message.chat.id, text="HELLO WORLD", reply_markup=keybaords)
 
@@ -172,6 +172,11 @@ def callbackHandler(callback: CallBackQuery):
     callback.answer("Hello world")
     bot.send_message(callback.message.chat.id, text="HELLO WORLD")
 
+
+@bot.add_callback_handler_regex_helper(regex="^123$")
+def callbackHandlerRegex(callback: CallBackQuery):
+    callback.answer("Hello world")
+    bot.send_message(callback.message.chat.id, text="HELLO WORLD")
 
 # Printing the commands
 print(bot.get_my_commands().to_dict())

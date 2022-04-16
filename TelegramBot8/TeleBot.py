@@ -29,6 +29,7 @@ def _sending_media(url, file, request: MediaRequestBase, media_type: str) -> Bas
 
 class TeleBot:
     _callback = {}
+    _callback_regex = {}
     _text = {}
     _command = Commands()
     headers = {
@@ -133,6 +134,21 @@ class TeleBot:
 
         return decorator
 
+    def add_callback_handler_regex_helper(self, regex):
+        """Method to look at each chat and if the message matches it will triggers
+
+        :param regex: The regex pattern you want the text to match
+        """
+
+        def decorator(func):
+            if isinstance(regex, list):
+                for t in regex:
+                    self._callback_regex[t] = func
+            else:
+                self._callback_regex[regex] = func
+
+        return decorator
+
     def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault(), description="",
                                 language=None):
         """This method allows you handle commands send from telegram and allows you to add the \
@@ -190,6 +206,12 @@ class TeleBot:
                 self._callback.get(item.callback_query.data)(item.callback_query)
                 return True
             else:
+                for p in self._callback_regex.keys():
+                    r = re.compile(p)
+                    if re.fullmatch(r, item.callback_query.data.lower()):
+                        item.callback_query.set_instance_of_bot(self)
+                        self._callback_regex.get(p)(item.callback_query)
+                        return True
                 return False
         elif item.message.text:
             for p in self._text.keys():
@@ -704,7 +726,7 @@ class TeleBot:
 
         url = self.base + f"setWebhook"
         request: WebHookRequest = WebHookRequest.builder().url(url_webhook) \
-            .ip_address(ip_address).max_connections(max_connections).drop_pending_updates(drop_pending_updates)\
+            .ip_address(ip_address).max_connections(max_connections).drop_pending_updates(drop_pending_updates) \
             .allowed_updates(allowed_updates)
 
         response = requests.post(url, headers=self.headers, data=request.to_json())
