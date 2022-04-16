@@ -3,7 +3,7 @@ import os
 import uuid
 
 from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope, MediaResponse, Error, BaseResponse, \
-    InlineKeyboard, InlineKeyboardButton, CallBackQuery
+    InlineKeyboard, InlineKeyboardButton, CallBackQuery, ReplyKeyboard, ReplyKeyboardButton
 
 API_KEY = os.getenv('telegramApiKey')
 bot = TeleBot(API_KEY)
@@ -44,15 +44,15 @@ def endServer(message: Message):
 
 
 # Listen to regex based messages
-@bot.add_regex_helper(regex="^hi$")
-def endServer(message: Message):
-    bot.send_message(message.chat.id, "Hello")
-
-
-# Sending bold message and types is possible
 @bot.add_regex_helper(regex="^bold$")
 def send_bold(message: Message):
     bot.send_message(message.chat.id, "<b>Hello</b>", parse_mode=ParseMode.HTML)
+
+
+# Sending bold message and types is possible
+@bot.add_regex_helper(regex="^hi$")
+def endServer(message: Message):
+    bot.send_message(message.chat.id, "Hello")
 
 
 # Forwarding message in telegram bot
@@ -161,14 +161,29 @@ def sendVideoNote(message: Message):
 @bot.add_command_menu_helper(command="/domain_links", description="Send different browswer links")
 def browserLinks(message: Message):
     keybaords = InlineKeyboard()
-    button1 = InlineKeyboardButton(text="Google.com", callback_data="sendvidenote")
-    button2 = InlineKeyboardButton(text="Yahoo.com", callback_data="sendvidenote")
-    keybaords.add(button1, button2)
+    button1 = InlineKeyboardButton(text="Google.com", callback_data="123")
+    button2 = InlineKeyboardButton(text="Yahoo.com", callback_data="123")
+    keybaords.add([button1, button2, button2], [button1])
+    bot.send_message(message.chat.id, text="HELLO WORLD", reply_markup=keybaords)
+
+
+@bot.add_command_menu_helper(command="/emoji", description="Send different browswer links")
+def emoji(message: Message):
+    keybaords = ReplyKeyboard()
+    button1 = ReplyKeyboardButton(text="😭")
+    button2 = ReplyKeyboardButton(text="😳")
+    keybaords.add([button1, button2, button2], [button1])
     bot.send_message(message.chat.id, text="HELLO WORLD", reply_markup=keybaords)
 
 
 @bot.callback_handler(callback_data="sendvidenote")
 def callbackHandler(callback: CallBackQuery):
+    callback.answer("Hello world")
+    bot.send_message(callback.message.chat.id, text="HELLO WORLD")
+
+
+@bot.callback_handler(regex="^123$")
+def callbackHandlerRegex(callback: CallBackQuery):
     callback.answer("Hello world")
     bot.send_message(callback.message.chat.id, text="HELLO WORLD")
 
