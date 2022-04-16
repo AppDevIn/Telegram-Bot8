@@ -9,7 +9,7 @@ from TelegramBot8 import SetMyCommandRequest, BotCommandScope, BotCommand, Comma
     SettingCommandException, ParseMode, MessageEntity, \
     media_response_from_dict, MissingUrlOrFile, update_from_dict, Keyboard
 from TelegramBot8.Model.Reqest.MediaRequest import PhotoRequest, AudioRequest, DocumentRequest, MediaRequestBase, \
-    VideoRequest, AnimationRequest, VideoNoteRequest
+    VideoRequest, AnimationRequest, VideoNoteRequest, VoiceRequest
 from TelegramBot8.Model.Reqest.UrlRequest import UpdateRequest, SendMessageRequest, AnswerCallbackRequest, \
     WebHookRequest
 
@@ -29,6 +29,7 @@ def _sending_media(url, file, request: MediaRequestBase, media_type: str) -> Bas
 
 class TeleBot:
     _callback = {}
+    _callback_regex = {}
     _text = {}
     _command = Commands()
     headers = {
@@ -117,21 +118,31 @@ class TeleBot:
 
         return decorator
 
-    def callback_handler(self, callback_data):
+    def callback_handler(self, callback_data=None, regex=None):
         """Method yet to be implemented
 
         :param callback_data:
         :return:
         """
 
-        def decorator(func):
-            if isinstance(callback_data, list):
-                for c in callback_data:
-                    self._callback[c] = func
-            else:
-                self._callback[callback_data] = func
+        if regex is None and callback_data is None:
+            raise Exception("Both the callback_data and regex are null")
 
+        def decorator(func):
+            if callback_data is not None:
+                if isinstance(callback_data, list):
+                    for c in callback_data:
+                        self._callback[c] = func
+                else:
+                    self._callback[callback_data] = func
+            else:
+                if isinstance(regex, list):
+                    for t in regex:
+                        self._callback_regex[t] = func
+                else:
+                    self._callback_regex[regex] = func
         return decorator
+
 
     def add_command_menu_helper(self, command, scope=BotCommandScope.BotCommandScopeDefault(), description="",
                                 language=None):
@@ -190,6 +201,12 @@ class TeleBot:
                 self._callback.get(item.callback_query.data)(item.callback_query)
                 return True
             else:
+                for p in self._callback_regex.keys():
+                    r = re.compile(p)
+                    if re.fullmatch(r, item.callback_query.data.lower()):
+                        item.callback_query.set_instance_of_bot(self)
+                        self._callback_regex.get(p)(item.callback_query)
+                        return True
                 return False
         elif item.message.text:
             for p in self._text.keys():
@@ -595,7 +612,7 @@ class TeleBot:
 
         url = self.base + f"sendVoice"
 
-        request: VideoNoteRequest = VideoNoteRequest().chat_id(chat_id).caption(caption).parse_mode(parse_mode) \
+        request: VoiceRequest = VoiceRequest().chat_id(chat_id).caption(caption).parse_mode(parse_mode) \
             .caption_entities(caption_entities).disable_notification(disable_notification). \
             protect_content(protect_content).reply_to_message_id(reply_to_message_id) \
             .allow_sending_without_reply(allow_sending_without_reply).reply_markup(reply_markup)
@@ -702,9 +719,11 @@ class TeleBot:
         :return: True on success
         """
 
+        self._set_commands()
+
         url = self.base + f"setWebhook"
         request: WebHookRequest = WebHookRequest.builder().url(url_webhook) \
-            .ip_address(ip_address).max_connections(max_connections).drop_pending_updates(drop_pending_updates)\
+            .ip_address(ip_address).max_connections(max_connections).drop_pending_updates(drop_pending_updates) \
             .allowed_updates(allowed_updates)
 
         response = requests.post(url, headers=self.headers, data=request.to_json())
