@@ -188,6 +188,12 @@ def callbackHandlerRegex(callback: CallBackQuery):
     bot.send_message(callback.message.chat.id, text="HELLO WORLD")
 
 
+@bot.add_command_menu_helper(command="/args", description="Send command with args")
+def args(message: Message):
+    for arg in message.getArgs():
+        bot.send_message(message.chat.id, text=arg)
+
+
 # Printing the commands
 print(bot.get_my_commands().to_dict())
 

@@ -348,6 +348,15 @@ class Message:
         self.document = document
         self.video = video
 
+    def getArgs(self):
+        texts = self._get_text_from_command()
+        return texts.split()
+
+    def _get_text_from_command(self):
+        end_of_command = self.entities[0].offset + self.entities[0].length
+        final_text = self.text[end_of_command::]
+        return final_text.strip()
+
     @staticmethod
     def from_dict(obj: Any) -> 'Message':
         assert isinstance(obj, dict)
