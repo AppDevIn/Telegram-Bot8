@@ -1,6 +1,4 @@
-import json
 import os
-import uuid
 
 from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope, MediaResponse, Error, BaseResponse, \
     InlineKeyboard, InlineKeyboardButton, CallBackQuery, ReplyKeyboard, ReplyKeyboardButton
