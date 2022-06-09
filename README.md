@@ -15,9 +15,12 @@ $ pip install Telegram-Bot8
 ## Usage
 
 ```python
-from TelegramBot8 import Message, TeleBot, Update, ParseMode
+import os
 
-API_KEY = os.getenv('telegramApiKey')
+from TelegramBot8 import Message, TeleBot, ParseMode, Update, BotCommandScope, MediaResponse, Error, BaseResponse, \
+    InlineKeyboard, InlineKeyboardButton, CallBackQuery, ReplyKeyboard, ReplyKeyboardButton
+
+API_KEY = os.getenv('env_variable_name')
 bot = TeleBot(API_KEY)
 
 @bot.add_command_helper(command="/hi")
